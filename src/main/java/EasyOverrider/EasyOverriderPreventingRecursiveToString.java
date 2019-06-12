@@ -70,6 +70,15 @@ package EasyOverrider;
 public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverrider<B> implements RecursionPreventingToString {
 
     /**
+     * Casts this into a B as expected by the ParamList methods.
+     * @return A B.
+     */
+    @SuppressWarnings("unchecked")
+    private B getThis() {
+        return (B)this;
+    }
+
+    /**
      * An EasyOverrider version of toString() that prevents recursion.
      *
      * @return The string representation of this object as defined by the {@link ParamList}.
@@ -90,9 +99,10 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
      *
      * @param preventingRecursion  the flag for whether or not we're trying to prevent recursion
      * @return The string representation of this object as defined by the {@link ParamList}.
+     * @see ParamList#toString(Object, boolean)
      */
     @Override
     public String toString(boolean preventingRecursion) {
-        return getParamList().toString((B)this, preventingRecursion);
+        return getParamList().toString(getThis(), preventingRecursion);
     }
 }

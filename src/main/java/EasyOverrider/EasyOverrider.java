@@ -93,6 +93,15 @@ public abstract class EasyOverrider<B> {
     abstract ParamList<B> getParamList();
 
     /**
+     * Casts this into a B as expected by the ParamList methods.
+     * @return A B.
+     */
+    @SuppressWarnings("unchecked")
+    private B getThis() {
+        return (B)this;
+    }
+
+    /**
      * An EasyOverrider version of equals(Object).
      *
      * @param obj  the object to compare this object to
@@ -100,7 +109,7 @@ public abstract class EasyOverrider<B> {
      */
     @Override
     public boolean equals(Object obj) {
-        return getParamList().equals((B)this, obj);
+        return getParamList().equals(getThis(), obj);
     }
 
     /**
@@ -110,7 +119,7 @@ public abstract class EasyOverrider<B> {
      */
     @Override
     public int hashCode() {
-        return getParamList().hashCode((B)this);
+        return getParamList().hashCode(getThis());
     }
 
     /**
@@ -120,6 +129,6 @@ public abstract class EasyOverrider<B> {
      */
     @Override
     public String toString() {
-        return getParamList().toString((B)this);
+        return getParamList().toString(getThis());
     }
 }
