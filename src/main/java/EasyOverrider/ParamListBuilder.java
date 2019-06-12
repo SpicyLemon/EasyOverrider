@@ -14,8 +14,23 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Class to help with building a {@link ParamList}.
- * @param <O> The type of the param list you're creating.
+ * Class to help with building the building of a ParamList.<br>
+ *
+ * Since the {@link ParamList} objects are pretty complicated, this class helps create them in a nice, fluent way.
+ *
+ * <pre>
+ * {@code
+ *
+ * private static ParamList<Foo> paramList =
+ *                 ParamList.forClass(Foo.class)
+ *                          .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                          .withParam("name", Foo::getName, String.class)
+ *                          .withParam("bar", Foo::getBar, Bar.class)
+ *                          .andThatsIt();
+ * }
+ * </pre>
+ *
+ * @param <O>  the type of the param list you're creating
  */
 public class ParamListBuilder<O> {
 
@@ -41,12 +56,14 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Private constructor to do all the meat of the setting of stuff, without any validation.
+     * Private constructor to do all the meat of the setting of stuff, without any validation.<br>
+     *
      * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.
-     * @param superParamList Any existing ParamList available to the parentClass.
-     * @param parentClass The class of the object being described.
-     * @param paramMethodRestrictionRestriction The {@link ParamMethodRestrictionRestriction} to use.
-     *                                          If null, {@link ParamMethodRestrictionRestriction#SAFE_ONLY} is used.
+     *
+     * @param superParamList  any existing ParamList available to the parentClass
+     * @param parentClass  the class of the object being described
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use -
+     *                                          if null, {@link ParamMethodRestrictionRestriction#SAFE_ONLY} is used
      */
     private ParamListBuilder(final ParamList<? super O> superParamList, final Class<O> parentClass,
                              final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
@@ -63,10 +80,13 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Default constructor to start. Usually this is done using {@link ParamList#forClass(Class)}
+     * Default constructor to start.<br>
+     *
+     * Usually this is done using {@link ParamList#forClass(Class)}
      * so that you don't have to import ParamListBuilder.
-     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}
-     * @param parentClass The class of the object being described.
+     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}.
+     *
+     * @param parentClass  the class of the object being described - cannot be null
      * @see ParamList#forClass(Class)
      */
     ParamListBuilder(final Class<O> parentClass) {
@@ -75,11 +95,14 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Default constructor to start. Usually this is done using {@link ParamList#forClass(Class, ParamMethodRestrictionRestriction)}
+     * Default constructor to start.<br>
+     *
+     * Usually this is done using {@link ParamList#forClass(Class, ParamMethodRestrictionRestriction)}
      * so that you don't have to import ParamListBuilder.
-     * It allows you to specify the {@link ParamMethodRestrictionRestriction} if needed.
-     * @param parentClass The class of the object being described.
-     * @param paramMethodRestrictionRestriction The {@link ParamMethodRestrictionRestriction} to use.
+     * It allows you to specify the {@link ParamMethodRestrictionRestriction}.
+     *
+     * @param parentClass  the class of the object being described - cannot be null
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use - cannot be null
      * @see ParamList#forClass(Class)
      */
     ParamListBuilder(final Class<O> parentClass, final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
@@ -89,11 +112,13 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Constructor for basing a new list off of an existing one.
+     * Constructor for basing a new list off of an existing one.<br>
+     *
      * This is usually done using {@link ParamList#extendedBy(Class)}.
-     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}
-     * @param parentClass The class of the object being described.
-     * @param superParamList The existing ParamList available to the parentClass.
+     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}.
+     *
+     * @param parentClass  the class of the object being described - cannot be null
+     * @param superParamList  the existing {@link ParamList] available to the parentClass - cannot be null
      * @see ParamList#extendedBy(Class)
      */
     ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList) {
@@ -103,12 +128,14 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Constructor for basing a new list off of an existing one.
-     * This is usually done using {@link ParamList#extendedBy(Class, ParamMethodRestrictionRestriction)}
-     * @param parentClass The class of the object being described.
-     * @param superParamList The existing ParamList available to the parentClass.
-     * @param paramMethodRestrictionRestriction The {@link ParamMethodRestrictionRestriction} to use.
-     * @see ParamList#extendedBy(Class)
+     * Constructor for basing a new list off of an existing one.<br>
+     *
+     * This is usually done using {@link ParamList#extendedBy(Class, ParamMethodRestrictionRestriction)}.
+     *
+     * @param parentClass  the class of the object being described - cannot be null
+     * @param superParamList  the existing ParamList available to the parentClass - cannot be null
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use - cannot be null
+     * @see ParamList#extendedBy(Class, ParamMethodRestrictionRestriction)
      */
     ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList,
                      final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
@@ -120,6 +147,7 @@ public class ParamListBuilder<O> {
 
     /**
      * Getter for the parentClass parameter.
+     *
      * @return A Class.
      */
     public Class<O> getParentClass() {
@@ -128,6 +156,7 @@ public class ParamListBuilder<O> {
 
     /**
      * Getter for the paramMethodRestrictionRestriction parameter.
+     *
      * @return A {@link ParamMethodRestrictionRestriction} value.
      */
     public ParamMethodRestrictionRestriction getParamMethodRestrictionRestriction() {
@@ -136,6 +165,7 @@ public class ParamListBuilder<O> {
 
     /**
      * Getter for the ParamOrder parameter.
+     *
      * @return A list of name strings that dictate the parameter order.
      */
     public List<String> getParamOrder() {
@@ -144,6 +174,7 @@ public class ParamListBuilder<O> {
 
     /**
      * Getter for the map of parameter names to their descriptions.
+     *
      * @return A map of name strings to ParamDescription objects.
      */
     public Map<String, ParamDescription<? super O, ?, ?>> getParamDescriptionMap() {
@@ -152,10 +183,11 @@ public class ParamListBuilder<O> {
 
     /**
      * Add a new ParamDescription to the list with the provided parameters.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -179,11 +211,12 @@ public class ParamListBuilder<O> {
 
     /**
      * Add a new ParamDescription to the list with the provided parameters.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -210,12 +243,13 @@ public class ParamListBuilder<O> {
 
     /**
      * Add a new ParamDescription to the list with the provided parameters.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question.  Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -241,13 +275,14 @@ public class ParamListBuilder<O> {
 
     /**
      * Add a new ParamDescription to the list with the provided parameters.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null.
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -276,13 +311,14 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionSingle and add it to be included in the ParamList.
-     * @param paramClass The class of the parameter in question.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed.
+     * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -295,12 +331,13 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -325,14 +362,15 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
-     * @return The current ParamListBuilder.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
+     * @return The current ParamListBuilder
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
@@ -359,14 +397,15 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -393,15 +432,16 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -431,15 +471,16 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionCollection and add it to be included in the ParamList.
-     * @param paramClass The class of the parameter in question.
-     * @param entryClass The class of the entries in the collection.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param entryClass  the class of the entries in the collection
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -454,14 +495,15 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the map's keys. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the map.
-     * @param <E> The type of the entries in the map.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the map's keys - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the map
+     * @param <E>  the type of the entries in the map
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -488,15 +530,16 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the map's keys. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the map.
-     * @param <E> The type of the entries in the map.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the map's keys - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the map
+     * @param <E>  the type of the entries in the map
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -526,16 +569,17 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the map's keys. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the map.
-     * @param <E> The type of the entries in the map.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the map's keys  - cannot be null
+     * @param entryClass  the class of the entries in the collection  - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the map
+     * @param <E>  the type of the entries in the map
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -564,17 +608,18 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the map's keys. Cannot be null.
-     * @param entryClass The class of the entries in the collection. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the map.
-     * @param <E> The type of the entries in the map.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the map's keys - cannot be null
+     * @param entryClass  the class of the entries in the collection - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the map
+     * @param <E>  the type of the entries in the map
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
@@ -606,17 +651,18 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     * @param paramClass The class of the parameter in question.
-     * @param keyClass The class of the keys in the map.
-     * @param entryClass The class of the entries in the collection.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the map.
-     * @param <E> The type of the entries in the map.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param keyClass  the class of the keys in the map
+     * @param entryClass  the class of the entries in the map
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the map
+     * @param <E>  the type of the entries in the map
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -632,9 +678,10 @@ public class ParamListBuilder<O> {
 
     /**
      * Adds a ParamDescription to what we've got.
-     * @param paramDescription The ParamDescription to add.
-     * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
+     *
+     * @param paramDescription  the ParamDescription to add
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
     private void addParam(final ParamDescription<? super O, ?, ?> paramDescription) {
         enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
@@ -648,13 +695,15 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name with the new values given.
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
      * Specifically, a new ParamDescription is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -677,14 +726,16 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name with the new values given.
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
      * Specifically, a new ParamDescription is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -710,15 +761,17 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name with the new values given.
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
      * Specifically, a new ParamDescription is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -743,16 +796,18 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name with the new values given.
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
      * Specifically, a new ParamDescription is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param <P> The type of the parameter being described.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -781,13 +836,14 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionSingle and replace the existing ParamDescription with the same name.
-     * @param paramClass The class of the parameter in question.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed
+     * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -799,15 +855,17 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a collection with the new values given.
+     * Updates the parameter having the provided name to be a collection with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a collection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -831,16 +889,18 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a collection with the new values given.
+     * Updates the parameter having the provided name to be a collection with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a collection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -867,17 +927,19 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a collection with the new values given.
+     * Updates the parameter having the provided name to be a collection with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a collection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -903,18 +965,20 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a collection with the new values given.
+     * Updates the parameter having the provided name to be a collection with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a collection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -944,15 +1008,16 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionCollection and replace the existing ParamDescription with the same name.
-     * @param paramClass The class of the parameter in question.
-     * @param entryClass The class of the entries in the parameter.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param entryClass  the class of the entries in the parameter
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed
+     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
+     * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -966,17 +1031,19 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a map with the new values given.
+     * Updates the parameter having the provided name to be a map with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a map is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the keys in the parameter. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the keys in the parameter - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P> he type of the parameter (must be a {@link Map} of some sort)
+     * @param <K> he type of the keys in the parameter
+     * @param <E> he type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -1002,18 +1069,20 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a map with the new values given.
+     * Updates the parameter having the provided name to be a map with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a map is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the keys in the parameter. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the keys in the parameter - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the parameter
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -1042,19 +1111,21 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a map with the new values given.
+     * Updates the parameter having the provided name to be a map with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a map is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the keys in the parameter. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the keys in the parameter - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the parameter
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -1082,20 +1153,22 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Updates the parameter having the provided name to be a map with the new values given.
+     * Updates the parameter having the provided name to be a map with the new values given.<br>
+     *
      * Specifically, a new ParamDescription for a map is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
-     * @param name The name of the parameter, e.g. "id". Cannot be null.
-     * @param getter The getter for the parameter, e.g. Product::getId. Cannot be null.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used. Cannot be null.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    Cannot be null.
-     * @param paramClass The class of the parameter in question. Cannot be null.
-     * @param keyClass The class of the keys in the parameter. Cannot be null.
-     * @param entryClass The class of the entries in the parameter. Cannot be null.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param keyClass  the class of the keys in the parameter - cannot be null
+     * @param entryClass  the class of the entries in the parameter - cannot be null
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the parameter
+     * @param <E>  the type of the entries in the parameter
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
@@ -1127,17 +1200,18 @@ public class ParamListBuilder<O> {
 
     /**
      * Create a new ParamDescriptionMap and replace the existing ParamDescription with the same name.
-     * @param paramClass The class of the parameter in question.
-     * @param keyClass The class of the keys in the parameter.
-     * @param entryClass The class of the entries in the parameter.
-     * @param name The name of the parameter, e.g. "id".
-     * @param getter The getter for the parameter, e.g. Product::getId.
-     * @param paramMethodRestriction A {@link ParamMethodRestriction} value indicating how this parameter should be used.
-     * @param recursionPreventingToString A toString method that takes in a flag that can be used to prevent recursive toString functions.
-     *                                    If null, it is assumed that no recursion prevention is needed.
-     * @param <P> The type of the parameter.
-     * @param <K> The type of the keys in the parameter.
-     * @param <E> The type of the entries in the parameter.
+     *
+     * @param paramClass  the class of the parameter in question
+     * @param keyClass  the class of the keys in the parameter
+     * @param entryClass  the class of the entries in the parameter
+     * @param name  the name of the parameter, e.g. "id"
+     * @param getter  the getter for the parameter, e.g. Product::getId
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
+     *                                     if null, it is assumed that no recursion prevention is needed
+     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
+     * @param <K>  the type of the keys in the parameter
+     * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -1152,7 +1226,8 @@ public class ParamListBuilder<O> {
 
     /**
      * Replaces the existing ParamDescription with the same name as the provided ParamDescription.
-     * @param paramDescription The ParamDescription to use.
+     *
+     * @param paramDescription  the ParamDescription to use
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
@@ -1167,8 +1242,9 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Makes sure that the provided {@link ParamMethodRestriction} is allowed using this builder's {@link ParamMethodRestrictionRestriction}.
-     * @param paramMethodRestriction The {@link ParamMethodRestriction} to check.
+     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.
+     *
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} to check
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction) {
@@ -1181,8 +1257,9 @@ public class ParamListBuilder<O> {
 
     /**
      * Removes the parameter with the provided name.
-     * @param name The name of the parameter to remove. Cannot be null.
-     * @return the current ParamListBuilder.
+     *
+     * @param name  the name of the parameter to remove - cannot be null
+     * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @see #withoutParam(String)
@@ -1203,7 +1280,8 @@ public class ParamListBuilder<O> {
 
     /**
      * Removes the parameter with the provided name.
-     * @param name The name of the parameter to remove. Cannot be null.
+     *
+     * @param name  the name of the parameter to remove - cannot be null
      * @return the current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
@@ -1226,7 +1304,8 @@ public class ParamListBuilder<O> {
 
     /**
      * Removes the parameter with the provided name.
-     * @param name The name of the parameter to remove. Cannot be null.
+     *
+     * @param name  the name of the parameter to remove - cannot be null
      * @return the current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
@@ -1249,9 +1328,10 @@ public class ParamListBuilder<O> {
 
     /**
      * Removes the parameter with the provide name.
-     * @param name The name of the parameter to remove.
-     * @param expectedParamClass The class you're expecting the parameter to be. If null, this part of the check is skipped.
-     * @param callingMethod The name of the calling method (used in exceptions).
+     *
+     * @param name  the name of the parameter to remove
+     * @param expectedParamClass  the class you're expecting the parameter to be. If null, this part of the check is skipped
+     * @param callingMethod  the name of the calling method (used in exceptions)
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if an expectedParamClass is provided, but the parameter with the provided name is not assignable to that class.
      */
@@ -1271,6 +1351,7 @@ public class ParamListBuilder<O> {
 
     /**
      * Finalizes the builder and returns the final ParamList.
+     *
      * @return a ParamList object.
      */
     public ParamList<O> andThatsIt() {
@@ -1279,8 +1360,9 @@ public class ParamListBuilder<O> {
 
     /**
      * equals method for a ParamListBuilder.
-     * @param obj The object to test against.
-     * @return True of this ParamListBuilder equals the provided object. False otherwise.
+     *
+     * @param obj  the object to test against
+     * @return True if this ParamListBuilder equals the provided object. False otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -1289,6 +1371,7 @@ public class ParamListBuilder<O> {
 
     /**
      * hashCode method for a ParamListBuilder.
+     *
      * @return An int.
      */
     @Override
@@ -1298,6 +1381,7 @@ public class ParamListBuilder<O> {
 
     /**
      * toString method for a ParamListBuilder.
+     *
      * @return A String.
      */
     @Override

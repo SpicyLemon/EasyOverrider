@@ -2,20 +2,23 @@ package EasyOverrider;
 
 /**
  * Enum to make it easier to dictate which methods a parameter should be included in.
- * <li>{@link #IGNORED_FOR_ALL}</li>
- * <li>{@link #INCLUDED_IN_TOSTRING_ONLY}</li>
- * <li>{@link #IGNORED_FOR_TOSTRING}</li>
- * <li>{@link #INCLUDED_IN_ALL}</li>
- * <li>{@link #INCLUDED_IN_EQUALS_ONLY__UNSAFE}</li>
- * <li>{@link #INCLUDED_IN_HASHCODE_ONLY__UNSAFE}</li>
- * <li>{@link #IGNORED_FOR_EQUALS__UNSAFE}</li>
- * <li>{@link #IGNORED_FOR_HASHCODE__UNSAFE}</li>
+ * <ul>
+ * <li>{@link #IGNORED_FOR_ALL}
+ * <li>{@link #INCLUDED_IN_TOSTRING_ONLY}
+ * <li>{@link #IGNORED_FOR_TOSTRING}
+ * <li>{@link #INCLUDED_IN_ALL}
+ * <li>{@link #INCLUDED_IN_EQUALS_ONLY__UNSAFE}
+ * <li>{@link #INCLUDED_IN_HASHCODE_ONLY__UNSAFE}
+ * <li>{@link #IGNORED_FOR_EQUALS__UNSAFE}
+ * <li>{@link #IGNORED_FOR_HASHCODE__UNSAFE}
+ * </ul>
  *
  * Entries that end in <code>__UNSAFE</code> should only be used in extreme circumstances.<br>
- * The rule is that if objA.equals(objB) then objA.hashCode() must equal objB.hashCode().
+ *
+ * The rule is that if <code>objA.equals(objB)</code> then <code>objA.hashCode()</code> must equal <code>objB.hashCode()</code>.
  * By including a parameter in equals but not hashCode, there's a very good chance of breaking that part of the contract.
  * By including a parameter in hashCode but not equals, you run the risk of things not working right when they rely on the hashCode.
- * For example, a hashSet might falsly identify to different entries as the same.
+ * For example, a hashSet might falsely identify to different entries as the same.
  */
 public enum ParamMethodRestriction {
     /**
@@ -70,6 +73,7 @@ public enum ParamMethodRestriction {
 
     /**
      * Whether or not the parameter associated with this should be ignored in the equals method.
+     *
      * @return True if it should be ignored. False if it should be included.
      * @see #isEqualsInclude()
      */
@@ -79,6 +83,7 @@ public enum ParamMethodRestriction {
 
     /**
      * Whether or not the parameter associated with this should be included in the equals method.
+     *
      * @return True if it should be included. False if it should be ignored.
      * @see #isEqualsIgnore()
      */
@@ -88,6 +93,7 @@ public enum ParamMethodRestriction {
 
     /**
      * Whether or not the parameter associated with this should be ignored in the hashCode() method.
+     *
      * @return True if it should be ignored. False if it should be included.
      * @see #isHashCodeInclude()
      */
@@ -97,6 +103,7 @@ public enum ParamMethodRestriction {
 
     /**
      * Whether or not the parameter associated with this should be included in the hashCode() method.
+     *
      * @return True if it should be included. False if it should be ignored.
      * @see #isEqualsIgnore()
      */
@@ -105,7 +112,8 @@ public enum ParamMethodRestriction {
     }
 
     /**
-     * Whether or not the parameter associated with this should be included in the toString() method
+     * Whether or not the parameter associated with this should be included in the toString() method.
+     *
      * @return True if it should be ignored. False if it should be included.
      * @see #isToStringInclude()
      */
@@ -115,6 +123,7 @@ public enum ParamMethodRestriction {
 
     /**
      * Whether or not the parameter associated with this should be included in the toString() method.
+     *
      * @return True if it should be included. False if it should be ignored.
      * @see #isToStringIgnore()
      */
@@ -124,6 +133,7 @@ public enum ParamMethodRestriction {
 
     /**
      * String representation of this enum.
+     *
      * @return A string.
      */
     @Override
@@ -137,7 +147,8 @@ public enum ParamMethodRestriction {
 
     /**
      * Converts an ignore flag to either "Ignored" or "Included".
-     * @param flag an ignore flag.
+     *
+     * @param flag  the ignore flag
      * @return "Ignored" if the flag is true, "Included" if the flag is false.
      */
     private static String flagToString(boolean flag) {

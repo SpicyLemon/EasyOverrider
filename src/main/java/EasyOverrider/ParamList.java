@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * }
  * }
  * </pre>
- * @param <O> The class you're describing.
+ * @param <O>  the class you're describing
  */
 public class ParamList<O> {
 
@@ -72,13 +72,14 @@ public class ParamList<O> {
     }
 
     /**
-     * Constructor for if you've already got a list of ParamDescription objects.
+     * Constructor for if you've already got a list of ParamDescription objects.<br>
+     *
      * Alternatively (preferably), you can use the static {@link ParamList#forClass(Class)} method
      * combined with the {@link ParamListBuilder} methods,
      * and finished off with the {@link ParamListBuilder#andThatsIt()} method to create a new ParamList.
-     * @param parentClass The class of the object these parameters represent.
-     * @param paramDescriptionMap A map of name to ParamDescription objects describing the parameters in the parent object.
-     * @param paramOrder The order that the parameters should be in.
+     * @param parentClass  the class of the object these parameters represent
+     * @param paramDescriptionMap  a map of name to ParamDescription objects describing the parameters in the parent object
+     * @param paramOrder  the order that the parameters should be in
      * @throws IllegalArgumentException if the sizes of the provided paramOrder list and paramDescriptionMap are different.
      * @throws IllegalArgumentException if an entry exists in the paramOrder that doesn't have a matching key in the paramDescriptionMap.
      */
@@ -104,6 +105,7 @@ public class ParamList<O> {
 
     /**
      * Getter for the parentClass parameter that records the class this ParamList applies to.
+     *
      * @return A Class.
      */
     public Class<O> getParentClass() {
@@ -112,6 +114,7 @@ public class ParamList<O> {
 
     /**
      * Getter for the order parameter.
+     *
      * @return An unmodifiable list of Strings
      */
     public List<String> getParamOrder() {
@@ -120,6 +123,7 @@ public class ParamList<O> {
 
     /**
      * Getter for the paramDescriptionMap parameter.
+     *
      * @return An unmodifiable Map of Strings to ParamDescription values.
      */
     public Map<String, ParamDescription<? super O, ?, ?>> getParamDescriptionMap() {
@@ -128,6 +132,7 @@ public class ParamList<O> {
 
     /**
      * Gets the list of all param descriptions in an unmodifiable state.
+     *
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?, ?>> getAllParamDescriptions() {
@@ -136,6 +141,7 @@ public class ParamList<O> {
 
     /**
      * Gets the list of all param descriptions that are to be used in an equals() method.
+     *
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?, ?>> getEqualsParamDescriptions() {
@@ -144,6 +150,7 @@ public class ParamList<O> {
 
     /**
      * Gets the list of all param descriptions that are to be used in a hashCode() method.
+     *
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?, ?>> getHashCodeParamDescriptions() {
@@ -152,6 +159,7 @@ public class ParamList<O> {
 
     /**
      * Gets the list of all param descriptions that are to be used in a toString() method.
+     *
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?, ?>> getToStringParamDescriptions() {
@@ -159,8 +167,9 @@ public class ParamList<O> {
     }
 
     /**
-     * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions
-     * @param filter The predicate to use in the filter, e.g. ParamDescription::isToStringInclude
+     * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions.
+     *
+     * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - cannot be null
      * @return An unmodifialbe list of ParamDescriptions.
      */
     private List<ParamDescription<? super O, ?, ?>> getFilteredParamList(final Predicate<ParamDescription<? super O, ?, ?>> filter) {
@@ -171,16 +180,18 @@ public class ParamList<O> {
     }
 
     /**
-     * Checks to see if the provided objects are equal as described by this paramList.
-     * This first checks to see if the two provided object pointers are equal; if so, return true.
-     * Then, if one is null, return false.
+     * Checks to see if the provided objects are equal as described by this paramList.<br>
+     *
+     * This first checks to see if the two provided objects are equal using <code>==</code>; if so, return true.<br>
+     * Then, if one is null, return false.<br>
      * Then check to see which of the objects is an instance of the parent class.
      * If neither of them are, return <code>thisObj.equals(thatObj);</code>.
      * If one of them isn't, return false.
-     * Lastly, Got through all the param descriptions that are to be included in the equals function
+     * Lastly, go through all the param descriptions that are to be included in the equals function
      * and make sure all the appropriate parameters are equal.
-     * @param thisObj The main object you're checking against.
-     * @param thatObj The other object you're wanting to test.
+     *
+     * @param thisObj  the main object you're checking against
+     * @param thatObj  the other object you're wanting to test
      * @return True if both objects are equal. False otherwise.
      */
     public boolean equals(final Object thisObj, final Object thatObj) {
@@ -207,7 +218,8 @@ public class ParamList<O> {
 
     /**
      * Generates the hashCode for the provided object using the appropriate parameters.
-     * @param thisObj The object to get the parameter values from.
+     *
+     * @param thisObj  the object to get the parameter values from
      * @return An integer.
      */
     public int hashCode(final O thisObj) {
@@ -217,7 +229,8 @@ public class ParamList<O> {
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters.
-     * @param thisObj The object to get the paramter values from.
+     *
+     * @param thisObj  the object to get the paramter values from
      * @return A string.
      */
     public String toString(final O thisObj) {
@@ -226,8 +239,9 @@ public class ParamList<O> {
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.
-     * @param thisObj The object to get the parameter values from.
-     * @param preventingRecursion Flag for whether or not we should be preventing recursion.
+     *
+     * @param thisObj  the object to get the parameter values from
+     * @param preventingRecursion  the flag for whether or not we should be preventing recursion
      * @return A string representation of the given object.
      */
     public String toString(final O thisObj, final boolean preventingRecursion) {
@@ -237,7 +251,8 @@ public class ParamList<O> {
 
     /**
      * Gets a String representation of the desired parameters in the provided object.
-     * @param thisObj The object to get the parameter values from.
+     *
+     * @param thisObj  the object to get the parameter values from
      * @return A String of comma-space delimited name/value Strings.
      */
     public String getParamsString(final O thisObj) {
@@ -246,8 +261,9 @@ public class ParamList<O> {
 
     /**
      * Gets a String representation of the desired parameters in the provided object.
-     * @param thisObj The object to get the parameter values from.
-     * @param preventingRecursion Flag for whether or not we should be preventing recursion.
+     *
+     * @param thisObj  the object to get the parameter values from
+     * @param preventingRecursion  the flag for whether or not we should be preventing recursion
      * @return A String of comma-space delimited name/value Strings.
      */
     public String getParamsString(final O thisObj, final boolean preventingRecursion) {
@@ -262,10 +278,12 @@ public class ParamList<O> {
     }
 
     /**
-     * Creates a new {@link ParamListBuilder} based on this ParamList.
+     * Creates a new ParamListBuilder based on this ParamList.<br>
+     *
      * This allows you to extend an already created ParamList when, for example, extending a class, and adding new parameters.
-     * @param newParentClass The new class that extends the class that this ParamList is for.
-     * @param <C> The type of the new class.
+     *
+     * @param newParentClass  the new class that extends the class that this ParamList is for
+     * @param <C>  the type of the new class
      * @return A new {@link ParamListBuilder}.
      */
     public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass) {
@@ -273,13 +291,15 @@ public class ParamList<O> {
     }
 
     /**
-     * Creates a new {@link ParamListBuilder} based on this ParamList, using the provided {@link ParamMethodRestrictionRestriction}.
+     * Creates a new ParamListBuilder based on this ParamList using the provided ParamMethodRestrictionRestriction.<br>
+     *
      * This allows you to extend an already created ParamList when, for example, extending a class, and adding new parameters.
      * Previously created entries in the ParamList are grandfathered in with respectes to the ParamMethodRestrictionRestriction.
      * As such, you only need to set it when your new parameters require (somehow) an <code>__UNSAFE</code> {@link ParamMethodRestriction}.
-     * @param newParentClass The new class that extends the class that this ParamList is for.
-     * @param paramMethodRestrictionRestriction The {@link ParamMethodRestrictionRestriction} to use.
-     * @param <C> The type of the new class.
+     *
+     * @param newParentClass  the new class that extends the class that this ParamList is for
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
+     * @param <C>  the type of the new class
      * @return A new {@link ParamListBuilder}.
      */
     public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass,
@@ -289,7 +309,8 @@ public class ParamList<O> {
 
     /**
      * equals method for a ParamList object.
-     * @param obj The object to test against.
+     *
+     * @param obj  the object to test against
      * @return True if this ParamList equals the provided object. False otherwise.
      */
     @Override
@@ -299,6 +320,7 @@ public class ParamList<O> {
 
     /**
      * hashCode method for a ParamList object.
+     *
      * @return An int.
      */
     @Override
@@ -308,6 +330,7 @@ public class ParamList<O> {
 
     /**
      * toString method for a ParamList object.
+     *
      * @return A String.
      */
     @Override
@@ -317,8 +340,9 @@ public class ParamList<O> {
 
     /**
      * Kicks off a ParamListBuilder for the provided class.
-     * @param parentClass The class you're building the parameter list for.
-     * @param <C> The class you're building the parameter list for.
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param <C>  the class you're building the parameter list for
      * @return A {@link ParamListBuilder} for the specified class.
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
@@ -326,10 +350,11 @@ public class ParamList<O> {
     }
 
     /**
-     * Kicks off a ParamListBuilder for the provided class, with the provided {@link ParamMethodRestrictionRestriction}.
-     * @param parentClass The class you're building the parameter list for.
-     * @param paramMethodRestrictionRestriction The {@link ParamMethodRestrictionRestriction} to use.
-     * @param <C> The class you're building the parameter list for.
+     * Kicks off a ParamListBuilder for the provided class, with the provided ParamMethodRestrictionRestriction.
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
+     * @param <C>  the class you're building the parameter list for
      * @return A {@link ParamListBuilder} for the specified class.
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass,
@@ -338,12 +363,14 @@ public class ParamList<O> {
     }
 
     /**
-     * Checks if an object is null. If it is, generates and throws an IllegalArgumentException with a message using the rest of the parameters.
+     * Makes sure an object is not null.<br>
+     *
+     * If it is, an IllegalArgumentException is thrown with a message using the rest of the parameters.
      * The message looks something like <code>"Argument 1 (paramName) provided to methodName cannot be null."</code>
-     * @param obj The object that needs to not be null.
-     * @param position The position of the argument in the call to the method in question.
-     * @param paramName The name of the parameter in the method call.
-     * @param methodName The name of the method.
+     * @param obj  the object that needs to not be null
+     * @param position  the position of the argument in the call to the method in question
+     * @param paramName  the name of the parameter in the method call
+     * @param methodName  the name of the method
      * @throws IllegalArgumentException if obj == null.
      */
     protected static void requireNonNull(final Object obj, final int position, final String paramName, final String methodName) {

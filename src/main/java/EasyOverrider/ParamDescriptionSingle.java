@@ -5,8 +5,9 @@ import java.util.function.Function;
 
 /**
  * Describes a standard parameter in an object.
- * @param <O> The type of the object.
- * @param <P> The type of the parameter.
+ *
+ * @param <O>  the type of the object
+ * @param <P>  the type of the parameter
  */
 public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> {
 
@@ -56,7 +57,8 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
 
     /**
      * equals method for a ParamDescriptionSingle object.
-     * @param obj The object to test against.
+     *
+     * @param obj  the object to test against
      * @return True if this ParamDescriptionSingle is equal to the provided object. False otherwise.
      */
     @Override
@@ -66,6 +68,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
 
     /**
      * hashCode method for a ParamDescriptionSingle abstract object.
+     *
      * @return an int.
      */
     @Override
@@ -75,6 +78,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
 
     /**
      * toString method for a ParamDescriptionSingle object.
+     *
      * @return A string representation of this object.
      */
     @Override

@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 /**
  * Describes a standard {@link Map} parameter in an object.
- * @param <O> The type of the object.
- * @param <P> The type of the parameter.
- * @param <K> The type of the keys in the Map.
- * @param <E> The type of the values in the Map.
+ *
+ * @param <O>  the type of the object
+ * @param <P>  the type of the parameter
+ * @param <K>  the type of the keys in the Map
+ * @param <E>  the type of the values in the Map
  */
 public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDescriptionBase<O, P, E> {
 
@@ -31,14 +32,15 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
 
     /**
      * Standard constructor for a parameter that is a map of some type.
-     * @param parentClass The class of the object containing the parameter.
-     * @param paramClass The class of the parameter (must extend Map).
-     * @param keyClass The class of the keys in the map parameter.
-     * @param entryClass The class of the entries in the map parameter.
-     * @param name The name of the parameter.
-     * @param getter The getter for the parameter.
-     * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
-     * @param recursionPreventingToString The <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls.
+     *
+     * @param parentClass  the class of the object containing the parameter
+     * @param paramClass  the class of the parameter (must extend Map)
+     * @param keyClass  the class of the keys in the map parameter
+     * @param entryClass  the class of the entries in the map parameter
+     * @param name  the name of the parameter
+     * @param getter  the getter for the parameter
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
+     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     public ParamDescriptionMap(final Class<O> parentClass, final Class<P> paramClass,
                                final Class<K> keyClass, final Class<E> entryClass, final String name,
@@ -76,7 +78,8 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
 
     /**
      * equals method for a ParamDescriptionMap object.
-     * @param obj The object to test against.
+     *
+     * @param obj  the object to test against
      * @return True if this ParamDescriptionMap is equal to the provided object. False otherwise.
      */
     @Override
@@ -86,6 +89,7 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
 
     /**
      * hashCode method for a ParamDescriptionMap abstract object.
+     *
      * @return an int.
      */
     @Override
@@ -95,6 +99,7 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
 
     /**
      * toString method for a ParamDescriptionMap object.
+     *
      * @return A string representation of this object.
      */
     @Override

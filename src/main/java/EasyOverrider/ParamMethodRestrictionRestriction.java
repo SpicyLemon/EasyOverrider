@@ -14,25 +14,28 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * This enum dictates which {@link ParamMethodRestriction} values are available for use.
- * It is here so that using the unsafe ones requires effort and thought before being used.<br?
+ * This enum dictates which {@link ParamMethodRestriction} values are available for use.<br>
+ *
+ * It is here so that using the unsafe ones requires effort and thought before being used.<br>
  * The default value is {@link #SAFE_ONLY}, but if, for some reason, you decided that you want
  * the <code>__UNSAFE</code> values, you can use {@link #ALLOW_UNSAFE}.
- *
  */
 public enum ParamMethodRestrictionRestriction {
     /**
      * This is the default. It only allows safe, normal {@link ParamMethodRestriction} values:
+     * <ul>
      * <li>{@link ParamMethodRestriction#IGNORED_FOR_ALL}</li>
      * <li>{@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}</li>
      * <li>{@link ParamMethodRestriction#IGNORED_FOR_TOSTRING}</li>
      * <li>{@link ParamMethodRestriction#INCLUDED_IN_ALL}</li>
+     * </ul>
      * If, for some weird reason, you think you need the other values too, use {@link #ALLOW_UNSAFE}.
      */
     SAFE_ONLY(EnumSet.of(IGNORED_FOR_ALL, INCLUDED_IN_TOSTRING_ONLY, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL)),
 
     /**
-     * This allows all the {@link ParamMethodRestriction} values to be available, including the <code>__UNSAFE</code> ones.
+     * This allows all the {@link ParamMethodRestriction} values to be available, including the <code>__UNSAFE</code> ones. <br>
+     *
      * <B>It is not recommended that you use this, ever.</B> If you do, there should be a very good and well-thought-out reason for it.<br>
      * What you probably want is {@link #SAFE_ONLY}.
      */
@@ -46,14 +49,30 @@ public enum ParamMethodRestrictionRestriction {
         this.allowedParamMethodRestrictions = allowedParamMethodRestrictions;
     }
 
+    /**
+     * Gets all of the ParamMethodRestriction values that are allowed for this ParamMethodRestrictionRestriction.
+     *
+     * @return A Set of {@link ParamMethodRestriction} values.
+     */
     public Set<ParamMethodRestriction> getAllowedParamMethodRestrictions() {
-        return  Collections.unmodifiableSet(allowedParamMethodRestrictions);
+        return Collections.unmodifiableSet(allowedParamMethodRestrictions);
     }
 
+    /**
+     * Tests if the provided ParamMethodRestriction is allowed for this ParamMethodRestrictionRestriction.
+     *
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value to check on
+     * @return True if the provided ParamMethodRestriction is allowed. False if not.
+     */
     public boolean allows(ParamMethodRestriction paramMethodRestriction) {
         return allowedParamMethodRestrictions.contains(paramMethodRestriction);
     }
 
+    /**
+     * toString method for a ParamMethodRestrictionRestriction.
+     *
+     * @return A String
+     */
     @Override
     public String toString() {
         return this.name();

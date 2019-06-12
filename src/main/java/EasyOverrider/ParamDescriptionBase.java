@@ -7,14 +7,18 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * An abstract class that implements most of the functionality of a {@link ParamDescription}.
+ * An abstract class that implements most of the functionality of a ParamDescription.<br>
  *
  * It does not implement the following:
- * <li>{@link ParamDescription#isCollection()}</li>
- * <li>{@link ParamDescription#isMap()}</li>
- * The extending class is also required to implement the following:
- * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object)}</li>
+ * <ul>
+ * <li>{@link ParamDescription#isCollection()}
+ * <li>{@link ParamDescription#isMap()}
+ * </ul>
  *
+ * The extending class is also required to implement the following:
+ * <ul>
+ * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object)}
+ * </ul>
  * The implementation of valueToStringPreventingRecursion(Object) should look something like
  * <pre>
  * {@code
@@ -28,9 +32,9 @@ import java.util.function.Function;
  * }
  * </pre>
  *
- * @param <O> The type of object in question.
- * @param <P> The type of the parameter in question.
- * @param <E> The type of entry contained in the parameter (if it's a collection or map).
+ * @param <O>  the type of object in question
+ * @param <P>  the type of the parameter in question
+ * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
 public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<O, P, E> {
     private static final String stringNull = "null";
@@ -62,14 +66,15 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     }
 
     /**
-     * Constructor for the extending class to use to set all the pieces pre-implemented in this abstract class.
-     * @param parentClass The class of the parent object.
-     * @param paramClass The class of the parameter.
-     * @param entryClass The class of the entry. It's used for interaction with collections and lists.
-     * @param name The name of the parameter.
-     * @param getter The getter for the parameter.
-     * @param paramMethodRestriction The {@link ParamMethodRestriction} for the parameter.
-     * @param recursionPreventingToString The <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls.
+     * Constructor for the extending class to use to set all the pieces pre-implemented in this abstract class
+     *
+     * @param parentClass  the class of the parent object
+     * @param paramClass  the class of the parameter
+     * @param entryClass  the class of the entry - used for interaction with collections and lists
+     * @param name  the name of the parameter
+     * @param getter  the getter for the parameter
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter
+     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass,
                          final Class<E> entryClass, final String name,
@@ -214,7 +219,7 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      * }
      * }
      * </pre>
-     * @param value The value to convert to a String.
+     * @param value  the value to convert to a String
      * @return A string.
      */
     abstract String valueToStringPreventingRecursion(final P value);
@@ -233,7 +238,8 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
 
     /**
      * equals method for a ParamDescriptionBase abstract object.
-     * @param obj The object to test against.
+     *
+     * @param obj  the object to test against
      * @return True if this ParamDescriptionBase is equal to the provided object. False otherwise.
      */
     @Override
@@ -243,7 +249,8 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
 
     /**
      * hashCode method for a ParamDescriptionBase abstract object.
-     * @return an int.
+     *
+     * @return An int.
      */
     @Override
     public int hashCode() {
@@ -252,6 +259,7 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
 
     /**
      * toString method for a ParamDescriptionBase abstract object.
+     *
      * @return A string representation of this object.
      */
     @Override

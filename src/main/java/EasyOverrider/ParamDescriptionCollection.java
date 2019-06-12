@@ -7,9 +7,10 @@ import java.util.stream.Collectors;
 
 /**
  * Describes a standard {@link Collection} parameter in an object.
- * @param <O> The type of the object.
- * @param <P> The type of the parameter.
- * @param <E> The type of objects contained in the Collection.
+ *
+ * @param <O>  the type of the object
+ * @param <P>  the type of the parameter
+ * @param <E>  the type of objects contained in the Collection
  */
 public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends ParamDescriptionBase<O, P, E> {
 
@@ -24,16 +25,16 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
         return paramList;
     }
 
-
     /**
      * Standard constructor for a parameter that is a collection of some type.
-     * @param parentClass The class of the object containing the parameter.
-     * @param paramClass The class of the parameter (must extend Collection).
-     * @param entryClass The class of the entries in the collection parameter.
-     * @param name The name of the parameter.
-     * @param getter The getter for the parameter.
-     * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
-     * @param recursionPreventingToString The <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls.
+     *
+     * @param parentClass  the class of the object containing the parameter
+     * @param paramClass  the class of the parameter (must extend Collection)
+     * @param entryClass  the class of the entries in the collection parameter
+     * @param name  the name of the parameter
+     * @param getter  the getter for the parameter
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
+     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
@@ -65,7 +66,8 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
 
     /**
      * equals method for a ParamDescriptionCollection object.
-     * @param obj The object to test against.
+     *
+     * @param obj  the object to test against
      * @return True if this ParamDescriptionCollection is equal to the provided object. False otherwise.
      */
     @Override
@@ -75,6 +77,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
 
     /**
      * hashCode method for a ParamDescriptionCollection abstract object.
+     *
      * @return an int.
      */
     @Override
@@ -84,6 +87,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
 
     /**
      * toString method for a ParamDescriptionCollection object.
+     *
      * @return A string representation of this object.
      */
     @Override
