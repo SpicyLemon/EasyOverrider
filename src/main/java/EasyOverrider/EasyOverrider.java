@@ -88,6 +88,7 @@ public abstract class EasyOverrider<B> {
 
     /**
      * Casts this into a B as expected by the ParamList methods.
+     *
      * @return A B.
      */
     @SuppressWarnings("unchecked")
