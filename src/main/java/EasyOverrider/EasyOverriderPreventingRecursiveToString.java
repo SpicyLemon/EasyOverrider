@@ -25,22 +25,16 @@ package EasyOverrider;
  *     private String name;
  *     private List<Foo> foos;
  *
- *     private static ParamList<Foo> paramList = null;
- *
- *     static paramList<Foo> getFooParamList() {
- *         if (paramList == null) {
- *             paramList = ParamList.forClass(Foo.class)
+ *     private static ParamList<Foo> paramList =
+ *                         ParamList.forClass(Foo.class)
  *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
  *                                  .withParam("name", Foo::getName, String.class)
  *                                  .withCollection("foos", Foo::getFoos, Foo::toString, List.class, Foo.class)
  *                                  .andThatsIt();
- *         }
- *         return paramList;
- *     }
  *
  *     &#64;Override
  *     paramList<Foo> getParamList() {
- *         return getFooParamList();
+ *         return paramList;
  *     }
  *
  *     public Foo(int id, String name, List<Foo> foos) {
