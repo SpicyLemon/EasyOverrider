@@ -13,3 +13,11 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
+
+tasks.withType(Test) { 
+  testLogging {
+    exceptionFormat "full"
+    events "skipped", "passed", "failed"
+    showStandardStreams true
+  }
+}
