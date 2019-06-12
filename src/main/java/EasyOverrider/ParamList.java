@@ -230,7 +230,7 @@ public class ParamList<O> {
     /**
      * Gets a String representation of the provided object using the appropriate parameters.
      *
-     * @param thisObj  the object to get the paramter values from
+     * @param thisObj  the object to get the parameter values from
      * @return A string.
      */
     public String toString(final O thisObj) {
@@ -287,7 +287,7 @@ public class ParamList<O> {
      * @return A new {@link ParamListBuilder}.
      */
     public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass) {
-        return new ParamListBuilder<>(newParentClass, this);
+        return new ParamListBuilder<C>(newParentClass, this);
     }
 
     /**
@@ -304,7 +304,7 @@ public class ParamList<O> {
      */
     public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass,
                                                         ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return new ParamListBuilder<>(newParentClass, this, paramMethodRestrictionRestriction);
+        return new ParamListBuilder<C>(newParentClass, this, paramMethodRestrictionRestriction);
     }
 
     /**
@@ -359,7 +359,7 @@ public class ParamList<O> {
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass,
                                                    ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return new ParamListBuilder<>(parentClass, paramMethodRestrictionRestriction);
+        return new ParamListBuilder<C>(parentClass, paramMethodRestrictionRestriction);
     }
 
     /**
