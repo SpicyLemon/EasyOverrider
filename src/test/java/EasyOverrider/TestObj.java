@@ -3,6 +3,7 @@ package EasyOverrider;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 
 import org.junit.Ignore;
 
@@ -22,7 +23,7 @@ public class TestObj {
     private Map<String, TestObj> theMapStringTestObj;
 
     public static final ParamList<TestObj> paramList =
-                    ParamList.forClass(TestObj.class)
+                    ParamList.forClass(TestObj.class, ALLOW_UNSAFE)
                              .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
                              .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
                              .withParam("theString", TestObj::getTheString, String.class)
