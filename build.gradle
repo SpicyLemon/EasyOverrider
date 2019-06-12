@@ -14,10 +14,16 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+//Enhance the output when running unit tests.
 tasks.withType(Test) { 
   testLogging {
     exceptionFormat "full"
     events "skipped", "passed", "failed"
     showStandardStreams true
   }
+}
+
+//When we ask to run the unit tests, clean up the previous results so that they will actually run.
+test {
+    dependsOn 'cleanTest'
 }
