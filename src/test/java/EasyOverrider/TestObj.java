@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Ignore
-public class TestObj {
+public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
     private boolean theBoolean;
     private int theInt;
     private String theString;
@@ -34,6 +34,11 @@ public class TestObj {
                              .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString, Collection.class, TestObj.class)
                              .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString, Map.class, String.class, TestObj.class)
                              .andThatsIt();
+
+    @Override
+    ParamList<TestObj> getParamList() {
+        return paramList;
+    }
 
     public TestObj() { }
 
@@ -107,24 +112,5 @@ public class TestObj {
 
     public void setTheMapStringTestObj(Map<String, TestObj> theMapStringTestObj) {
         this.theMapStringTestObj = theMapStringTestObj;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return paramList.equals(this, obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return paramList.hashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return toString(false);
-    }
-
-    public String toString(boolean preventingRecursion) {
-        return paramList.toString(this, preventingRecursion);
     }
 }
