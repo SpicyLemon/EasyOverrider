@@ -1,7 +1,7 @@
 package EasyOverrider;
 
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static models.easyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
 import java.util.ArrayList;
 import java.util.Collection;

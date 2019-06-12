@@ -1,6 +1,6 @@
 package EasyOverrider;
 
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
 import java.util.Objects;
 import java.util.function.BiFunction;

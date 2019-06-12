@@ -1,13 +1,13 @@
 package EasyOverrider;
 
-import static models.easyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static models.easyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
-import static models.easyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
-import static models.easyOverrider.ParamMethodRestriction.IGNORED_FOR_TOSTRING;
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
-import static models.easyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
+import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_TOSTRING;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
 import java.util.Collections;
 import java.util.EnumSet;
