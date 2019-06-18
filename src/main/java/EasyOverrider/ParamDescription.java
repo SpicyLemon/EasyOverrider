@@ -166,46 +166,23 @@ public interface ParamDescription<O, P, E> {
     /**
      * Get the String of this parameter from the provided object. <br>
      *
-     * If the parameter is null, "null" is returned.
-     * Calls {@link #toString(Object, Map)} with an empty seen map.
-     *
-     * @param obj  the object to get the parameter from - cannot be null
-     * @return A String of the parameter.
-     * @see #toString(Object, Map)
-     */
-    String toString(final O obj);
-
-    /**
-     * Get the String of this parameter from the provided object. <br>
-     *
      * If the parameter is null, "null" is returned.<br>
      *
      * If there's a recursionPreventingToString available, and we're not preventing recursion, the recursionPreventingToString
      * is called using a true preventingRecursion flag.
      * If there's a recursionPreventingToString available, and we ARE preventing recursion, "..." is returned.
      * @param obj  the object to get the parameter from - cannot be null
-     * @param seen  the map of class to set of hashcodes of objects that have already been toString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A String. Either "null", "..." or the results of toString on the parameter in the provided object.
      * @throws IllegalArgumentException if the object is null.
      */
     String toString(final O obj, final Map<Class, Set<Integer>> seen);
 
     /**
-     * Gets the name/value string for this parameter given the provided object. <br>
-     *
-     * Calls {@link #getNameValueString(Object, Map)} with an empty seen map.
-     *
-     * @param obj  the object to get the parameter from
-     * @return A String in the form of "name='value'" or "name=null".
-     * @see #getNameValueString(Object, Map)
-     */
-    String getNameValueString(final O obj);
-
-    /**
      * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.
      *
      * @param obj  the object to get the parameter from
-     * @param seen  the map of class to set of hashcodes of objects that have already been toString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A string in the form of "name='value'" or "name=null" or "name=...".
      * @throws IllegalArgumentException if the object is null.
      */
