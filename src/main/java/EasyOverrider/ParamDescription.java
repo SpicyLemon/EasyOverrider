@@ -1,6 +1,7 @@
 package EasyOverrider;
 
-import java.util.function.BiFunction;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -77,13 +78,6 @@ public interface ParamDescription<O, P, E> {
      * @return a {@link ParamMethodRestriction} value.
      */
     ParamMethodRestriction getParamMethodRestriction();
-
-    /**
-     * Getter for the recursion preventing toString method that takes in a prevent recursion boolean.
-     *
-     * @return A reference to the <code>toString(boolean)</code> method needed.
-     */
-    BiFunction<? super E, Boolean, String> getRecursionPreventingToString();
 
     /**
      * Gets whether or not this is a collection parameter.
@@ -173,11 +167,11 @@ public interface ParamDescription<O, P, E> {
      * Get the String of this parameter from the provided object. <br>
      *
      * If the parameter is null, "null" is returned.
-     * Calls {@link #toString(Object, boolean)} with a false preventingRecursion flag.
+     * Calls {@link #toString(Object, Map)} with an empty seen map.
      *
      * @param obj  the object to get the parameter from - cannot be null
      * @return A String of the parameter.
-     * @see #toString(Object, boolean)
+     * @see #toString(Object, Map)
      */
     String toString(final O obj);
 
@@ -190,20 +184,20 @@ public interface ParamDescription<O, P, E> {
      * is called using a true preventingRecursion flag.
      * If there's a recursionPreventingToString available, and we ARE preventing recursion, "..." is returned.
      * @param obj  the object to get the parameter from - cannot be null
-     * @param preventingRecursion  the flag for whether or not we're trying to prevent recursion on this parameter
+     * @param seen  the map of class to set of hashcodes of objects that have already been toString-ified.
      * @return A String. Either "null", "..." or the results of toString on the parameter in the provided object.
      * @throws IllegalArgumentException if the object is null.
      */
-    String toString(final O obj, final boolean preventingRecursion);
+    String toString(final O obj, final Map<Class, Set<Integer>> seen);
 
     /**
      * Gets the name/value string for this parameter given the provided object. <br>
      *
-     * Calls {@link #getNameValueString(Object, boolean)} with a false preventRecursion flag.
+     * Calls {@link #getNameValueString(Object, Map)} with an empty seen map.
      *
      * @param obj  the object to get the parameter from
      * @return A String in the form of "name='value'" or "name=null".
-     * @see #getNameValueString(Object, boolean)
+     * @see #getNameValueString(Object, Map)
      */
     String getNameValueString(final O obj);
 
@@ -211,9 +205,9 @@ public interface ParamDescription<O, P, E> {
      * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.
      *
      * @param obj  the object to get the parameter from
-     * @param preventingRecursion  the flag for whether or not we're trying to prevent recursion on this parameter
+     * @param seen  the map of class to set of hashcodes of objects that have already been toString-ified.
      * @return A string in the form of "name='value'" or "name=null" or "name=...".
      * @throws IllegalArgumentException if the object is null.
      */
-    String getNameValueString(final O obj, final boolean preventingRecursion);
+    String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen);
 }
