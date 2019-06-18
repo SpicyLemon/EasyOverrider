@@ -82,7 +82,7 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
      */
     @Override
     public String toString() {
-        return this.toString(false);
+        return this.toString(null);
     }
 
     /**
