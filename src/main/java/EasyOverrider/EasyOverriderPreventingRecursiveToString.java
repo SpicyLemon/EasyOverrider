@@ -1,5 +1,8 @@
 package EasyOverrider;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * An abstract class that extends EasyOverrider and implements RecursionPreventingToString.<br>
  *
@@ -91,12 +94,12 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
      * providing a true flag.  If the provided flag is true, then for parameters that have a toString(boolean) function,
      * a value of "..." is used instead of calling its toString method.
      *
-     * @param preventingRecursion  the flag for whether or not we're trying to prevent recursion
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return The string representation of this object as defined by the {@link ParamList}.
      * @see ParamList#toString(Object, boolean)
      */
     @Override
-    public String toString(boolean preventingRecursion) {
-        return getParamList().toString(getThis(), preventingRecursion);
+    public String toString(final Map<Class, Set<Integer>> seen) {
+        return getParamList().toString(getThis(), seen);
     }
 }
