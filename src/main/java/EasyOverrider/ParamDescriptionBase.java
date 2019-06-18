@@ -2,8 +2,9 @@ package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -17,19 +18,8 @@ import java.util.function.Function;
  *
  * The extending class is also required to implement the following:
  * <ul>
- * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object)}
+ * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object, Map)}
  * </ul>
- * The implementation of valueToStringPreventingRecursion(Object) should look something like
- * <pre>
- * {@code
- *
- * String valueToStringPreventingRecursion(final P value) {
- *     if (recursionPreventingToString != null) {
- *         //Do something with calling recursionPreventingToString.apply(?, true), and return it.
- *     }
- *     return value.toString();
- * }
- * }
  * </pre>
  *
  * @param <O>  the type of object in question
@@ -37,8 +27,8 @@ import java.util.function.Function;
  * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
 public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<O, P, E> {
-    private static final String stringNull = "null";
-    private static final String recursionPrevented = "...";
+    static final String stringNull = "null";
+    static final String recursionPrevented = "...";
 
     final Class<O> parentClass;
     final Class<P> paramClass;
@@ -46,7 +36,6 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     final String name;
     final Function<? super O, P> getter;
     final ParamMethodRestriction paramMethodRestriction;
-    final BiFunction<? super E, Boolean, String> recursionPreventingToString;
 
     private static ParamList<ParamDescriptionBase> paramList;
 
@@ -59,7 +48,6 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
                                      .withParam("name", ParamDescriptionBase::getName, String.class)
                                      .withParam("getter", ParamDescriptionBase::getGetter, INCLUDED_IN_TOSTRING_ONLY, Function.class)
                                      .withParam("paramMethodRestriction", ParamDescriptionBase::getParamMethodRestriction, ParamMethodRestriction.class)
-                                     .withParam("recursionPreventingToString", ParamDescriptionBase::getRecursionPreventingToString, INCLUDED_IN_TOSTRING_ONLY, BiFunction.class)
                                      .andThatsIt();
         }
         return paramList;
@@ -74,19 +62,16 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter
-     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass,
                          final Class<E> entryClass, final String name,
-                         final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                         final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
+                         final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
         this.parentClass = parentClass;
         this.paramClass = paramClass;
         this.entryClass = entryClass;
         this.name = name;
         this.getter = getter;
         this.paramMethodRestriction = paramMethodRestriction;
-        this.recursionPreventingToString = recursionPreventingToString;
     }
 
     @Override
@@ -117,11 +102,6 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     @Override
     public ParamMethodRestriction getParamMethodRestriction() {
         return paramMethodRestriction;
-    }
-
-    @Override
-    public BiFunction<? super E, Boolean, String> getRecursionPreventingToString() {
-        return recursionPreventingToString;
     }
 
     @Override
@@ -184,24 +164,16 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     }
 
     @Override
-    public String toString(final O obj) {
-        return toString(obj, false);
-    }
-
-    @Override
-    public String toString(final O obj, final boolean preventingRecursion) {
+    public String toString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "toString");
-        return valueToString(getter.apply(obj), preventingRecursion);
+        return valueToString(getter.apply(obj), seen);
     }
 
-    private String valueToString(final P value, final boolean preventingRecursion) {
+    private String valueToString(final P value, final Map<Class, Set<Integer>> seen) {
         if (value == null) {
             return stringNull;
         }
-        if (preventingRecursion && recursionPreventingToString != null) {
-            return recursionPrevented;
-        }
-        return valueToStringPreventingRecursion(value);
+        return valueToStringPreventingRecursion(value, seen);
     }
 
     /**
@@ -211,28 +183,28 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      * <pre>
      * {@code
      *
-     * String valueToStringPreventingRecursion(final P value) {
-     *     if (recursionPreventingToString != null) {
-     *         //Do something with calling recursionPreventingToString.apply(?, true), and return it.
+     * String valueToStringPreventingRecursion(final P value,
+     *                                         final Map<Class, Set<Integer>> seen) {
+     *     if (RecursionPreventingToString.class.isAssignableFrom(entryClass)) {
+     *         //Get the entry's hashCode.
+     *         //Check if it's in it's class's set of hashCodes yet.
+     *         //If it is, return recursionPrevented;
+     *         //If it isn't, add it to the proper set and call toString(seen) on it.
      *     }
      *     return value.toString();
      * }
      * }
      * </pre>
      * @param value  the value to convert to a String
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A string.
      */
-    abstract String valueToStringPreventingRecursion(final P value);
+    abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
 
     @Override
-    public String getNameValueString(final O obj) {
-        return getNameValueString(obj, false);
-    }
-
-    @Override
-    public String getNameValueString(final O obj, final boolean preventingRecursion) {
+    public String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "getNameValuePair");
-        String value = toString(obj, preventingRecursion);
+        String value = toString(obj, seen);
         return name + "=" + (value.equals(stringNull) || value.equals(recursionPrevented) ? value : "'" + value + "'");
     }
 
