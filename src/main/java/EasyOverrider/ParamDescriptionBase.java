@@ -2,6 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -27,8 +28,8 @@ import java.util.function.Function;
  * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
 public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<O, P, E> {
-    static final String stringNull = "null";
-    static final String recursionPrevented = "...";
+    private static final String stringNull = "null";
+    private static final String recursionPrevented = "...";
 
     final Class<O> parentClass;
     final Class<P> paramClass;
@@ -166,18 +167,19 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     @Override
     public String toString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "toString");
-        return valueToString(getter.apply(obj), seen);
-    }
-
-    private String valueToString(final P value, final Map<Class, Set<Integer>> seen) {
+        ParamList.requireNonNull(seen, 2, "seen", "toString");
+        P value = getter.apply(obj);
         if (value == null) {
             return stringNull;
         }
-        return valueToStringPreventingRecursion(value, seen);
+        if (RecursionPreventingToString.class.isAssignableFrom(entryClass)) {
+            return valueToStringPreventingRecursion(value, seen);
+        }
+        return value.toString();
     }
 
     /**
-     * Creates a string of the object in such a way that recursion is prevented. <br><br>
+     * Calls entryToStringPreventingRecursion on every entry in this parameter. <br><br>
      *
      * The implementation of this method should look something like
      * <pre>
@@ -185,13 +187,8 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      *
      * String valueToStringPreventingRecursion(final P value,
      *                                         final Map<Class, Set<Integer>> seen) {
-     *     if (RecursionPreventingToString.class.isAssignableFrom(entryClass)) {
-     *         //Get the entry's hashCode.
-     *         //Check if it's in it's class's set of hashCodes yet.
-     *         //If it is, return recursionPrevented;
-     *         //If it isn't, add it to the proper set and call toString(seen) on it.
-     *     }
-     *     return value.toString();
+     *     //Go through every entry in the provided value,
+     *     //Do something with calling entryToStringPreventingRecursion(entry, seen)
      * }
      * }
      * </pre>
@@ -201,9 +198,38 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      */
     abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
 
+    /**
+     * This method should be used by the valueToStringPreventingRecursion in order to get the string of an entry. <br><br>
+     *
+     * If possible, it uses {@link RecursionPreventingToString#toString(Map)}, and properly checks and adds to that map.
+     * Otherwise, it just uses the plain toString() method on the entry.
+     *
+     * @param entry  the entry you want the string of - if null, "null" is returned
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     * @return A string of the provided entry.
+     */
+    String entryToStringPreventingRecursion(final E entry, final Map<Class, Set<Integer>> seen) {
+        if (entry == null) {
+            return stringNull;
+        }
+        if (entry instanceof RecursionPreventingToString) {
+            int entryHashCode = entry.hashCode();
+            if (!seen.containsKey(entryClass)) {
+                seen.put(entryClass, new HashSet<>());
+            }
+            if (seen.get(entryClass).contains(entryHashCode)) {
+                return recursionPrevented;
+            }
+            seen.get(entryClass).add(entryHashCode);
+            return ((RecursionPreventingToString)entry).toString(seen);
+        }
+        return entry.toString();
+    }
+
     @Override
     public String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "getNameValuePair");
+        ParamList.requireNonNull(seen, 2, "seen", "getNameValuePair");
         String value = toString(obj, seen);
         return name + "=" + (value.equals(stringNull) || value.equals(recursionPrevented) ? value : "'" + value + "'");
     }

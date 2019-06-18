@@ -1,6 +1,7 @@
 package EasyOverrider;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,7 +30,6 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
         return paramList;
     }
 
-
     /**
      * Standard constructor for a parameter that is a map of some type.
      *
@@ -40,13 +40,11 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
-     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     public ParamDescriptionMap(final Class<O> parentClass, final Class<P> paramClass,
                                final Class<K> keyClass, final Class<E> entryClass, final String name,
-                               final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                               final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        super(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+                               final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+        super(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction);
         this.keyClass = keyClass;
     }
 
@@ -65,15 +63,12 @@ public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDesc
     }
 
     @Override
-    String valueToStringPreventingRecursion(final P value) {
-        if (recursionPreventingToString != null) {
-            return value.entrySet()
-                        .stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey,
-                                                  e -> recursionPreventingToString.apply(e.getValue(), true)))
-                        .toString();
-        }
-        return value.toString();
+    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
+        return value.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey,
+                                              e -> entryToStringPreventingRecursion(e.getValue(), seen)))
+                    .toString();
     }
 
     /**

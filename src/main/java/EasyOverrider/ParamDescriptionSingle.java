@@ -1,5 +1,7 @@
 package EasyOverrider;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -29,12 +31,10 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
      * @param name The name of the parameter.
      * @param getter The getter for the parameter.
      * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
-     * @param recursionPreventingToString The <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls.
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                                  final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                                  final BiFunction<? super P, Boolean, String> recursionPreventingToString) {
-        super(parentClass, paramClass, paramClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+                                  final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+        super(parentClass, paramClass, paramClass, name, getter, paramMethodRestriction);
     }
 
     @Override
@@ -48,11 +48,8 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
     }
 
     @Override
-    String valueToStringPreventingRecursion(final P value) {
-        if (recursionPreventingToString != null) {
-            return recursionPreventingToString.apply(value, true);
-        }
-        return value.toString();
+    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
+        return entryToStringPreventingRecursion(value, seen);
     }
 
     /**

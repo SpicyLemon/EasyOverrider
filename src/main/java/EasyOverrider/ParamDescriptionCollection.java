@@ -1,6 +1,9 @@
 package EasyOverrider;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,13 +37,11 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
-     * @param recursionPreventingToString  the <code>toString(boolean)</code> function that can be used to prevent recursive toString function calls
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
-                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                                      final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        super(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+        super(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction);
     }
 
     @Override
@@ -54,14 +55,11 @@ public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends P
     }
 
     @Override
-    String valueToStringPreventingRecursion(final P value) {
-        if (recursionPreventingToString != null) {
-            return value.stream()
-                        .map(e -> recursionPreventingToString.apply(e, true))
-                        .collect(Collectors.toList())
-                        .toString();
-        }
-        return value.toString();
+    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
+        return value.stream()
+                    .map(e -> entryToStringPreventingRecursion(e, seen))
+                    .collect(Collectors.toList())
+                    .toString();
     }
 
     /**
