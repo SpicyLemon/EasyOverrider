@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @param <K>  the type of the keys in the Map
  * @param <E>  the type of the values in the Map
  */
-public class ParamDescriptionMap<O, K, E, P extends Map<K, E>> extends ParamDescriptionBase<O, P, E> {
+public class ParamDescriptionMap<O, K, E, P extends Map<? extends K, ? extends E>> extends ParamDescriptionBase<O, P, E> {
 
     private final Class<K> keyClass;
 

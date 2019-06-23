@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @param <P>  the type of the parameter
  * @param <E>  the type of objects contained in the Collection
  */
-public class ParamDescriptionCollection<O, E, P extends Collection<E>> extends ParamDescriptionBase<O, P, E> {
+public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>> extends ParamDescriptionBase<O, P, E> {
 
     private static ParamList<ParamDescriptionCollection> paramList;
 

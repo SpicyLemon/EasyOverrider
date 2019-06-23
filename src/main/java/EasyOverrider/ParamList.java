@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
  *                 ParamList.forClass(Foo.class)
  *                          .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
  *                          .withParam("bar", Foo::getBar, String.class)
- *                          .withParam("baz", Foo::getBaz, WeirdThing::toString, WeirdThing.class)
- *                          .withCollection("moreFoo", Foo::getMoreFoo, INCLUDED_IN_TOSTRING_ONLY, Foo::toString, List.class, Foo.class)
+ *                          .withParam("baz", Foo::getBaz, Baz.class)
+ *                          .withCollection("moreFoo", Foo::getMoreFoo, INCLUDED_IN_TOSTRING_ONLY, List.class, Foo.class)
  *                          .andThatsIt();
  * }
  * </pre>
@@ -234,19 +235,19 @@ public class ParamList<O> {
      * @return A string.
      */
     public String toString(final O thisObj) {
-        return toString(thisObj, false);
+        return toString(thisObj, new HashMap<>());
     }
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.
      *
      * @param thisObj  the object to get the parameter values from
-     * @param preventingRecursion  the flag for whether or not we should be preventing recursion
+     * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
      * @return A string representation of the given object.
      */
-    public String toString(final O thisObj, final boolean preventingRecursion) {
+    public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "hahsCode");
-        return parentClass.getName() + "@" + thisObj.hashCode() + " [" + getParamsString(thisObj, preventingRecursion) + "]";
+        return parentClass.getName() + "@" + thisObj.hashCode() + " [" + getParamsString(thisObj, seen) + "]";
     }
 
     /**
@@ -256,24 +257,24 @@ public class ParamList<O> {
      * @return A String of comma-space delimited name/value Strings.
      */
     public String getParamsString(final O thisObj) {
-        return getParamsString(thisObj, false);
+        return getParamsString(thisObj, new HashMap<>());
     }
 
     /**
      * Gets a String representation of the desired parameters in the provided object.
      *
      * @param thisObj  the object to get the parameter values from
-     * @param preventingRecursion  the flag for whether or not we should be preventing recursion
+     * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
      * @return A String of comma-space delimited name/value Strings.
      */
-    public String getParamsString(final O thisObj, final boolean preventingRecursion) {
+    public String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
         List<ParamDescription<? super O, ?, ?>> toStringParamDescriptions = getToStringParamDescriptions();
         if (toStringParamDescriptions.size() <= 0) {
             return " ";
         }
         return toStringParamDescriptions.stream()
-                                        .map(pd -> pd.getNameValueString(thisObj, preventingRecursion))
+                                        .map(pd -> pd.getNameValueString(thisObj, seen))
                                         .collect(Collectors.joining(", "));
     }
 
@@ -367,6 +368,7 @@ public class ParamList<O> {
      *
      * If it is, an IllegalArgumentException is thrown with a message using the rest of the parameters.
      * The message looks something like <code>"Argument 1 (paramName) provided to methodName cannot be null."</code>
+     *
      * @param obj  the object that needs to not be null
      * @param position  the position of the argument in the call to the method in question
      * @param paramName  the name of the parameter in the method call

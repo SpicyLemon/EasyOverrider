@@ -96,7 +96,7 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
      *
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return The string representation of this object as defined by the {@link ParamList}.
-     * @see ParamList#toString(Object, boolean)
+     * @see ParamList#toString(Object, Map)
      */
     @Override
     public String toString(final Map<Class, Set<Integer>> seen) {

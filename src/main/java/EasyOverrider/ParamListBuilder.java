@@ -193,8 +193,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withParam(String, Function, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
@@ -205,7 +203,7 @@ public class ParamListBuilder<O> {
         ParamList.requireNonNull(name, 1, "name", "withParam");
         ParamList.requireNonNull(getter, 2, "getter", "withParam");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, null);
+        addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -223,8 +221,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withParam(String, Function, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
@@ -237,75 +233,7 @@ public class ParamListBuilder<O> {
         ParamList.requireNonNull(getter, 2, "getter", "withParam");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Add a new ParamDescription to the list with the provided parameters.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param <P>  the type of the parameter being described
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withParam(String, Function, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withoutParam(String)
-     */
-    public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
-                                             final BiFunction<? super P, Boolean, String> recursionPreventingToString,
-                                             final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withParam");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withParam");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Add a new ParamDescription to the list with the provided parameters.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null.
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param <P>  the type of the parameter being described
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withParam(String, Function, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withoutParam(String)
-     */
-    public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
-                                             final ParamMethodRestriction paramMethodRestriction,
-                                             final BiFunction<? super P, Boolean, String> recursionPreventingToString,
-                                             final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withParam");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withParam");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        addSingleParam(paramClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -316,17 +244,13 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed.
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                    final ParamMethodRestriction paramMethodRestriction,
-                                    final BiFunction<? super P, Boolean, String> recursionPreventingToString) {
-        addParam(new ParamDescriptionSingle<>(parentClass, paramClass, name, getter,
-                                              paramMethodRestriction, recursionPreventingToString));
+                                    final ParamMethodRestriction paramMethodRestriction) {
+        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -343,20 +267,18 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withCollection(String, Function, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withoutCollection(String)
      */
-    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
-                                                                        final Class<P> paramClass, final Class<E> entryClass) {
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
+                                                                                     final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withCollection");
         ParamList.requireNonNull(getter, 2, "getter", "withCollection");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withCollection");
         ParamList.requireNonNull(entryClass, 4, "entryClass", "withCollection");
-        addCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL, null);
+        addCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -376,96 +298,20 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withCollection(String, Function, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutCollection(String)
      */
-    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                        final ParamMethodRestriction paramMethodRestriction,
-                                                                        final Class<P> paramClass, final Class<E> entryClass) {
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
+                                                                                     final ParamMethodRestriction paramMethodRestriction,
+                                                                                     final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withCollection");
         ParamList.requireNonNull(getter, 2, "getter", "withCollection");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withCollection");
         ParamList.requireNonNull(entryClass, 5, "entryClass", "withCollection");
-        addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param entryClass  the class of the entries in the collection - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withCollection(String, Function, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withoutCollection(String)
-     */
-    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                        final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                        final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withCollection");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withCollection");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withCollection");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withCollection");
-        addCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Create a new ParamDescription for a collection and add it to be included in the ParamList.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param entryClass  the class of the entries in the collection - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withCollection(String, Function, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withoutCollection(String)
-     */
-    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                        final ParamMethodRestriction paramMethodRestriction,
-                                                                        final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                        final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withCollection");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withCollection");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withCollection");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withCollection");
-        addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -477,20 +323,16 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
-    private <E, P extends Collection> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
-                                                              final String name, final Function<? super O, P> getter,
-                                                              final ParamMethodRestriction paramMethodRestriction,
-                                                              final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        addParam(new ParamDescriptionCollection<>(parentClass, paramClass, entryClass, name, getter,
-                                                  paramMethodRestriction, recursionPreventingToString));
+    private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
+                                                                           final String name, final Function<? super O, P> getter,
+                                                                           final ParamMethodRestriction paramMethodRestriction) {
+        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -509,22 +351,20 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withoutMap(String)
      */
-    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final Class<P> paramClass, final Class<K> keyClass,
-                                                             final Class<E> entryClass) {
+    public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
+                                                                                       final Class<P> paramClass, final Class<K> keyClass,
+                                                                                       final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withMap");
         ParamList.requireNonNull(getter, 2, "getter", "withMap");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withMap");
         ParamList.requireNonNull(keyClass, 4, "keyClass", "withMap");
         ParamList.requireNonNull(entryClass, 5, "entryClass", "withMap");
-        addMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL, null);
+        addMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -546,106 +386,22 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutMap(String)
      */
-    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final ParamMethodRestriction paramMethodRestriction,
-                                                             final Class<P> paramClass, final Class<K> keyClass,
-                                                             final Class<E> entryClass) {
+    public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
+                                                                                       final ParamMethodRestriction paramMethodRestriction,
+                                                                                       final Class<P> paramClass, final Class<K> keyClass,
+                                                                                       final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withMap");
         ParamList.requireNonNull(getter, 2, "getter", "withMap");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withMap");
         ParamList.requireNonNull(keyClass, 5, "keyClass", "withMap");
         ParamList.requireNonNull(entryClass, 6, "entryClass", "withMap");
-        addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param keyClass  the class of the map's keys  - cannot be null
-     * @param entryClass  the class of the entries in the collection  - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
-     * @param <K>  the type of the keys in the map
-     * @param <E>  the type of the entries in the map
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withoutMap(String)
-     */
-    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                             final Class<P> paramClass, final Class<K> keyClass,
-                                                             final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withMap");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withMap");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withMap");
-        ParamList.requireNonNull(keyClass, 5, "keyClass", "withMap");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withMap");
-        addMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Create a new ParamDescriptionMap and add it to be included in the ParamList.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param keyClass  the class of the map's keys - cannot be null
-     * @param entryClass  the class of the entries in the collection - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
-     * @param <K>  the type of the keys in the map
-     * @param <E>  the type of the entries in the map
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withoutMap(String)
-     */
-    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final ParamMethodRestriction paramMethodRestriction,
-                                                             final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                             final Class<P> paramClass, final Class<K> keyClass,
-                                                             final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withMap");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withMap");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withMap");
-        ParamList.requireNonNull(keyClass, 6, "keyClass", "withMap");
-        ParamList.requireNonNull(entryClass, 7, "entryClass", "withMap");
-        addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -658,8 +414,6 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the map
      * @param <E>  the type of the entries in the map
@@ -667,13 +421,11 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
-    private <K, E, P extends Map> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
-                                                   final Class<E> entryClass, final String name,
-                                                   final Function<? super O, P> getter,
-                                                   final ParamMethodRestriction paramMethodRestriction,
-                                                   final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        addParam(new ParamDescriptionMap<>(parentClass, paramClass, keyClass, entryClass, name, getter,
-                                           paramMethodRestriction, recursionPreventingToString));
+    private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
+                                                                             final Class<E> entryClass, final String name,
+                                                                             final Function<? super O, P> getter,
+                                                                             final ParamMethodRestriction paramMethodRestriction) {
+        addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -709,8 +461,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withParam(String, Function, Class)
@@ -721,7 +471,7 @@ public class ParamListBuilder<O> {
         ParamList.requireNonNull(name, 1, "name", "withUpdatedParam");
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, null);
+        updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -742,8 +492,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
@@ -756,81 +504,7 @@ public class ParamListBuilder<O> {
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param <P>  the type of the parameter being described
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withParam(String, Function, BiFunction, Class)
-     * @see #withoutParam(String)
-     */
-    public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
-                                                    final BiFunction<? super P, Boolean, String> recursionPreventingToString,
-                                                    final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withUpdatedParam");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param <P>  the type of the parameter being described
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withoutParam(String)
-     */
-    public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
-                                                    final ParamMethodRestriction paramMethodRestriction,
-                                                    final BiFunction<? super P, Boolean, String> recursionPreventingToString,
-                                                    final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withUpdatedParam");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        updateSingleParam(paramClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -841,17 +515,13 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                       final ParamMethodRestriction paramMethodRestriction,
-                                       final BiFunction<? super P, Boolean, String> recursionPreventingToString) {
-        updateParam(new ParamDescriptionSingle<>(parentClass, paramClass, name, getter,
-                                                 paramMethodRestriction, recursionPreventingToString));
+                                       final ParamMethodRestriction paramMethodRestriction) {
+        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -871,20 +541,18 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withoutCollection(String)
      */
-    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                               final Class<P> paramClass, final Class<E> entryClass) {
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
+                                                                                            final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedCollection");
         ParamList.requireNonNull(entryClass, 4, "entryClass", "withUpdatedCollection");
-        updateCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL, null);
+        updateCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -907,102 +575,20 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutCollection(String)
      */
-    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                               final ParamMethodRestriction paramMethodRestriction,
-                                                                               final Class<P> paramClass, final Class<E> entryClass) {
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
+                                                                                            final ParamMethodRestriction paramMethodRestriction,
+                                                                                            final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
         ParamList.requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
-        updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name to be a collection with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription for a collection is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param entryClass  the class of the entries in the parameter - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withCollection(String, Function, BiFunction, Class, Class)
-     * @see #withoutCollection(String)
-     */
-    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                               final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                               final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withUpdatedCollection");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
-        updateCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name to be a collection with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription for a collection is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param entryClass  the class of the entries in the parameter - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withoutCollection(String)
-     */
-    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                               final ParamMethodRestriction paramMethodRestriction,
-                                                                               final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                               final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withUpdatedCollection");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withUpdatedCollection");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withUpdatedCollection");
-        updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -1014,20 +600,16 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
-    private <E, P extends Collection> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
-                                                                 final String name, final Function<? super O, P> getter,
-                                                                 final ParamMethodRestriction paramMethodRestriction,
-                                                                 final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        updateParam(new ParamDescriptionCollection<>(parentClass, paramClass, entryClass, name, getter,
-                                                     paramMethodRestriction, recursionPreventingToString));
+    private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
+                                                                              final String name, final Function<? super O, P> getter,
+                                                                              final ParamMethodRestriction paramMethodRestriction) {
+        updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -1049,22 +631,20 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withoutMap(String)
      */
-    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                     final Class<P> paramClass, final Class<K> keyClass,
-                                                                     final Class<E> entryClass) {
+    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
+                                                                                               final Class<P> paramClass, final Class<K> keyClass,
+                                                                                               final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
         ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedMap");
         ParamList.requireNonNull(keyClass, 4, "keyClass", "withUpdatedMap");
         ParamList.requireNonNull(entryClass, 5, "entryClass", "withUpdatedMap");
-        updateMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL, null);
+        updateMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
 
@@ -1089,112 +669,22 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutMap(String)
      */
-    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                     final ParamMethodRestriction paramMethodRestriction,
-                                                                     final Class<P> paramClass, final Class<K> keyClass,
-                                                                     final Class<E> entryClass) {
+    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
+                                                                                               final ParamMethodRestriction paramMethodRestriction,
+                                                                                               final Class<P> paramClass, final Class<K> keyClass,
+                                                                                               final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
         ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
         ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
         ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
         ParamList.requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
         ParamList.requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
-        updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction, null);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name to be a map with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription for a map is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param keyClass  the class of the keys in the parameter - cannot be null
-     * @param entryClass  the class of the entries in the parameter - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
-     * @param <K>  the type of the keys in the parameter
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, BiFunction, Class)
-     * @see #withUpdatedCollection(String, Function, BiFunction, Class, Class)
-     * @see #withMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withoutMap(String)
-     */
-    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                     final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                     final Class<P> paramClass, final Class<K> keyClass,
-                                                                     final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        ParamList.requireNonNull(recursionPreventingToString, 3, "recursionPreventingToString", "withUpdatedMap");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
-        ParamList.requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
-        updateMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL, recursionPreventingToString);
-        return this;
-    }
-
-    /**
-     * Updates the parameter having the provided name to be a map with the new values given.<br>
-     *
-     * Specifically, a new ParamDescription for a map is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
-     *
-     * @param name  the name of the parameter, e.g. "id" - cannot be null
-     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     cannot be null
-     * @param paramClass  the class of the parameter in question - cannot be null
-     * @param keyClass  the class of the keys in the parameter - cannot be null
-     * @param entryClass  the class of the entries in the parameter - cannot be null
-     * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
-     * @param <K>  the type of the keys in the parameter
-     * @param <E>  the type of the entries in the parameter
-     * @return The current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
-     * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, BiFunction, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, BiFunction, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, BiFunction, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, BiFunction, Class, Class, Class)
-     * @see #withoutMap(String)
-     */
-    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                     final ParamMethodRestriction paramMethodRestriction,
-                                                                     final BiFunction<? super E, Boolean, String> recursionPreventingToString,
-                                                                     final Class<P> paramClass, final Class<K> keyClass,
-                                                                     final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
-        ParamList.requireNonNull(recursionPreventingToString, 4, "recursionPreventingToString", "withUpdatedMap");
-        ParamList.requireNonNull(paramClass, 5, "paramClass", "withUpdatedMap");
-        ParamList.requireNonNull(keyClass, 6, "keyClass", "withUpdatedMap");
-        ParamList.requireNonNull(entryClass, 7, "entryClass", "withUpdatedMap");
-        updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction, recursionPreventingToString);
+        updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
 
@@ -1207,8 +697,6 @@ public class ParamListBuilder<O> {
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
-     * @param recursionPreventingToString  the toString method that takes in a flag that can be used to prevent recursive toString functions -
-     *                                     if null, it is assumed that no recursion prevention is needed
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the parameter
      * @param <E>  the type of the entries in the parameter
@@ -1216,12 +704,10 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
-    private <K, E, P extends Map> void updateMapParam(final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
-                                                            final String name, final Function<? super O, P> getter,
-                                                            final ParamMethodRestriction paramMethodRestriction,
-                                                            final BiFunction<? super E, Boolean, String> recursionPreventingToString) {
-        updateParam(new ParamDescriptionMap<>(parentClass, paramClass, keyClass, entryClass, name, getter,
-                                              paramMethodRestriction, recursionPreventingToString));
+    private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
+                                                                                final String name, final Function<? super O, P> getter,
+                                                                                final ParamMethodRestriction paramMethodRestriction) {
+        updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -1355,7 +841,7 @@ public class ParamListBuilder<O> {
      * @return a ParamList object.
      */
     public ParamList<O> andThatsIt() {
-        return new ParamList<>(parentClass, paramDescriptionMap, paramOrder);
+        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder);
     }
 
     /**
