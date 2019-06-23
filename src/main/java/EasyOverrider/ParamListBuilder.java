@@ -37,7 +37,7 @@ public class ParamListBuilder<O> {
     private final Class<O> parentClass;
     private final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
     private final List<String> paramOrder;
-    private final Map<String, ParamDescription<? super O, ?, ?>> paramDescriptionMap;
+    private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
 
     private static ParamList<ParamListBuilder> paramList;
 
@@ -75,7 +75,7 @@ public class ParamListBuilder<O> {
                                   .orElseGet(ArrayList::new);
         this.paramDescriptionMap = Optional.ofNullable(superParamList)
                                            .map(ParamList::getParamDescriptionMap)
-                                           .map(HashMap<String, ParamDescription<? super O, ?, ?>>::new)
+                                           .map(HashMap<String, ParamDescription<? super O, ?>>::new)
                                            .orElseGet(HashMap::new);
     }
 
@@ -177,7 +177,7 @@ public class ParamListBuilder<O> {
      *
      * @return A map of name strings to ParamDescription objects.
      */
-    public Map<String, ParamDescription<? super O, ?, ?>> getParamDescriptionMap() {
+    public Map<String, ParamDescription<? super O, ?>> getParamDescriptionMap() {
         return Collections.unmodifiableMap(paramDescriptionMap);
     }
 
@@ -435,7 +435,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
-    private void addParam(final ParamDescription<? super O, ?, ?> paramDescription) {
+    private void addParam(final ParamDescription<? super O, ?> paramDescription) {
         enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
         String name = paramDescription.getName();
         if (paramDescriptionMap.containsKey(name)) {
@@ -717,7 +717,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
-    private void updateParam(final ParamDescription<? super O, ?, ?> paramDescription) {
+    private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
         enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
         String name = paramDescription.getName();
         if (!paramDescriptionMap.containsKey(name)) {

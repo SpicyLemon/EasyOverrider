@@ -33,9 +33,8 @@ import java.util.function.Function;
  *
  * @param <O>  the type of object in question
  * @param <P>  the type of the parameter in question
- * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
-public interface ParamDescription<O, P, E> {
+public interface ParamDescription<O, P> {
 
     /**
      * Gets the class of the parent object that this parameter is part of.
@@ -50,13 +49,6 @@ public interface ParamDescription<O, P, E> {
      * @return A Class
      */
     Class<P> getParamClass();
-
-    /**
-     * Gets the class of the entries in this parameter (only appicable if it's a collection or map).
-     *
-     * @return A Class
-     */
-    Class<E> getEntryClass();
 
     /**
      * Gets the name of the parameter.

@@ -56,7 +56,7 @@ public class ParamList<O> {
 
     final private Class<O> parentClass;
     final private List<String> paramOrder;
-    final private Map<String, ParamDescription<? super O, ?, ?>> paramDescriptionMap;
+    final private Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
 
     private static ParamList<ParamList> paramList;
 
@@ -84,7 +84,7 @@ public class ParamList<O> {
      * @throws IllegalArgumentException if the sizes of the provided paramOrder list and paramDescriptionMap are different.
      * @throws IllegalArgumentException if an entry exists in the paramOrder that doesn't have a matching key in the paramDescriptionMap.
      */
-     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?, ?>> paramDescriptionMap, final List<String> paramOrder) {
+     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap, final List<String> paramOrder) {
         requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
          requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
          requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
@@ -127,7 +127,7 @@ public class ParamList<O> {
      *
      * @return An unmodifiable Map of Strings to ParamDescription values.
      */
-    public Map<String, ParamDescription<? super O, ?, ?>> getParamDescriptionMap() {
+    public Map<String, ParamDescription<? super O, ?>> getParamDescriptionMap() {
         return Collections.unmodifiableMap(paramDescriptionMap);
     }
 
@@ -136,7 +136,7 @@ public class ParamList<O> {
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
-    public List<ParamDescription<? super O, ?, ?>> getAllParamDescriptions() {
+    public List<ParamDescription<? super O, ?>> getAllParamDescriptions() {
         return getFilteredParamList((p) -> true);
     }
 
@@ -145,7 +145,7 @@ public class ParamList<O> {
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
-    public List<ParamDescription<? super O, ?, ?>> getEqualsParamDescriptions() {
+    public List<ParamDescription<? super O, ?>> getEqualsParamDescriptions() {
         return getFilteredParamList(ParamDescription::isEqualsInclude);
     }
 
@@ -154,7 +154,7 @@ public class ParamList<O> {
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
-    public List<ParamDescription<? super O, ?, ?>> getHashCodeParamDescriptions() {
+    public List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions() {
         return getFilteredParamList(ParamDescription::isHashCodeInclude);
     }
 
@@ -163,7 +163,7 @@ public class ParamList<O> {
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
-    public List<ParamDescription<? super O, ?, ?>> getToStringParamDescriptions() {
+    public List<ParamDescription<? super O, ?>> getToStringParamDescriptions() {
         return getFilteredParamList(ParamDescription::isToStringInclude);
     }
 
@@ -173,7 +173,7 @@ public class ParamList<O> {
      * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - cannot be null
      * @return An unmodifialbe list of ParamDescriptions.
      */
-    private List<ParamDescription<? super O, ?, ?>> getFilteredParamList(final Predicate<ParamDescription<? super O, ?, ?>> filter) {
+    private List<ParamDescription<? super O, ?>> getFilteredParamList(final Predicate<ParamDescription<? super O, ?>> filter) {
         return Collections.unmodifiableList(paramOrder.stream()
                                                       .map(paramDescriptionMap::get)
                                                       .filter(filter)
@@ -269,7 +269,7 @@ public class ParamList<O> {
      */
     public String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
-        List<ParamDescription<? super O, ?, ?>> toStringParamDescriptions = getToStringParamDescriptions();
+        List<ParamDescription<? super O, ?>> toStringParamDescriptions = getToStringParamDescriptions();
         if (toStringParamDescriptions.size() <= 0) {
             return " ";
         }

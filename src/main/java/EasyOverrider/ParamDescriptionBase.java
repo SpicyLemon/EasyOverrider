@@ -27,13 +27,12 @@ import java.util.function.Function;
  * @param <P>  the type of the parameter in question
  * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
-public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<O, P, E> {
+public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, P> {
     private static final String stringNull = "null";
     private static final String recursionPrevented = "...";
 
     final Class<O> parentClass;
     final Class<P> paramClass;
-    final Class<E> entryClass;
     final String name;
     final Function<? super O, P> getter;
     final ParamMethodRestriction paramMethodRestriction;
@@ -45,7 +44,6 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
             paramList = ParamList.forClass(ParamDescriptionBase.class)
                                      .withParam("parentClass", ParamDescriptionBase::getParentClass, Class.class)
                                      .withParam("paramClass", ParamDescriptionBase::getParamClass, Class.class)
-                                     .withParam("entryClass", ParamDescriptionBase::getEntryClass, Class.class)
                                      .withParam("name", ParamDescriptionBase::getName, String.class)
                                      .withParam("getter", ParamDescriptionBase::getGetter, INCLUDED_IN_TOSTRING_ONLY, Function.class)
                                      .withParam("paramMethodRestriction", ParamDescriptionBase::getParamMethodRestriction, ParamMethodRestriction.class)
@@ -59,17 +57,14 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      *
      * @param parentClass  the class of the parent object
      * @param paramClass  the class of the parameter
-     * @param entryClass  the class of the entry - used for interaction with collections and lists
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter
      */
-    ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass,
-                         final Class<E> entryClass, final String name,
+    ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass, final String name,
                          final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
         this.parentClass = parentClass;
         this.paramClass = paramClass;
-        this.entryClass = entryClass;
         this.name = name;
         this.getter = getter;
         this.paramMethodRestriction = paramMethodRestriction;
@@ -83,11 +78,6 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
     @Override
     public Class<P> getParamClass() {
         return paramClass;
-    }
-
-    @Override
-    public Class<E> getEntryClass() {
-        return entryClass;
     }
 
     @Override
@@ -172,14 +162,11 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
         if (value == null) {
             return stringNull;
         }
-        if (RecursionPreventingToString.class.isAssignableFrom(entryClass)) {
-            return valueToStringPreventingRecursion(value, seen);
-        }
-        return value.toString();
+        return valueToStringPreventingRecursion(value, seen);
     }
 
     /**
-     * Calls entryToStringPreventingRecursion on every entry in this parameter. <br><br>
+     * Calls objectToStringPreventingRecursion on everything in this parameter. <br><br>
      *
      * The implementation of this method should look something like
      * <pre>
@@ -187,8 +174,8 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      *
      * String valueToStringPreventingRecursion(final P value,
      *                                         final Map<Class, Set<Integer>> seen) {
-     *     //Go through every entry in the provided value,
-     *     //Do something with calling entryToStringPreventingRecursion(entry, seen)
+     *     //Go through everything in the provided value,
+     *     //Do something with calling objectToStringPreventingRecursion(entryClass, entry, seen)
      * }
      * }
      * </pre>
@@ -198,32 +185,22 @@ public abstract class ParamDescriptionBase<O, P, E> implements ParamDescription<
      */
     abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
 
-    /**
-     * This method should be used by the valueToStringPreventingRecursion in order to get the string of an entry. <br><br>
-     *
-     * If possible, it uses {@link RecursionPreventingToString#toString(Map)}, and properly checks and adds to that map.
-     * Otherwise, it just uses the plain toString() method on the entry.
-     *
-     * @param entry  the entry you want the string of - if null, "null" is returned
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
-     * @return A string of the provided entry.
-     */
-    String entryToStringPreventingRecursion(final E entry, final Map<Class, Set<Integer>> seen) {
-        if (entry == null) {
+    static <C> String objectToStringPreventingRecursion(final Class<C> clazz, final C object, final Map<Class, Set<Integer>> seen) {
+        if (object == null) {
             return stringNull;
         }
-        if (entry instanceof RecursionPreventingToString) {
-            int entryHashCode = entry.hashCode();
-            if (!seen.containsKey(entryClass)) {
-                seen.put(entryClass, new HashSet<>());
+        if (object instanceof RecursionPreventingToString) {
+            int entryHashCode = object.hashCode();
+            if (!seen.containsKey(clazz)) {
+                seen.put(clazz, new HashSet<>());
             }
-            if (seen.get(entryClass).contains(entryHashCode)) {
+            if (seen.get(clazz).contains(entryHashCode)) {
                 return recursionPrevented;
             }
-            seen.get(entryClass).add(entryHashCode);
-            return ((RecursionPreventingToString)entry).toString(seen);
+            seen.get(clazz).add(entryHashCode);
+            return ((RecursionPreventingToString)object).toString(seen);
         }
-        return entry.toString();
+        return object.toString();
     }
 
     @Override

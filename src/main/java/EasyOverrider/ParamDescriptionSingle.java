@@ -11,7 +11,7 @@ import java.util.function.Function;
  * @param <O>  the type of the object
  * @param <P>  the type of the parameter
  */
-public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> {
+public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
 
     private static ParamList<ParamDescriptionSingle> paramList;
 
@@ -34,7 +34,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
                                   final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
-        super(parentClass, paramClass, paramClass, name, getter, paramMethodRestriction);
+        super(parentClass, paramClass, name, getter, paramMethodRestriction);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P, P> 
 
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return entryToStringPreventingRecursion(value, seen);
+        return objectToStringPreventingRecursion(paramClass, value, seen);
     }
 
     /**

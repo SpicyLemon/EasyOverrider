@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
  * @param <P>  the type of the parameter
  * @param <E>  the type of objects contained in the Collection
  */
-public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>> extends ParamDescriptionBase<O, P, E> {
+public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>> extends ParamDescriptionBase<O, P> {
+
+    final Class<E> entryClass;
 
     private static ParamList<ParamDescriptionCollection> paramList;
 
@@ -23,6 +25,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
         if (paramList == null) {
             paramList = ParamDescriptionBase.getBaseParamList()
                                             .extendedBy(ParamDescriptionCollection.class)
+                                            .withParam("entryClass", ParamDescriptionCollection::getEntryClass, Class.class)
                                             .andThatsIt();
         }
         return paramList;
@@ -41,7 +44,12 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
                                       final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
-        super(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction);
+        super(parentClass, paramClass, name, getter, paramMethodRestriction);
+        this.entryClass = entryClass;
+    }
+
+    public Class<E> getEntryClass() {
+        return entryClass;
     }
 
     @Override
@@ -57,7 +65,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
         return value.stream()
-                    .map(e -> entryToStringPreventingRecursion(e, seen))
+                    .map(e -> objectToStringPreventingRecursion(entryClass, e, seen))
                     .collect(Collectors.toList())
                     .toString();
     }
