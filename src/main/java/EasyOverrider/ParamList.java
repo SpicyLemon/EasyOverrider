@@ -56,8 +56,8 @@ import java.util.stream.Collectors;
 public class ParamList<O> {
 
     final private Class<O> parentClass;
-    final private List<String> paramOrder;
     final private Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
+    final private List<String> paramOrder;
 
     private static ParamList<ParamList> paramList;
 
@@ -65,9 +65,9 @@ public class ParamList<O> {
         if (paramList == null) {
             paramList = ParamList.forClass(ParamList.class)
                                  .withParam("parentClass", ParamList::getParentClass, Class.class)
-                                 .withCollection("paramOrder", ParamList::getParamOrder, List.class, String.class)
                                  .withMap("paramDescriptionMap", ParamList::getParamDescriptionMap, Map.class,
                                           String.class, ParamDescription.class)
+                                 .withCollection("paramOrder", ParamList::getParamOrder, List.class, String.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -86,23 +86,23 @@ public class ParamList<O> {
      * @throws IllegalArgumentException if an entry exists in the paramOrder that doesn't have a matching key in the paramDescriptionMap.
      */
      ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap, final List<String> paramOrder) {
-        requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
+         requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
          requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
          requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
-        if (paramOrder.size() != paramDescriptionMap.size()) {
-            throw new IllegalArgumentException("The size of the paramDescriptionMap [" + paramDescriptionMap.size() + "] " +
-                                               "does not equal the size of the paramOrder list [" + paramOrder.size() + "]");
-        }
-        if (!paramOrder.stream().allMatch(paramDescriptionMap::containsKey)) {
-            throw new IllegalArgumentException("Parameter names were found in the order list " +
-                                               "that do not exist in the paramDescriptionMap: " +
-                                               paramOrder.stream()
-                                                         .filter(name -> !paramDescriptionMap.containsKey(name))
-                                                         .collect(Collectors.joining(", ")));
-        }
-        this.parentClass = parentClass;
-        this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
-        this.paramOrder = new LinkedList<>(paramOrder);
+         if (paramOrder.size() != paramDescriptionMap.size()) {
+             throw new IllegalArgumentException("The size of the paramDescriptionMap [" + paramDescriptionMap.size() + "] " +
+                                                "does not equal the size of the paramOrder list [" + paramOrder.size() + "]");
+         }
+         if (!paramOrder.stream().allMatch(paramDescriptionMap::containsKey)) {
+             throw new IllegalArgumentException("Parameter names were found in the order list " +
+                                                "that do not exist in the paramDescriptionMap: " +
+                                                paramOrder.stream()
+                                                          .filter(name -> !paramDescriptionMap.containsKey(name))
+                                                          .collect(Collectors.joining(", ")));
+         }
+         this.parentClass = parentClass;
+         this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
+         this.paramOrder = new LinkedList<>(paramOrder);
     }
 
     /**
@@ -115,21 +115,21 @@ public class ParamList<O> {
     }
 
     /**
-     * Getter for the order parameter.
-     *
-     * @return An unmodifiable list of Strings
-     */
-    public List<String> getParamOrder() {
-        return Collections.unmodifiableList(paramOrder);
-    }
-
-    /**
      * Getter for the paramDescriptionMap parameter.
      *
      * @return An unmodifiable Map of Strings to ParamDescription values.
      */
     public Map<String, ParamDescription<? super O, ?>> getParamDescriptionMap() {
         return Collections.unmodifiableMap(paramDescriptionMap);
+    }
+
+    /**
+     * Getter for the order parameter.
+     *
+     * @return An unmodifiable list of Strings
+     */
+    public List<String> getParamOrder() {
+        return Collections.unmodifiableList(paramOrder);
     }
 
     /**
@@ -186,7 +186,7 @@ public class ParamList<O> {
      *
      * This first checks to see if the two provided objects are equal using <code>==</code>; if so, return true.<br>
      * Then, if one is null, return false.<br>
-     * Then check to see which of the objects is an instance of the parent class.
+     * Then check to see which of the objects are instances of the parent class.
      * If neither of them are, return <code>thisObj.equals(thatObj);</code>.
      * If one of them isn't, return false.
      * Lastly, go through all the param descriptions that are to be included in the equals function
@@ -247,20 +247,8 @@ public class ParamList<O> {
      * @return A string representation of the given object.
      */
     public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        requireNonNull(thisObj, 1, "thisObj", "hahsCode");
-        return parentClass.getCanonicalName() + "@" +
-               thisObj.hashCode() + " " +
-               "[" + getParamsString(thisObj, Optional.ofNullable(seen).orElseGet(HashMap::new)) + "]";
-    }
-
-    /**
-     * Gets a String representation of the desired parameters in the provided object.
-     *
-     * @param thisObj  the object to get the parameter values from
-     * @return A String of comma-space delimited name/value Strings.
-     */
-    public String getParamsString(final O thisObj) {
-        return getParamsString(thisObj, new HashMap<>());
+        requireNonNull(thisObj, 1, "thisObj", "toString");
+        return parentClass.getCanonicalName() + "@" + thisObj.hashCode() + " [" + getParamsString(thisObj, seen) + "]";
     }
 
     /**
@@ -273,11 +261,12 @@ public class ParamList<O> {
     public String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
         List<ParamDescription<? super O, ?>> toStringParamDescriptions = getToStringParamDescriptions();
-        if (toStringParamDescriptions.size() <= 0) {
+        if (toStringParamDescriptions.isEmpty()) {
             return " ";
         }
+        Map<Class, Set<Integer>> mySeen = Optional.ofNullable(seen).orElseGet(HashMap::new);
         return toStringParamDescriptions.stream()
-                                        .map(pd -> pd.getNameValueString(thisObj, seen))
+                                        .map(pd -> pd.getNameValueString(thisObj, mySeen))
                                         .collect(Collectors.joining(", "));
     }
 
