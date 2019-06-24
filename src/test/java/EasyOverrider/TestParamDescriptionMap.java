@@ -408,7 +408,16 @@ public class TestParamDescriptionMap {
     public void toString_objectNull_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
                         getParamMapStringTestObj("theMapStringTestObj", INCLUDED_IN_ALL);
-        String expected = "...";
+        String expected = "{testObj=EasyOverrider.TestObj@1171024628 [" +
+                          "theBoolean='false', " +
+                          "theInt='0', " +
+                          "theString=null, " +
+                          "theOtherString=null, " +
+                          "theCollectionString=null, " +
+                          "theMapStringInt=null, " +
+                          "theTestObj=null, " +
+                          "theCollectionTestObj=null, " +
+                          "theMapStringTestObj='{testObj=...}']}";
         TestObj testObj = new TestObj();
         Map<String, TestObj> map = new HashMap<>();
         map.put("testObj", testObj);
@@ -473,7 +482,7 @@ public class TestParamDescriptionMap {
         Map<String, TestObj> map = new HashMap<>();
         map.put("whatever", testObj);
         testObj.setTheMapStringTestObj(map);
-        String expected = "theMapStringTestObj=...";
+        String expected = "theMapStringTestObj='{whatever=...}'";
         Map<Class, Set<Integer>> seen = new HashMap<>();
         seen.put(TestObj.class, new HashSet<>());
         seen.get(TestObj.class).add(testObj.hashCode());
