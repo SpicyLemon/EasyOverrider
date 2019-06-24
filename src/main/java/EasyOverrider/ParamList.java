@@ -1,11 +1,12 @@
 package EasyOverrider;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -101,7 +102,7 @@ public class ParamList<O> {
         }
         this.parentClass = parentClass;
         this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
-        this.paramOrder = new ArrayList<>(paramOrder);
+        this.paramOrder = new LinkedList<>(paramOrder);
     }
 
     /**
@@ -235,7 +236,7 @@ public class ParamList<O> {
      * @return A string.
      */
     public String toString(final O thisObj) {
-        return toString(thisObj, new HashMap<>());
+        return toString(thisObj, null);
     }
 
     /**
@@ -247,7 +248,9 @@ public class ParamList<O> {
      */
     public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "hahsCode");
-        return parentClass.getName() + "@" + thisObj.hashCode() + " [" + getParamsString(thisObj, seen) + "]";
+        return parentClass.getCanonicalName() + "@" +
+               thisObj.hashCode() + " " +
+               "[" + getParamsString(thisObj, Optional.ofNullable(seen).orElseGet(HashMap::new)) + "]";
     }
 
     /**

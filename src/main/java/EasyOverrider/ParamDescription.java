@@ -163,8 +163,10 @@ public interface ParamDescription<O, P> {
      * If there's a recursionPreventingToString available, and we're not preventing recursion, the recursionPreventingToString
      * is called using a true preventingRecursion flag.
      * If there's a recursionPreventingToString available, and we ARE preventing recursion, "..." is returned.
-     * @param obj  the object to get the parameter from - cannot be null
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     *
+     * @param obj  the object to turn into a string - cannot be null
+     * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
+     *
      * @return A String. Either "null", "..." or the results of toString on the parameter in the provided object.
      * @throws IllegalArgumentException if the object is null.
      */
@@ -173,7 +175,7 @@ public interface ParamDescription<O, P> {
     /**
      * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.
      *
-     * @param obj  the object to get the parameter from
+     * @param obj  the object to get the name/value string of
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A string in the form of "name='value'" or "name=null" or "name=...".
      * @throws IllegalArgumentException if the object is null.

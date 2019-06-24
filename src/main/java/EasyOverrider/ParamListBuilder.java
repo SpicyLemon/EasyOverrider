@@ -3,14 +3,13 @@ package EasyOverrider;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -71,8 +70,8 @@ public class ParamListBuilder<O> {
         this.paramMethodRestrictionRestriction = Optional.ofNullable(paramMethodRestrictionRestriction).orElse(SAFE_ONLY);
         this.paramOrder = Optional.ofNullable(superParamList)
                                   .map(ParamList::getParamOrder)
-                                  .map(ArrayList::new)
-                                  .orElseGet(ArrayList::new);
+                                  .map(LinkedList::new)
+                                  .orElseGet(LinkedList::new);
         this.paramDescriptionMap = Optional.ofNullable(superParamList)
                                            .map(ParamList::getParamDescriptionMap)
                                            .map(HashMap<String, ParamDescription<? super O, ?>>::new)
@@ -440,7 +439,7 @@ public class ParamListBuilder<O> {
         String name = paramDescription.getName();
         if (paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("A parameter named '" + name + "' already exists while trying to " +
-                                               "build the ParamList for a " + parentClass.getName());
+                                               "build the ParamList for a " + parentClass.getCanonicalName());
         }
         paramOrder.add(name);
         paramDescriptionMap.put(name, paramDescription);
@@ -722,7 +721,7 @@ public class ParamListBuilder<O> {
         String name = paramDescription.getName();
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be updated while trying to " +
-                                               "build the ParamList for a " + parentClass.getName());
+                                               "build the ParamList for a " + parentClass.getCanonicalName());
         }
         paramDescriptionMap.replace(name, paramDescription);
     }
@@ -736,7 +735,7 @@ public class ParamListBuilder<O> {
     private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction) {
         if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
-                                               "is not allowed while building a ParamList for a " + parentClass.getName() + " " +
+                                               "is not allowed while building a ParamList for a " + parentClass.getCanonicalName() + " " +
                                                "with a ParamMethodRestrictionRestriction of [" + paramMethodRestrictionRestriction.name() + "].");
         }
     }
@@ -824,11 +823,11 @@ public class ParamListBuilder<O> {
     private void removeParam(String name, Class expectedParamClass, String callingMethod) {
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be removed while trying to " +
-                                               "build the ParamList for a " + parentClass.getName());
+                                               "build the ParamList for a " + parentClass.getCanonicalName());
         }
         if (expectedParamClass != null && !expectedParamClass.getClass().isAssignableFrom(paramDescriptionMap.get(name).getParamClass())) {
-            throw new IllegalArgumentException("While building the ParamList for a " + parentClass.getName() + ", " +
-                                               "the '" + name + "' parameter is not a " + expectedParamClass.getClass().getName() + ", " +
+            throw new IllegalArgumentException("While building the ParamList for a " + parentClass.getCanonicalName() + ", " +
+                                               "the '" + name + "' parameter is not a " + expectedParamClass.getClass().getCanonicalName() + ", " +
                                                "and cannot be removed using " + callingMethod + ".");
         }
         paramOrder.remove(name);
