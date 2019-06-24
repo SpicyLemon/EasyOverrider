@@ -220,14 +220,6 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_collectionStringParam_containsRecursionPreventingToString() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
-        String actual = paramDescriptionCollection.toString();
-        assertTrue(actual, actual.contains("recursionPreventingToString"));
-    }
-
-    @Test
     public void getParentClass_testObj_returnsCorrectValue() {
         Class<TestObj> expected = TestObj.class;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
@@ -539,7 +531,7 @@ public class TestParamDescriptionCollection {
         HashMap<Class, Set<Integer>> seen = new HashMap<>();
         seen.put(TestObj.class, new HashSet<>());
         seen.get(TestObj.class).add(testObj.hashCode());
-        String expected = "theCollectionTestObj=...";
+        String expected = "theCollectionTestObj='[..., ...]'";
         assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, seen));
     }
 
