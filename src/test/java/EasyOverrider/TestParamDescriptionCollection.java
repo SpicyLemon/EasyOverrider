@@ -25,9 +25,17 @@ public class TestParamDescriptionCollection {
 
     private ParamDescriptionCollection<TestObj, String, ?> getParamDescription(String name, ParamMethodRestriction pmr) {
         ParamDescriptionCollection<TestObj, String, ?> retval =
-                        new ParamDescriptionCollection<TestObj, String, Collection>(
+                        new ParamDescriptionCollection<>(
                                         TestObj.class, Collection.class, String.class, name,
                                         TestObj::getTheCollectionString, pmr);
+        return retval;
+    }
+
+    private ParamDescriptionCollection<TestObj, TestObj, ?> getTestObjList(String name, ParamMethodRestriction pmr) {
+        ParamDescriptionCollection<TestObj, TestObj, ?> retval =
+                        new ParamDescriptionCollection<>(
+                                        TestObj.class, Collection.class, TestObj.class, name,
+                                        TestObj::getTheCollectionTestObj, pmr);
         return retval;
     }
 
@@ -480,9 +488,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<TestObj, TestObj, List>(
-                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
+                        getTestObjList("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
             String boom = paramDescriptionCollection.toString(testObj, new HashMap<>());
@@ -529,9 +535,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void getNameValueString_objectInSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<TestObj, TestObj, List>(
-                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
+                        getTestObjList("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheCollectionTestObj(Arrays.asList(testObj, testObj));
         HashMap<Class, Set<Integer>> seen = new HashMap<>();
@@ -544,9 +548,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void getNameValueString_objectWithNullInSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<TestObj, TestObj, List>(
-                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
+                        getTestObjList("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheCollectionTestObj(null);
         HashMap<Class, Set<Integer>> seen = new HashMap<>();
@@ -559,9 +561,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void getNameValueString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<TestObj, TestObj, List>(
-                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
+                        getTestObjList("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
             String boom = paramDescriptionCollection.getNameValueString(testObj, new HashMap<>());
