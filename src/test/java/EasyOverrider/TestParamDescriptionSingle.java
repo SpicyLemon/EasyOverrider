@@ -271,16 +271,6 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_stringParam_containsRecursionPreventingToString() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<TestObj, String>(
-                                        TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
-        String actual = paramDescriptionSingle1.toString();
-        assertTrue(actual, actual.contains("recursionPreventingToString"));
-    }
-
-    @Test
     public void getParentClass_testObj_returnsCorrectValue() {
         Class<TestObj> expected = TestObj.class;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
@@ -616,7 +606,16 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL);
-        String expected = "...";
+        String expected = "EasyOverrider.TestObj@1171024628 [" +
+                          "theBoolean='false', " +
+                          "theInt='0', " +
+                          "theString=null, " +
+                          "theOtherString=null, " +
+                          "theCollectionString=null, " +
+                          "theMapStringInt=null, " +
+                          "theTestObj=..., " +
+                          "theCollectionTestObj=null, " +
+                          "theMapStringTestObj=null]";
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
         String actual = paramDescriptionSingle.toString(testObj, null);
@@ -685,7 +684,16 @@ public class TestParamDescriptionSingle {
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String expected = "theTestObj=...";
+        String expected = "theTestObj='EasyOverrider.TestObj@1171024628 [" +
+                          "theBoolean='false', " +
+                          "theInt='0', " +
+                          "theString=null, " +
+                          "theOtherString=null, " +
+                          "theCollectionString=null, " +
+                          "theMapStringInt=null, " +
+                          "theTestObj=..., " +
+                          "theCollectionTestObj=null, " +
+                          "theMapStringTestObj=null]'";
         String actual = paramDescriptionSingle.getNameValueString(testObj, new HashMap<>());
         assertEquals(expected, actual);
     }
