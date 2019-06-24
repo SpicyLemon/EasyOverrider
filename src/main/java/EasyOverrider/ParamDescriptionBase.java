@@ -2,9 +2,11 @@ package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -156,12 +158,11 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     @Override
     public String toString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "toString");
-        ParamList.requireNonNull(seen, 2, "seen", "toString");
         P value = getter.apply(obj);
         if (value == null) {
             return stringNull;
         }
-        return valueToStringPreventingRecursion(value, seen);
+        return valueToStringPreventingRecursion(value, Optional.ofNullable(seen).orElseGet(HashMap::new));
     }
 
     /**
@@ -217,14 +218,15 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
         }
         if (object instanceof RecursionPreventingToString) {
             int entryHashCode = object.hashCode();
-            if (!seen.containsKey(clazz)) {
-                seen.put(clazz, new HashSet<>());
+            Map<Class, Set<Integer>> mySeen = Optional.ofNullable(seen).orElseGet(HashMap::new);
+            if (!mySeen.containsKey(clazz)) {
+                mySeen.put(clazz, new HashSet<>());
             }
-            if (seen.get(clazz).contains(entryHashCode)) {
+            if (mySeen.get(clazz).contains(entryHashCode)) {
                 return recursionPrevented;
             }
-            seen.get(clazz).add(entryHashCode);
-            return ((RecursionPreventingToString)object).toString(seen);
+            mySeen.get(clazz).add(entryHashCode);
+            return ((RecursionPreventingToString)object).toString(mySeen);
         }
         return object.toString();
     }
@@ -232,8 +234,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     @Override
     public String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen) {
         ParamList.requireNonNull(obj, 1, "obj", "getNameValuePair");
-        ParamList.requireNonNull(seen, 2, "seen", "getNameValuePair");
-        String value = toString(obj, seen);
+        String value = toString(obj, Optional.ofNullable(seen).orElseGet(HashMap::new));
         return name + "=" + (value.equals(stringNull) || value.equals(recursionPrevented) ? value : "'" + value + "'");
     }
 
