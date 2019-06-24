@@ -25,7 +25,6 @@ import java.util.function.Function;
  *
  * @param <O>  the type of object in question
  * @param <P>  the type of the parameter in question
- * @param <E>  the type of entry contained in the parameter (if it's a collection or map)
  */
 public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, P> {
     private static final String stringNull = "null";
