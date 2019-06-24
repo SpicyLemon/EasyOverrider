@@ -7,3 +7,6 @@ build
 # Ignore the jetbrains Intellij stuff
 .idea
 *.iml
+
+# Ignore the gradle output directory
+out/
