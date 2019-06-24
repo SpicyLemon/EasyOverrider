@@ -27,3 +27,7 @@ tasks.withType(Test) {
 test {
     dependsOn 'cleanTest'
 }
+
+compileJava {
+    options.compilerArgs += ['-Xdiags:verbose']
+}
