@@ -29,5 +29,5 @@ test {
 }
 
 compileJava {
-    options.compilerArgs += ['-Xdiags:verbose']
+    options.compilerArgs += ['-Xdiags:verbose', "-Xlint:unchecked"]
 }
