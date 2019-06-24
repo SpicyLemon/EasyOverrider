@@ -350,7 +350,7 @@ public class ParamList<O> {
      * @return A {@link ParamListBuilder} for the specified class.
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
-        return new ParamListBuilder<>(parentClass);
+        return ParamListBuilder.forClass(parentClass);
     }
 
     /**
@@ -363,7 +363,7 @@ public class ParamList<O> {
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass,
                                                    ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return new ParamListBuilder<C>(parentClass, paramMethodRestrictionRestriction);
+        return ParamListBuilder.forClass(parentClass, paramMethodRestrictionRestriction);
     }
 
     /**

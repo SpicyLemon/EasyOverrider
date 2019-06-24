@@ -844,6 +844,30 @@ public class ParamListBuilder<O> {
     }
 
     /**
+     * Kicks off a ParamListBuilder for the provided class.
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param <C>  the class you're building the parameter list for
+     * @return A {@link ParamListBuilder} for the specified class.
+     */
+    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass) {
+        return new ParamListBuilder<C>(parentClass);
+    }
+
+    /**
+     * Kicks off a ParamListBuilder for the provided class, with the provided ParamMethodRestrictionRestriction.
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
+     * @param <C>  the class you're building the parameter list for
+     * @return A {@link ParamListBuilder} for the specified class.
+     */
+    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass,
+                                                   ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+        return new ParamListBuilder<C>(parentClass, paramMethodRestrictionRestriction);
+    }
+
+    /**
      * equals method for a ParamListBuilder.
      *
      * @param obj  the object to test against
