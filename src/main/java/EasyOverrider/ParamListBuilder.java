@@ -269,7 +269,7 @@ public class ParamListBuilder<O> {
      * @see #withParam(String, Function, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withoutCollection(String)
+     * @see #withoutParam(String)
      */
     public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
                                                                                      final Class<P> paramClass, final Class<E> entryClass) {
@@ -300,7 +300,7 @@ public class ParamListBuilder<O> {
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withoutCollection(String)
+     * @see #withoutParam(String)
      */
     public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
                                                                                      final ParamMethodRestriction paramMethodRestriction,
@@ -353,7 +353,7 @@ public class ParamListBuilder<O> {
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withoutMap(String)
+     * @see #withoutParam(String)
      */
     public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                                                        final Class<P> paramClass, final Class<K> keyClass,
@@ -388,7 +388,7 @@ public class ParamListBuilder<O> {
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withoutMap(String)
+     * @see #withoutParam(String)
      */
     public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                                                        final ParamMethodRestriction paramMethodRestriction,
@@ -543,7 +543,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withCollection(String, Function, Class, Class)
-     * @see #withoutCollection(String)
+     * @see #withoutParam(String)
      */
     public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
                                                                                             final Class<P> paramClass, final Class<E> entryClass) {
@@ -577,7 +577,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withoutCollection(String)
+     * @see #withoutParam(String)
      */
     public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
                                                                                             final ParamMethodRestriction paramMethodRestriction,
@@ -633,7 +633,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withoutMap(String)
+     * @see #withoutParam(String)
      */
     private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
                                                                                                final Class<P> paramClass, final Class<K> keyClass,
@@ -671,7 +671,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withoutMap(String)
+     * @see #withoutParam(String)
      */
     private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
                                                                                                final ParamMethodRestriction paramMethodRestriction,
@@ -748,8 +748,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @see #withoutParam(String)
-     * @see #withoutCollection(String)
-     * @see #withoutMap(String)
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -759,79 +757,13 @@ public class ParamListBuilder<O> {
      */
     public ParamListBuilder<O> withoutParam(final String name) {
         ParamList.requireNonNull(name, 1, "name", "withoutParam");
-        removeParam(name, null, "withoutParam");
-        return this;
-    }
-
-    /**
-     * Removes the parameter with the provided name.
-     *
-     * @param name  the name of the parameter to remove - cannot be null
-     * @return the current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is null.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the parameter for the provided name is not a Collection.
-     * @see #withoutParam(String)
-     * @see #withoutCollection(String)
-     * @see #withoutMap(String)
-     * @see #withParam(String, Function, Class)
-     * @see #withCollection(String, Function, Class, Class)
-     * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     */
-    public ParamListBuilder<O> withoutCollection(final String name) {
-        ParamList.requireNonNull(name, 1, "name", "withoutCollection");
-        removeParam(name, Collection.class, "withoutCollection");
-        return this;
-    }
-
-    /**
-     * Removes the parameter with the provided name.
-     *
-     * @param name  the name of the parameter to remove - cannot be null
-     * @return the current ParamListBuilder.
-     * @throws IllegalArgumentException if the provided name is null.
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the parameter for the provided name is not a Map.
-     * @see #withoutParam(String)
-     * @see #withoutCollection(String)
-     * @see #withoutMap(String)
-     * @see #withParam(String, Function, Class)
-     * @see #withCollection(String, Function, Class, Class)
-     * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     */
-    public ParamListBuilder<O> withoutMap(final String name) {
-        ParamList.requireNonNull(name, 1, "name", "withoutMap");
-        removeParam(name, Map.class, "withoutCollection");
-        return this;
-    }
-
-    /**
-     * Removes the parameter with the provide name.
-     *
-     * @param name  the name of the parameter to remove
-     * @param expectedParamClass  the class you're expecting the parameter to be. If null, this part of the check is skipped
-     * @param callingMethod  the name of the calling method (used in exceptions)
-     * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if an expectedParamClass is provided, but the parameter with the provided name is not assignable to that class.
-     */
-    private void removeParam(String name, Class expectedParamClass, String callingMethod) {
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be removed while trying to " +
                                                "build the ParamList for a " + parentClass.getCanonicalName());
         }
-        if (expectedParamClass != null && !expectedParamClass.getClass().isAssignableFrom(paramDescriptionMap.get(name).getParamClass())) {
-            throw new IllegalArgumentException("While building the ParamList for a " + parentClass.getCanonicalName() + ", " +
-                                               "the '" + name + "' parameter is not a " + expectedParamClass.getClass().getCanonicalName() + ", " +
-                                               "and cannot be removed using " + callingMethod + ".");
-        }
         paramOrder.remove(name);
         paramDescriptionMap.remove(name);
+        return this;
     }
 
     /**
