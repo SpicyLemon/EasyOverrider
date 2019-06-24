@@ -271,7 +271,8 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
+    @SuppressWarnings("unchecked")
+    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
                                                                                      final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withCollection");
         ParamList.requireNonNull(getter, 2, "getter", "withCollection");
@@ -302,7 +303,8 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
+    @SuppressWarnings("unchecked")
+    public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
                                                                                      final ParamMethodRestriction paramMethodRestriction,
                                                                                      final Class<P> paramClass, final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withCollection");
@@ -327,7 +329,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
-    @SuppressWarnings("unchecked")
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                            final String name, final Function<? super O, P> getter,
                                                                            final ParamMethodRestriction paramMethodRestriction) {
@@ -355,7 +356,8 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
+    @SuppressWarnings("unchecked")
+    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                                                        final Class<P> paramClass, final Class<K> keyClass,
                                                                                        final Class<E> entryClass) {
         ParamList.requireNonNull(name, 1, "name", "withMap");
@@ -390,7 +392,8 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    public <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
+    @SuppressWarnings("unchecked")
+    public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                                                        final ParamMethodRestriction paramMethodRestriction,
                                                                                        final Class<P> paramClass, final Class<K> keyClass,
                                                                                        final Class<E> entryClass) {
@@ -419,7 +422,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
      */
-    @SuppressWarnings("unchecked")
     private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
                                                                              final Class<E> entryClass, final String name,
                                                                              final Function<? super O, P> getter,
