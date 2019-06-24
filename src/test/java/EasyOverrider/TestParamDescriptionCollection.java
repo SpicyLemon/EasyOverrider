@@ -14,61 +14,50 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionCollection {
 
-    private ParamDescriptionCollection<TestObj, String, ?> getParamDescription(String name, ParamMethodRestriction pmr,
-                                                                               BiFunction<String, Boolean, String> recursionPreventingToString) {
+    private ParamDescriptionCollection<TestObj, String, ?> getParamDescription(String name, ParamMethodRestriction pmr) {
         ParamDescriptionCollection<TestObj, String, ?> retval =
-                        new ParamDescriptionCollection<>(
+                        new ParamDescriptionCollection<TestObj, String, Collection>(
                                         TestObj.class, Collection.class, String.class, name,
-                                        TestObj::getTheCollectionString, pmr, recursionPreventingToString);
+                                        TestObj::getTheCollectionString, pmr);
         return retval;
     }
 
     @Test
     public void isCollection_something_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionCollection.isCollection());
     }
 
     @Test
     public void isMap_something_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         assertFalse(paramDescriptionCollection.isMap());
     }
 
     @Test
     public void equals_sameObject_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionCollection.equals(paramDescriptionCollection));
     }
 
     @Test
     public void equals_sameConstructorParameters_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
-        assertTrue("1.equals(2)", paramDescriptionCollection1.equals(paramDescriptionCollection2));
-        assertTrue("2.equals(1)", paramDescriptionCollection2.equals(paramDescriptionCollection1));
-    }
-
-    @Test
-    public void equals_sameConstructorParametersExceptRecursionPreventingToString_true() {
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection1 =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, null);
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection2 =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         assertTrue("1.equals(2)", paramDescriptionCollection1.equals(paramDescriptionCollection2));
         assertTrue("2.equals(1)", paramDescriptionCollection2.equals(paramDescriptionCollection1));
     }
@@ -76,9 +65,9 @@ public class TestParamDescriptionCollection {
     @Test
     public void equals_sameConstructorParametersExceptNames_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString2", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString2", INCLUDED_IN_ALL);
         assertFalse("1.equals(2)", paramDescriptionCollection1.equals(paramDescriptionCollection2));
         assertFalse("2.equals(1)", paramDescriptionCollection2.equals(paramDescriptionCollection1));
     }
@@ -86,9 +75,9 @@ public class TestParamDescriptionCollection {
     @Test
     public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString", IGNORED_FOR_ALL, null);
+                        getParamDescription("theCollectionString", IGNORED_FOR_ALL);
         assertFalse("1.equals(2)", paramDescriptionCollection1.equals(paramDescriptionCollection2));
         assertFalse("2.equals(1)", paramDescriptionCollection2.equals(paramDescriptionCollection1));
     }
@@ -96,7 +85,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void hashCode_runTwice_same() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         int actual = paramDescriptionCollection1.hashCode();
         int expected = paramDescriptionCollection1.hashCode();
         assertEquals(expected, actual);
@@ -105,54 +94,41 @@ public class TestParamDescriptionCollection {
     @Test
     public void hashCode_sameConstructorParameters_same() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
-        assertEquals(paramDescriptionCollection1.hashCode(), paramDescriptionCollection2.hashCode());
-    }
-
-    @Test
-    public void hashCode_sameConstructorParametersExceptRecursionPreventingToString_same() {
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection1 =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, null);
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection2 =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         assertEquals(paramDescriptionCollection1.hashCode(), paramDescriptionCollection2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptNames_different() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString2", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString2", INCLUDED_IN_ALL);
         assertNotEquals(paramDescriptionCollection1.hashCode(), paramDescriptionCollection2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamDescription("theCollectionString2", INCLUDED_IN_EQUALS_ONLY__UNSAFE, null);
+                        getParamDescription("theCollectionString2", INCLUDED_IN_EQUALS_ONLY__UNSAFE);
         assertNotEquals(paramDescriptionCollection1.hashCode(), paramDescriptionCollection2.hashCode());
     }
 
     @Test
     public void toString_collectionStringParam_containsParamDescriptionCollection() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionCollection.toString().contains("ParamDescriptionCollection"));
     }
 
     @Test
     public void toString_collectionStringParam_containsParentClass() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("parentClass"));
     }
@@ -160,7 +136,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParentClassName() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("TestObj"));
     }
@@ -168,7 +144,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParamClass() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("paramClass"));
     }
@@ -176,7 +152,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParamClassName() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("Collection"));
     }
@@ -184,7 +160,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsEntryClass() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("entryClass"));
     }
@@ -192,7 +168,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsEntryClassName() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("String"));
     }
@@ -200,7 +176,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsName() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("name"));
     }
@@ -208,7 +184,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParamName() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("theCollectionString1"));
     }
@@ -216,7 +192,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsGetter() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("getter"));
     }
@@ -224,7 +200,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParamMethodRestriction() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("paramMethodRestriction"));
     }
@@ -232,7 +208,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsParamMethodRestrictionValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
     }
@@ -240,7 +216,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void toString_collectionStringParam_containsRecursionPreventingToString() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("recursionPreventingToString"));
     }
@@ -249,7 +225,7 @@ public class TestParamDescriptionCollection {
     public void getParentClass_testObj_returnsCorrectValue() {
         Class<TestObj> expected = TestObj.class;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         Class<TestObj> actual = paramDescriptionCollection.getParentClass();
         assertEquals(expected, actual);
     }
@@ -258,7 +234,7 @@ public class TestParamDescriptionCollection {
     public void getParamClass_string_returnsCorrectValue() {
         Class<? extends Collection> expected = Collection.class;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         Class<? extends Collection> actual = paramDescriptionCollection.getParamClass();
         assertEquals(expected, actual);
     }
@@ -267,7 +243,7 @@ public class TestParamDescriptionCollection {
     public void getEntryClass_string_returnsCorrectValue() {
         Class<String> expected = String.class;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         Class<String> actual = paramDescriptionCollection.getEntryClass();
         assertEquals(expected, actual);
     }
@@ -276,7 +252,7 @@ public class TestParamDescriptionCollection {
     public void getName_string_returnsCorrectValue() {
         String expected = "myCustomStringNameJustForThisTest";
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription(expected, INCLUDED_IN_ALL, null);
+                        getParamDescription(expected, INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.getName();
         assertEquals(expected, actual);
     }
@@ -285,20 +261,9 @@ public class TestParamDescriptionCollection {
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
         ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("some name or thing", expected, null);
+                        getParamDescription("some name or thing", expected);
         ParamMethodRestriction actual = paramDescriptionCollection.getParamMethodRestriction();
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getRecursionPreventingToString_toString_returnsCorrectValue() {
-        BiFunction<? super TestObj, Boolean, String> expected = TestObj::toString;
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection1 =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, expected);
-        BiFunction<? super TestObj, Boolean, String> actual = paramDescriptionCollection1.getRecursionPreventingToString();
-        assertEquals(actual, expected);
     }
 
     @Test
@@ -306,7 +271,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsIgnore();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isEqualsIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -317,7 +282,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isEqualsInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -328,7 +293,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeIgnore();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isHashCodeIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -339,7 +304,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isHashCodeInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -350,7 +315,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringIgnore();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isToStringIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -361,7 +326,7 @@ public class TestParamDescriptionCollection {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamDescription("theCollectionString1", pmr, null);
+                            getParamDescription("theCollectionString1", pmr);
             boolean actual = paramDescriptionCollection.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -370,32 +335,32 @@ public class TestParamDescriptionCollection {
     @Test
     public void get_collectionValue_matchesObjectValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Collection<String> expected = Arrays.asList("one", "two", "three");
         testObj.setTheCollectionString(expected);
-        Collection<String> actual = paramDescriptionCollection.get(testObj);
+        Collection<String> actual = (Collection<String>)paramDescriptionCollection.get(testObj);
         assertEquals(expected, actual);
     }
 
     @Test
     public void get_nullStringValue_matchesObjectValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Collection<String> expected = null;
         testObj.setTheCollectionString(expected);
-        Collection<String> actual = paramDescriptionCollection.get(testObj);
+        Collection<String> actual = (Collection<String>)paramDescriptionCollection.get(testObj);
         assertEquals(expected, actual);
     }
 
     @Test
     public void get_nullObj_blowsUp() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            Collection<String> actual = paramDescriptionCollection.get(testObj);
+            Collection<String> actual = (Collection<String>)paramDescriptionCollection.get(testObj);
             fail("IllegalArgumentException should have been thrown calling get(null).");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -405,28 +370,28 @@ public class TestParamDescriptionCollection {
     @Test
     public void safeGet_collectionValue_matchesObjectValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Collection<String> expected = Arrays.asList("one", "two", "three", "four");
         testObj.setTheCollectionString(expected);
-        Collection<String> actual = paramDescriptionCollection.get(testObj);
+        Collection<String> actual = (Collection<String>)paramDescriptionCollection.get(testObj);
         assertEquals(expected, actual);
     }
 
     @Test
     public void safeGet_nullObj_returnsNull() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = null;
         Collection<String> expected = null;
-        Collection<String> actual = paramDescriptionCollection.safeGet(testObj);
+        Collection<String> actual = (Collection<String>)paramDescriptionCollection.safeGet(testObj);
         assertEquals(expected, actual);
     }
 
     @Test
     public void paramsAreEqual_nullNull_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = null;
         assertTrue(paramDescriptionCollection.paramsAreEqual(testObj1, testObj2));
@@ -435,7 +400,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void paramsAreEqual_nullVsNullParam_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = new TestObj();
         testObj2.setTheCollectionString(null);
@@ -446,7 +411,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void paramsAreEqual_same_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Collection<String> expected = Arrays.asList("five", "two", "three", "four");
         testObj.setTheCollectionString(expected);
@@ -456,7 +421,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void paramsAreEqual_differentObjectsSameValue_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         Collection<String> collection = Arrays.asList("five", "two", "three", "four");
         TestObj testObj1 = new TestObj();
         testObj1.setTheCollectionString(collection);
@@ -468,7 +433,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void paramsAreEqual_differentObjectsDifferentValues_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         testObj1.setTheCollectionString(Arrays.asList("one", "two"));
         TestObj testObj2 = new TestObj();
@@ -480,7 +445,7 @@ public class TestParamDescriptionCollection {
     @Test
     public void paramsAreEqual_differentObjectsOneNullValue_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         testObj1.setTheCollectionString(Arrays.asList("one", "two"));
         TestObj testObj2 = new TestObj();
@@ -490,45 +455,22 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_object_returnsExpectedValue() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
-        Collection<String> collection = Arrays.asList("one", "two", "ten");
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionString(collection);
-        assertEquals(collection.toString(), paramDescriptionCollection.toString(testObj));
-    }
-
-    @Test
-    public void toString_nullObject_blowsUP() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionCollection.toString(testObj);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
     public void toString_objectFalse_returnsExpectedValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         Collection<String> collection = Arrays.asList("one", "two", "ten");
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(collection);
-        assertEquals(collection.toString(), paramDescriptionCollection.toString(testObj, false));
+        assertEquals(collection.toString(), paramDescriptionCollection.toString(testObj, new HashMap<>()));
     }
 
     @Test
-    public void toString_nullObjectFalse_blowsUP() {
+    public void toString_nullObjectNullMap_blowsUP() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.toString(testObj, false);
+            String boom = paramDescriptionCollection.toString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -536,26 +478,14 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void toString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
-        String expected = "...";
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionTestObj(Arrays.asList(testObj, testObj, testObj));
-        assertEquals(expected, paramDescriptionCollection.toString(testObj, true));
-    }
-
-    @Test
-    public void toString_nullObjectTrue_blowsUP() {
-        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionCollection<TestObj, TestObj, List>(
+                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
+                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.toString(testObj, true);
+            String boom = paramDescriptionCollection.toString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -563,33 +493,33 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void getNameValueString_object_returnsExpectedValue() {
+    public void getNameValueString_objectNull_returnsExpectedValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         Collection<String> collection = Arrays.asList("420", "69");
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(collection);
         String expected = "theCollectionString='" + collection.toString() + "'";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj));
+        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, null));
     }
 
     @Test
-    public void getNameValueString_objectWithNull_returnsExpectedValue() {
+    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(null);
         String expected = "theCollectionString=null";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj));
+        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, null));
     }
 
     @Test
-    public void getNameValueString_nullObject_blowsUP() {
+    public void getNameValueString_nullObjectNull_blowsUP() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
+                        getParamDescription("theCollectionString", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.getNameValueString(testObj);
+            String boom = paramDescriptionCollection.getNameValueString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -597,72 +527,44 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void getNameValueString_objectFalse_returnsExpectedValue() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
-        Collection<String> collection = Arrays.asList("420", "69");
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionString(collection);
-        String expected = "theCollectionString='" + collection.toString() + "'";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, false));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNullFalse_returnsExpectedValue() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionString(null);
-        String expected = "theCollectionString=null";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, false));
-    }
-
-    @Test
-    public void getNameValueString_nullObjectFalse_blowsUP() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamDescription("theCollectionString", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionCollection.getNameValueString(testObj, false);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void getNameValueString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void getNameValueString_objectInSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionCollection<TestObj, TestObj, List>(
+                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
+                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheCollectionTestObj(Arrays.asList(testObj, testObj));
+        HashMap<Class, Set<Integer>> seen = new HashMap<>();
+        seen.put(TestObj.class, new HashSet<>());
+        seen.get(TestObj.class).add(testObj.hashCode());
         String expected = "theCollectionTestObj=...";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, true));
+        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, seen));
     }
 
     @Test
-    public void getNameValueString_objectWithNullTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void getNameValueString_objectWithNullInSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionCollection<TestObj, TestObj, List>(
+                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
+                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheCollectionTestObj(null);
+        HashMap<Class, Set<Integer>> seen = new HashMap<>();
+        seen.put(TestObj.class, new HashSet<>());
+        seen.get(TestObj.class).add(testObj.hashCode());
         String expected = "theCollectionTestObj=null";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, true));
+        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, seen));
     }
 
     @Test
-    public void getNameValueString_nullObjectTrue_blowsUP() {
+    public void getNameValueString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, "theCollectionTestObj",
-                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionCollection<TestObj, TestObj, List>(
+                                        TestObj.class, List.class, TestObj.class, "theCollectionTestObj",
+                                        TestObj::getTheCollectionTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.getNameValueString(testObj, true);
+            String boom = paramDescriptionCollection.getNameValueString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected

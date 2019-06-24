@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -20,47 +21,40 @@ public class TestParamDescriptionSingle {
     @Test
     public void isMap_something_false() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Boolean.class, "theBoolean",
-                                                     TestObj::isTheBoolean, IGNORED_FOR_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Boolean>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, IGNORED_FOR_ALL);
         assertFalse(paramDescriptionSingle.isMap());
     }
 
     @Test
     public void isCollection_something_false() {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theInt",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         assertFalse(paramDescriptionSingle.isCollection());
     }
 
     @Test
     public void equals_sameObject_true() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         assertTrue(paramDescriptionSingle.equals(paramDescriptionSingle));
     }
 
     @Test
     public void equals_sameConstructorParameters_true() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
-        assertTrue("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
-        assertTrue("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
-    }
-
-    @Test
-    public void equals_sameConstructorParametersExceptRecursionPreventingToString_true() {
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString);
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         assertTrue("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertTrue("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -68,11 +62,13 @@ public class TestParamDescriptionSingle {
     @Test
     public void equals_sameConstructorParametersExceptNames_false() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj1",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj1",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj2",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj2",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         assertFalse("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertFalse("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -80,11 +76,13 @@ public class TestParamDescriptionSingle {
     @Test
     public void equals_sameConstructorParametersExceptGetter_true() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheOtherString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheOtherString, INCLUDED_IN_ALL);
         assertTrue("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertTrue("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -92,11 +90,13 @@ public class TestParamDescriptionSingle {
     @Test
     public void equals_sameConstructorParametersExceptParameter_false() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theString",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theString",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         assertNotEquals("1, 2", paramDescriptionSingle1, paramDescriptionSingle2);
         assertNotEquals("2, 1", paramDescriptionSingle2, paramDescriptionSingle1);
     }
@@ -104,11 +104,13 @@ public class TestParamDescriptionSingle {
     @Test
     public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, IGNORED_FOR_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, IGNORED_FOR_ALL);
         assertFalse("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertFalse("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -116,8 +118,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void hashCode_runTwice_same() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         int actual = paramDescriptionSingle.hashCode();
         int expected = paramDescriptionSingle.hashCode();
         assertEquals(expected, actual);
@@ -126,82 +129,83 @@ public class TestParamDescriptionSingle {
     @Test
     public void hashCode_sameConstructorParameters_same() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
-        assertEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
-    }
-
-    @Test
-    public void hashCode_sameConstructorParametersExceptRecursionPreventingToString_same() {
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString);
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         assertEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptNames_different() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj1",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj1",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj2",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj2",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptGetter_same() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheOtherString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheOtherString, INCLUDED_IN_ALL);
         assertEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptParameter_different() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theString",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theString",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, IGNORED_FOR_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, IGNORED_FOR_ALL);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
     @Test
     public void toString_stringParam_containsParamDescriptionSingle() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         assertTrue(paramDescriptionSingle1.toString().contains("ParamDescriptionSingle"));
     }
 
     @Test
     public void toString_stringParam_containsParentClass() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("parentClass"));
     }
@@ -209,8 +213,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsParentClassName() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("TestObj"));
     }
@@ -218,8 +223,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsParamClass() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("String"));
     }
@@ -227,8 +233,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsParamName() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("theString"));
     }
@@ -236,8 +243,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsGetter() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("getter"));
     }
@@ -245,8 +253,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsParamMethodRestriction() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("paramMethodRestriction"));
     }
@@ -254,8 +263,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsParamMethodRestrictionValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
     }
@@ -263,8 +273,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_stringParam_containsRecursionPreventingToString() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("recursionPreventingToString"));
     }
@@ -273,8 +284,9 @@ public class TestParamDescriptionSingle {
     public void getParentClass_testObj_returnsCorrectValue() {
         Class<TestObj> expected = TestObj.class;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(expected, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        expected, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         Class<TestObj> actual = paramDescriptionSingle1.getParentClass();
         assertEquals(expected, actual);
     }
@@ -283,19 +295,10 @@ public class TestParamDescriptionSingle {
     public void getParamClass_string_returnsCorrectValue() {
         Class<String> expected = String.class;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, expected, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, expected, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         Class<String> actual = paramDescriptionSingle1.getParamClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getEntryClass_string_returnsCorrectValue() {
-        Class<String> expected = String.class;
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, expected, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
-        Class<String> actual = paramDescriptionSingle1.getEntryClass();
         assertEquals(expected, actual);
     }
 
@@ -303,8 +306,9 @@ public class TestParamDescriptionSingle {
     public void getName_string_returnsCorrectValue() {
         String expected = "myCustomStringNameJustForThisTest";
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, expected,
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, expected,
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String actual = paramDescriptionSingle1.getName();
         assertEquals(expected, actual);
     }
@@ -313,8 +317,9 @@ public class TestParamDescriptionSingle {
     public void getGetter_getTheString_returnsCorrectValue() {
         Function<? super TestObj, String> expected = TestObj::getTheString;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     expected, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        expected, INCLUDED_IN_ALL);
         Function<? super TestObj, String> actual = paramDescriptionSingle1.getGetter();
         assertEquals(expected, actual);
     }
@@ -323,20 +328,11 @@ public class TestParamDescriptionSingle {
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
         ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, expected, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, expected);
         ParamMethodRestriction actual = paramDescriptionSingle1.getParamMethodRestriction();
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getRecursionPreventingToString_toString_returnsCorrectValue() {
-        BiFunction<? super TestObj, Boolean, String> expected = TestObj::toString;
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, IGNORED_FOR_HASHCODE__UNSAFE, expected);
-        BiFunction<? super TestObj, Boolean, String> actual = paramDescriptionSingle1.getRecursionPreventingToString();
-        assertEquals(actual, expected);
     }
 
     @Test
@@ -344,7 +340,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isEqualsIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -355,7 +351,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isEqualsInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -366,7 +362,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isHashCodeIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -377,7 +373,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isHashCodeInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -388,7 +384,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isToStringIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -399,7 +395,7 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr, null);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
             boolean actual = paramDescriptionSingle.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -408,8 +404,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void get_stringValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         String expected = "some string or something";
         testObj.setTheString(expected);
@@ -420,8 +417,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void get_nullStringValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         String expected = null;
         testObj.setTheString(expected);
@@ -432,8 +430,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void get_intValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theInt",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         int expected = 69;
         testObj.setTheInt(expected);
@@ -444,8 +443,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void get_nullObj_blowsUp() {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theInt",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
             int actual = paramDescriptionSingle.get(testObj);
@@ -458,8 +458,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void safeGet_stringValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         String expected = "some string or something";
         testObj.setTheString(expected);
@@ -470,8 +471,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void safeGet_nullStringValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         String expected = null;
         testObj.setTheString(expected);
@@ -482,8 +484,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void safeGet_intValue_matchesObjectValue() {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theInt",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         int expected = 69;
         testObj.setTheInt(expected);
@@ -494,8 +497,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void safeGet_nullObj_returnsNull() {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Integer.class, "theInt",
-                                                     TestObj::getTheInt, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Integer>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_ALL);
         TestObj testObj = null;
         Integer expected = null;
         Integer actual = paramDescriptionSingle.safeGet(testObj);
@@ -505,8 +509,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_nullNull_true() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Boolean.class, "theBoolean",
-                                                     TestObj::isTheBoolean, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Boolean>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = null;
         assertTrue("1, 2", paramDescriptionSingle.paramsAreEqual(testObj1, testObj2));
@@ -516,8 +521,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_nullVsNullParam_false() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = new TestObj();
         testObj2.setTheString(null);
@@ -528,8 +534,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_same_true() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Boolean.class, "theBoolean",
-                                                     TestObj::isTheBoolean, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Boolean>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheBoolean(true);
         assertTrue(paramDescriptionSingle.paramsAreEqual(testObj, testObj));
@@ -538,8 +545,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_differentObjectsSameValue_true() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Boolean.class, "theBoolean",
-                                                     TestObj::isTheBoolean, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Boolean>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         testObj1.setTheBoolean(true);
         TestObj testObj2 = new TestObj();
@@ -550,8 +558,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_differentObjectsDifferentValues_false() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, Boolean.class, "theBoolean",
-                                                     TestObj::isTheBoolean, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, Boolean>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         testObj1.setTheBoolean(true);
         TestObj testObj2 = new TestObj();
@@ -563,8 +572,9 @@ public class TestParamDescriptionSingle {
     @Test
     public void paramsAreEqual_differentObjectsOneNullValue_false() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         testObj1.setTheString("food");
         TestObj testObj2 = new TestObj();
@@ -574,49 +584,26 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_object_returnsExpectedValue() {
+    public void toString_objectNull_returnsExpectedValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
-        String expected = "theValue";
-        TestObj testObj = new TestObj();
-        testObj.setTheString(expected);
-        assertEquals(expected, paramDescriptionSingle.toString(testObj));
-    }
-
-    @Test
-    public void toString_nullObject_blowsUP() {
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionSingle.toString(testObj);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void toString_objectFalse_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString2",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString2",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         String expected = "theValue2";
         TestObj testObj = new TestObj();
         testObj.setTheString(expected);
-        assertEquals(expected, paramDescriptionSingle.toString(testObj, false));
+        assertEquals(expected, paramDescriptionSingle.toString(testObj, null));
     }
 
     @Test
     public void toString_nullObjectFalse_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.toString(testObj, false);
+            String boom = paramDescriptionSingle.toString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -626,22 +613,25 @@ public class TestParamDescriptionSingle {
     @Test
     public void toString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         String expected = "...";
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        assertEquals(expected, paramDescriptionSingle.toString(testObj, true));
+        String actual = paramDescriptionSingle.toString(testObj, null);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void toString_nullObjectTrue_blowsUP() {
+    public void toString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.toString(testObj, true);
+            String boom = paramDescriptionSingle.toString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -649,71 +639,38 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void getNameValueString_object_returnsExpectedValue() {
+    public void getNameValueString_objectNull_returnsExpectedValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        testObj.setTheString("theValue");
-        String expected = "theString='theValue'";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNull_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        testObj.setTheString(null);
-        String expected = "theString=null";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj));
-    }
-
-    @Test
-    public void getNameValueString_nullObject_blowsUP() {
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionSingle.getNameValueString(testObj);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void getNameValueString_objectFalse_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString2",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString2",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheString("theValue2");
         String expected = "theString2='theValue2'";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, false));
+        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
     }
 
     @Test
-    public void getNameValueString_objectWithNullFalse_returnsExpectedValue() {
+    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, String.class, "theString2",
-                                                     TestObj::getTheString, INCLUDED_IN_ALL, null);
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "theString2",
+                                        TestObj::getTheString, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheString(null);
         String expected = "theString2=null";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, false));
+        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
     }
 
     @Test
-    public void getNameValueString_nullObjectFalse_blowsUP() {
+    public void getNameValueString_nullObjectNull_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.getNameValueString(testObj, false);
+            String boom = paramDescriptionSingle.getNameValueString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -723,33 +680,37 @@ public class TestParamDescriptionSingle {
     @Test
     public void getNameValueString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
         String expected = "theTestObj=...";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, true));
+        String actual = paramDescriptionSingle.getNameValueString(testObj, new HashMap<>());
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void getNameValueString_objectWithNullTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void getNameValueString_objectWithNullNull_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(null);
         String expected = "theTestObj=null";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, true));
+        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
     }
 
     @Test
     public void getNameValueString_nullObjectTrue_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<>(TestObj.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionSingle<TestObj, TestObj>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.getNameValueString(testObj, true);
+            String boom = paramDescriptionSingle.getNameValueString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected

@@ -13,59 +13,47 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionMap {
-    private ParamDescriptionMap<TestObj, String, Integer, ?> getParamDescription(String name, ParamMethodRestriction pmr,
-                                                                                 BiFunction<Integer, Boolean, String> recursionPreventingToString) {
+    private ParamDescriptionMap<TestObj, String, Integer, ?> getParamDescription(String name, ParamMethodRestriction pmr) {
         ParamDescriptionMap<TestObj, String, Integer, ?> retval =
-                        new ParamDescriptionMap<>(
+                        new ParamDescriptionMap<TestObj, String, Integer, Map>(
                                         TestObj.class, Map.class, String.class, Integer.class, name,
-                                        TestObj::getTheMapStringInt, pmr, recursionPreventingToString);
+                                        TestObj::getTheMapStringInt, pmr);
         return retval;
     }
 
     @Test
     public void isCollection_something_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         assertFalse(paramDescriptionMap.isCollection());
     }
 
     @Test
     public void isMap_something_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionMap.isMap());
     }
 
     @Test
     public void equals_sameObject_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionMap.equals(paramDescriptionMap));
     }
 
     @Test
     public void equals_sameConstructorParameters_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        assertTrue("1.equals(2)", paramDescriptionMap1.equals(paramDescriptionMap2));
-        assertTrue("2.equals(1)", paramDescriptionMap2.equals(paramDescriptionMap1));
-    }
-
-    @Test
-    public void equals_sameConstructorParametersExceptRecursionPreventingToString_true() {
-        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap1 =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString);
-        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap2 =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theTestObj",
-                                                     TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         assertTrue("1.equals(2)", paramDescriptionMap1.equals(paramDescriptionMap2));
         assertTrue("2.equals(1)", paramDescriptionMap2.equals(paramDescriptionMap1));
     }
@@ -73,9 +61,9 @@ public class TestParamDescriptionMap {
     @Test
     public void equals_sameConstructorParametersExceptNames_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt1", INCLUDED_IN_ALL);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt2", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt2", INCLUDED_IN_ALL);
         assertFalse("1.equals(2)", paramDescriptionMap1.equals(paramDescriptionMap2));
         assertFalse("2.equals(1)", paramDescriptionMap2.equals(paramDescriptionMap1));
     }
@@ -83,9 +71,9 @@ public class TestParamDescriptionMap {
     @Test
     public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt1", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt1", INCLUDED_IN_ALL);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt2", IGNORED_FOR_TOSTRING, null);
+                        getParamDescription("theInt2", IGNORED_FOR_TOSTRING);
         assertFalse("1.equals(2)", paramDescriptionMap1.equals(paramDescriptionMap2));
         assertFalse("2.equals(1)", paramDescriptionMap2.equals(paramDescriptionMap1));
     }
@@ -93,7 +81,7 @@ public class TestParamDescriptionMap {
     @Test
     public void hashCode_runTwice_same() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         int actual = paramDescriptionMap.hashCode();
         int expected = paramDescriptionMap.hashCode();
         assertEquals(expected, actual);
@@ -102,52 +90,41 @@ public class TestParamDescriptionMap {
     @Test
     public void hashCode_sameConstructorParameters_same() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", IGNORED_FOR_TOSTRING, null);
+                        getParamDescription("theInt", IGNORED_FOR_TOSTRING);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt", IGNORED_FOR_TOSTRING, null);
-        assertEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
-    }
-
-    @Test
-    public void hashCode_sameConstructorParametersExceptRecursionPreventingToString_same() {
-        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap1 =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString);
-        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap2 =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, null);
+                        getParamDescription("theInt", IGNORED_FOR_TOSTRING);
         assertEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptNames_different() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt1", IGNORED_FOR_TOSTRING, null);
+                        getParamDescription("theInt1", IGNORED_FOR_TOSTRING);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt2", IGNORED_FOR_TOSTRING, null);
+                        getParamDescription("theInt2", IGNORED_FOR_TOSTRING);
         assertNotEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", IGNORED_FOR_TOSTRING, null);
+                        getParamDescription("theInt", IGNORED_FOR_TOSTRING);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamDescription("theInt", INCLUDED_IN_TOSTRING_ONLY, null);
+                        getParamDescription("theInt", INCLUDED_IN_TOSTRING_ONLY);
         assertNotEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 
     @Test
     public void toString_stringParam_containsParamDescriptionMap() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         assertTrue(paramDescriptionMap1.toString().contains("ParamDescriptionMap"));
     }
 
     @Test
     public void toString_stringParam_containsParentClass() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap1.toString();
         assertTrue(actual, actual.contains("parentClass"));
     }
@@ -155,7 +132,7 @@ public class TestParamDescriptionMap {
     @Test
     public void toString_stringParam_containsParentClassName() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap1.toString();
         assertTrue(actual, actual.contains("TestObj"));
     }
@@ -163,7 +140,7 @@ public class TestParamDescriptionMap {
     @Test
     public void toString_stringParam_containsParamClass() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
         assertTrue(actual, actual.contains("Map"));
     }
@@ -171,7 +148,7 @@ public class TestParamDescriptionMap {
     @Test
     public void toString_stringParam_containsParamName() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
         assertTrue(actual, actual.contains("theInt"));
     }
@@ -179,7 +156,7 @@ public class TestParamDescriptionMap {
     @Test
     public void toString_stringParam_containsParamMethodRestriction() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
         assertTrue(actual, actual.contains("paramMethodRestriction"));
     }
@@ -187,24 +164,16 @@ public class TestParamDescriptionMap {
     @Test
     public void toString_stringParam_containsParamMethodRestrictionValue() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
-    }
-
-    @Test
-    public void toString_stringParam_containsRecursionPreventingToString() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        String actual = paramDescriptionMap.toString();
-        assertTrue(actual, actual.contains("recursionPreventingToString"));
     }
 
     @Test
     public void getParentClass_testObj_returnsCorrectValue() {
         Class<TestObj> expected = TestObj.class;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         Class<TestObj> actual = paramDescriptionMap.getParentClass();
         assertEquals(expected, actual);
     }
@@ -213,7 +182,7 @@ public class TestParamDescriptionMap {
     public void getParamClass_string_returnsCorrectValue() {
         Class<? extends Map> expected = Map.class;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         Class<? extends Map> actual = paramDescriptionMap.getParamClass();
         assertEquals(expected, actual);
     }
@@ -222,8 +191,8 @@ public class TestParamDescriptionMap {
     public void getEntryClass_string_returnsCorrectValue() {
         Class<Integer> expected = Integer.class;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        Class<Integer> actual = paramDescriptionMap.getEntryClass();
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
+        Class<Integer> actual = paramDescriptionMap.getValueClass();
         assertEquals(expected, actual);
     }
 
@@ -231,7 +200,7 @@ public class TestParamDescriptionMap {
     public void getKeyClass_string_returnsCorrectValue() {
         Class<String> expected = String.class;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         Class<String> actual = paramDescriptionMap.getKeyClass();
         assertEquals(expected, actual);
     }
@@ -240,7 +209,7 @@ public class TestParamDescriptionMap {
     public void getName_string_returnsCorrectValue() {
         String expected = "myCustomStringNameJustForThisTest";
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription(expected, INCLUDED_IN_ALL, null);
+                        getParamDescription(expected, INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.getName();
         assertEquals(expected, actual);
     }
@@ -249,19 +218,9 @@ public class TestParamDescriptionMap {
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
         ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", expected, null);
+                        getParamDescription("theInt", expected);
         ParamMethodRestriction actual = paramDescriptionMap.getParamMethodRestriction();
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getRecursionPreventingToString_toString_returnsCorrectValue() {
-        BiFunction<? super TestObj, Boolean, String> expected = TestObj::toString;
-        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL, expected);
-        BiFunction<? super TestObj, Boolean, String> actual = paramDescriptionMap.getRecursionPreventingToString();
-        assertEquals(actual, expected);
     }
 
     @Test
@@ -269,7 +228,7 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsIgnore();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isEqualsIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -280,7 +239,7 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isEqualsInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -291,7 +250,7 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeIgnore();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isHashCodeIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -302,7 +261,7 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isHashCodeInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -313,7 +272,7 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringIgnore();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isToStringIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -324,63 +283,16 @@ public class TestParamDescriptionMap {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamDescription("theInt", pmr, null);
+                            getParamDescription("theInt", pmr);
             boolean actual = paramDescriptionMap.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
     }
 
     @Test
-    public void get_singleEntry_matchesObjectValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> expected = new HashMap<>();
-        expected.put("five", 5);
-        testObj.setTheMapStringInt(expected);
-        Map<String, Integer> actual = paramDescriptionMap.get(testObj);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void get_nullObj_blowsUp() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        try {
-            Map<String, Integer> actual = paramDescriptionMap.get(testObj);
-            fail("IllegalArgumentException should have been thrown calling get(null).");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void safeGet_stringValue_matchesObjectValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> expected = new HashMap<>();
-        expected.put("not five", 69);
-        testObj.setTheMapStringInt(expected);
-        Map<String, Integer> actual = paramDescriptionMap.safeGet(testObj);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void safeGet_nullObj_returnsNull() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        Integer expected = null;
-        Map<String, Integer> actual = paramDescriptionMap.safeGet(testObj);
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void paramsAreEqual_nullNull_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = null;
         assertTrue("1, 2", paramDescriptionMap.paramsAreEqual(testObj1, testObj2));
@@ -390,7 +302,7 @@ public class TestParamDescriptionMap {
     @Test
     public void paramsAreEqual_nullVsNullParam_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj1 = null;
         TestObj testObj2 = new TestObj();
         testObj2.setTheString(null);
@@ -401,7 +313,7 @@ public class TestParamDescriptionMap {
     @Test
     public void paramsAreEqual_same_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Map<String, Integer> map = new HashMap<>();
         map.put("five", 5);
@@ -413,7 +325,7 @@ public class TestParamDescriptionMap {
     @Test
     public void paramsAreEqual_differentObjectsSameValue_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         TestObj testObj2 = new TestObj();
         Map<String, Integer> map1 = new HashMap<>();
@@ -430,7 +342,7 @@ public class TestParamDescriptionMap {
     @Test
     public void paramsAreEqual_differentObjectsDifferentValues_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         TestObj testObj2 = new TestObj();
         Map<String, Integer> map1 = new HashMap<>();
@@ -448,7 +360,7 @@ public class TestParamDescriptionMap {
     @Test
     public void paramsAreEqual_differentObjectsOneNullValue_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj1 = new TestObj();
         TestObj testObj2 = new TestObj();
         Map<String, Integer> map1 = new HashMap<>();
@@ -461,47 +373,23 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_object_returnsExpectedValue() {
+    public void toString_objectNull_returnsExpectedValue() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Map<String, Integer> map = new HashMap<>();
         map.put("ten", 10);
         testObj.setTheMapStringInt(map);
-        assertEquals(map.toString(), paramDescriptionMap.toString(testObj));
-    }
-
-    @Test
-    public void toString_nullObject_blowsUP() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionMap.toString(testObj);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void toString_objectFalse_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> map = new HashMap<>();
-        map.put("ten", 10);
-        testObj.setTheMapStringInt(map);
-        assertEquals(map.toString(), paramDescriptionMap.toString(testObj, false));
+        assertEquals(map.toString(), paramDescriptionMap.toString(testObj, null));
     }
 
     @Test
     public void toString_nullObjectFalse_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.toString(testObj, false);
+            String boom = paramDescriptionMap.toString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -509,25 +397,27 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void toString_objectNull_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionMap<TestObj, String, TestObj, Map>(
+                                        TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
+                                        TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL);
         String expected = "...";
         TestObj testObj = new TestObj();
         Map<String, TestObj> map = new HashMap<>();
         map.put("testObj", testObj);
         testObj.setTheMapStringTestObj(map);
-        assertEquals(expected, paramDescriptionMap.toString(testObj, true));
+        String actual = paramDescriptionMap.toString(testObj, null);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void toString_nullObjectTrue_blowsUP() {
+    public void toString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.toString(testObj, true);
+            String boom = paramDescriptionMap.toString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -535,69 +425,34 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void getNameValueString_object_returnsExpectedValue() {
+    public void getNameValueString_objectNull_returnsExpectedValue() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> map = new HashMap<>();
-        map.put("ten", 10);
-        testObj.setTheMapStringInt(map);
-        String expected = "theMapStringInt='" + map.toString() + "'";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNull_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = new TestObj();
-        testObj.setTheMapStringInt(null);
-        String expected = "theMapStringInt=null";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj));
-    }
-
-    @Test
-    public void getNameValueString_nullObject_blowsUP() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
-        TestObj testObj = null;
-        try {
-            String boom = paramDescriptionMap.getNameValueString(testObj);
-            fail("IllegalArgumentException should have been thrown here.");
-        } catch (IllegalArgumentException iae) {
-            //expected
-        }
-    }
-
-    @Test
-    public void getNameValueString_objectFalse_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Map<String, Integer> map = new HashMap<>();
         map.put("ten", 311);
         testObj.setTheMapStringInt(map);
         String expected = "theMapStringInt='" + map.toString() + "'";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, false));
+        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, null));
     }
 
     @Test
-    public void getNameValueString_objectWithNullFalse_returnsExpectedValue() {
+    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheMapStringInt(null);
         String expected = "theMapStringInt=null";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, false));
+        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, null));
     }
 
     @Test
     public void getNameValueString_nullObjectFalse_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL, null);
+                        getParamDescription("theMapStringInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.getNameValueString(testObj, false);
+            String boom = paramDescriptionMap.getNameValueString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -605,37 +460,46 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void getNameValueString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void getNameValueString_objectSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionMap<TestObj, String, TestObj, Map>(
+                                        TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
+                                        TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         Map<String, TestObj> map = new HashMap<>();
         map.put("whatever", testObj);
         testObj.setTheMapStringTestObj(map);
         String expected = "theMapStringTestObj=...";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, true));
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        seen.put(TestObj.class, new HashSet<>());
+        seen.get(TestObj.class).add(testObj.hashCode());
+        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, seen));
     }
 
     @Test
-    public void getNameValueString_objectWithNullTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void getNameValueString_objectWithNullSeen_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionMap<TestObj, String, TestObj, Map>(
+                                        TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
+                                        TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL);
         TestObj testObj = new TestObj();
         testObj.setTheMapStringTestObj(null);
         String expected = "theMapStringTestObj=null";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, true));
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        seen.put(TestObj.class, new HashSet<>());
+        seen.get(TestObj.class).add(testObj.hashCode());
+        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, seen));
     }
 
     @Test
     public void getNameValueString_nullObjectTrue_blowsUP() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
-                        new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
-                                                  TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL, TestObj::toString);
+                        new ParamDescriptionMap<TestObj, String, TestObj, Map>(
+                                        TestObj.class, Map.class, String.class, TestObj.class, "theMapStringTestObj",
+                                        TestObj::getTheMapStringTestObj, INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.getNameValueString(testObj, true);
+            String boom = paramDescriptionMap.getNameValueString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected

@@ -8,6 +8,7 @@ import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import org.junit.Ignore;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Ignore
@@ -19,7 +20,7 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
     private Collection<String> theCollectionString;
     private Map<String, Integer> theMapStringInt;
     private TestObj theTestObj;
-    private Collection<TestObj> theCollectionTestObj;
+    private List<TestObj> theCollectionTestObj;
     private Map<String, TestObj> theMapStringTestObj;
 
     public static final ParamList<TestObj> paramList =
@@ -30,9 +31,9 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
                              .withParam("theOtherString", TestObj::getTheOtherString, String.class)
                              .withCollection("theCollectionString", TestObj::getTheCollectionString, Collection.class, String.class)
                              .withMap("theMapStringInt", TestObj::getTheMapStringInt, Map.class, String.class, Integer.class)
-                             .withParam("theTestObj", TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString, TestObj.class)
-                             .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString, Collection.class, TestObj.class)
-                             .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj::toString, Map.class, String.class, TestObj.class)
+                             .withParam("theTestObj", TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj.class)
+                             .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, List.class, TestObj.class)
+                             .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, Map.class, String.class, TestObj.class)
                              .andThatsIt();
 
     @Override
@@ -98,11 +99,11 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
         this.theTestObj = theTestObj;
     }
 
-    public Collection<TestObj> getTheCollectionTestObj() {
+    public List<TestObj> getTheCollectionTestObj() {
         return theCollectionTestObj;
     }
 
-    public void setTheCollectionTestObj(Collection<TestObj> theCollectionTestObj) {
+    public void setTheCollectionTestObj(List<TestObj> theCollectionTestObj) {
         this.theCollectionTestObj = theCollectionTestObj;
     }
 
