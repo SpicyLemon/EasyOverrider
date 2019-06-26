@@ -188,10 +188,11 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      */
     public ParamListBuilder<O> usingService(EasyOverriderService easyOverriderService) {
+        getEasyOverriderServiceOrDefault().requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
+        this.easyOverriderService = easyOverriderService;
         if (!paramDescriptionMap.isEmpty()) {
             paramDescriptionMap.values().forEach(e -> e.setService(easyOverriderService));
         }
-        this.easyOverriderService = easyOverriderService;
         return this;
     }
 
