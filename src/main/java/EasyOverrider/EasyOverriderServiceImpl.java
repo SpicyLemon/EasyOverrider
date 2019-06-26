@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +38,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
                                  .withParam("nameValueFormat", EasyOverriderServiceImpl::getNameValueFormat, String.class)
                                  .withParam("parameterValueFormat", EasyOverriderServiceImpl::getParameterValueFormat, String.class)
                                  .withParam("toStringFormat", EasyOverriderServiceImpl::getToStringFormat, String.class)
+                                 .withParam("classNameGetter", EasyOverriderServiceImpl::getClassNameGetter, Function.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -52,6 +54,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setStringForNull(String stringForNull) {
+        requireNonNull(stringForNull, 1, "stringForNull", "setStringForNull");
         this.stringForNull = stringForNull;
     }
 
@@ -62,6 +65,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setStringForRecursionPrevented(String stringForRecursionPrevented) {
+        requireNonNull(stringForRecursionPrevented, 1, "stringForRecursionPrevented", "setStringForRecursionPrevented");
         this.stringForRecursionPrevented = stringForRecursionPrevented;
     }
 
@@ -72,6 +76,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setStringForEmptyParamList(String stringForEmptyParamList) {
+        requireNonNull(stringForEmptyParamList, 1, "stringForEmptyParamList", "setStringForEmptyParamList");
         this.stringForEmptyParamList = stringForEmptyParamList;
     }
 
@@ -82,6 +87,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setParameterDelimiter(String parameterDelimiter) {
+        requireNonNull(parameterDelimiter, 1, "parameterDelimiter", "setParameterDelimiter");
         this.parameterDelimiter = parameterDelimiter;
     }
 
@@ -92,6 +98,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setNameValueFormat(String nameValueFormat) {
+        requireNonNull(nameValueFormat, 1, "nameValueFormat", "setNameValueFormat");
+        try {
+            String.format(nameValueFormat, "name", "value");
+        } catch (IllegalFormatException e) {
+            throw new IllegalArgumentException("The string provided to setNameValueFormat is not a valid format string.", e);
+        }
         this.nameValueFormat = nameValueFormat;
     }
 
@@ -102,6 +114,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setParameterValueFormat(String parameterValueFormat) {
+        requireNonNull(parameterValueFormat, 1, "parameterValueFormat", "setParameterValueFormat");
+        try {
+            String.format(parameterValueFormat, "parameter");
+        } catch (IllegalFormatException e) {
+            throw new IllegalArgumentException("The string provided to setParameterValueFormat is not a valid format string.", e);
+        }
         this.parameterValueFormat = parameterValueFormat;
     }
 
@@ -112,6 +130,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setToStringFormat(String toStringFormat) {
+        requireNonNull(toStringFormat, 1, "toStringFormat", "setToStringFormat");
+        try {
+            String.format(toStringFormat, "class", "hashcode", "paramslist");
+        } catch (IllegalFormatException e) {
+            throw new IllegalArgumentException("The string provided to setToStringFormat is not a valid format string.", e);
+        }
         this.toStringFormat = toStringFormat;
     }
 
@@ -122,6 +146,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     @Override
     public void setClassNameGetter(Function<Class, String> classNameGetter) {
+        requireNonNull(classNameGetter, 1, "classNameGetter", "setClassNameGetter");
         this.classNameGetter = classNameGetter;
     }
 
