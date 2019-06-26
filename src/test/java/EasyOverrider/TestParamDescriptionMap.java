@@ -391,17 +391,6 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_objectNull_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> map = new HashMap<>();
-        map.put("ten", 10);
-        testObj.setTheMapStringInt(map);
-        assertEquals(map.toString(), paramDescriptionMap.paramValueToString(testObj, null));
-    }
-
-    @Test
     public void toString_nullObjectFalse_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
@@ -415,7 +404,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_objectNull_returnsExpectedValueAndPreventsRecursion() {
+    public void toString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
                         getParamMapStringTestObj("theMapStringTestObj", INCLUDED_IN_ALL);
         String expected = "{testObj=EasyOverrider.TestObj@1171024628 [" +
@@ -432,7 +421,7 @@ public class TestParamDescriptionMap {
         Map<String, TestObj> map = new HashMap<>();
         map.put("testObj", testObj);
         testObj.setTheMapStringTestObj(map);
-        String actual = paramDescriptionMap.paramValueToString(testObj, null);
+        String actual = paramDescriptionMap.paramValueToString(testObj, new HashMap<>());
         assertEquals(expected, actual);
     }
 
@@ -447,28 +436,6 @@ public class TestParamDescriptionMap {
         } catch (IllegalArgumentException iae) {
             //expected
         }
-    }
-
-    @Test
-    public void getNameValueString_objectNull_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theMapStringInt", INCLUDED_IN_ALL);
-        TestObj testObj = new TestObj();
-        Map<String, Integer> map = new HashMap<>();
-        map.put("ten", 311);
-        testObj.setTheMapStringInt(map);
-        String expected = "theMapStringInt='" + map.toString() + "'";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, null));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theMapStringInt", INCLUDED_IN_ALL);
-        TestObj testObj = new TestObj();
-        testObj.setTheMapStringInt(null);
-        String expected = "theMapStringInt=null";
-        assertEquals(expected, paramDescriptionMap.getNameValueString(testObj, null));
     }
 
     @Test

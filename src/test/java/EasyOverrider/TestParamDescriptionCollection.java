@@ -499,27 +499,6 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void getNameValueString_objectNull_returnsExpectedValue() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
-        Collection<String> collection = Arrays.asList("420", "69");
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionString(collection);
-        String expected = "theCollectionString='" + collection.toString() + "'";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, null));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
-        TestObj testObj = new TestObj();
-        testObj.setTheCollectionString(null);
-        String expected = "theCollectionString=null";
-        assertEquals(expected, paramDescriptionCollection.getNameValueString(testObj, null));
-    }
-
-    @Test
     public void getNameValueString_nullObjectNull_blowsUP() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);

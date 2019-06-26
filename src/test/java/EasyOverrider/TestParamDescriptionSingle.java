@@ -589,18 +589,6 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_objectNull_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, String>(
-                                        TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
-        String expected = "theValue2";
-        TestObj testObj = new TestObj();
-        testObj.setTheString(expected);
-        assertEquals(expected, paramDescriptionSingle.paramValueToString(testObj, null));
-    }
-
-    @Test
     public void toString_nullObjectFalse_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
@@ -616,7 +604,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_objectTrue_returnsExpectedValueAndPreventsRecursion() {
+    public void toString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
@@ -633,7 +621,7 @@ public class TestParamDescriptionSingle {
                           "theMapStringTestObj=null]";
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String actual = paramDescriptionSingle.paramValueToString(testObj, null);
+        String actual = paramDescriptionSingle.paramValueToString(testObj, new HashMap<>());
         assertEquals(expected, actual);
     }
 
@@ -650,30 +638,6 @@ public class TestParamDescriptionSingle {
         } catch (IllegalArgumentException iae) {
             //expected
         }
-    }
-
-    @Test
-    public void getNameValueString_objectNull_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, String>(
-                                        TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
-        TestObj testObj = new TestObj();
-        testObj.setTheString("theValue2");
-        String expected = "theString2='theValue2'";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
-    }
-
-    @Test
-    public void getNameValueString_objectWithNullNull_returnsExpectedValue() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, String>(
-                                        TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
-        TestObj testObj = new TestObj();
-        testObj.setTheString(null);
-        String expected = "theString2=null";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
     }
 
     @Test
@@ -711,18 +675,6 @@ public class TestParamDescriptionSingle {
                           "theMapStringTestObj=null]'";
         String actual = paramDescriptionSingle.getNameValueString(testObj, new HashMap<>());
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getNameValueString_objectWithNullNull_returnsExpectedValueAndPreventsRecursion() {
-        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, TestObj>(
-                                        TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
-        TestObj testObj = new TestObj();
-        testObj.setTheTestObj(null);
-        String expected = "theTestObj=null";
-        assertEquals(expected, paramDescriptionSingle.getNameValueString(testObj, null));
     }
 
     @Test
