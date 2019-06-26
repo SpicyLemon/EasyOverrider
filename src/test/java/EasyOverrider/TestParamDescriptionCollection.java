@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -21,11 +22,20 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionCollection {
 
+    static EasyOverriderService easyOverriderService = null;
+
+    @Before
+    public void initTestStuff() {
+        if (easyOverriderService == null) {
+            easyOverriderService = new EasyOverriderServiceImpl();
+        }
+    }
+
     private ParamDescriptionCollection<TestObj, String, ?> getParamCollectionString(String name, ParamMethodRestriction pmr) {
         ParamDescriptionCollection<TestObj, String, ?> retval =
                         new ParamDescriptionCollection<>(
                                         TestObj.class, Collection.class, String.class, name,
-                                        TestObj::getTheCollectionString, pmr);
+                                        TestObj::getTheCollectionString, pmr, easyOverriderService);
         return retval;
     }
 
@@ -33,7 +43,7 @@ public class TestParamDescriptionCollection {
         ParamDescriptionCollection<TestObj, TestObj, ?> retval =
                         new ParamDescriptionCollection<>(
                                         TestObj.class, Collection.class, TestObj.class, name,
-                                        TestObj::getTheCollectionTestObj, pmr);
+                                        TestObj::getTheCollectionTestObj, pmr, easyOverriderService);
         return retval;
     }
 
@@ -459,7 +469,7 @@ public class TestParamDescriptionCollection {
         Collection<String> collection = Arrays.asList("one", "two", "ten");
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(collection);
-        assertEquals(collection.toString(), paramDescriptionCollection.toString(testObj, new HashMap<>()));
+        assertEquals(collection.toString(), paramDescriptionCollection.paramValueToString(testObj, new HashMap<>()));
     }
 
     @Test
@@ -468,7 +478,7 @@ public class TestParamDescriptionCollection {
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.toString(testObj, null);
+            String boom = paramDescriptionCollection.paramValueToString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -481,7 +491,7 @@ public class TestParamDescriptionCollection {
                         getParamListTestObj("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionCollection.toString(testObj, new HashMap<>());
+            String boom = paramDescriptionCollection.paramValueToString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected

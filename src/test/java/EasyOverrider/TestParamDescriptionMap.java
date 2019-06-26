@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -19,11 +20,20 @@ import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionMap {
+    static EasyOverriderService easyOverriderService = null;
+
+    @Before
+    public void initTestStuff() {
+        if (easyOverriderService == null) {
+            easyOverriderService = new EasyOverriderServiceImpl();
+        }
+    }
+
     private ParamDescriptionMap<TestObj, String, Integer, ?> getParamMapStringInteger(String name, ParamMethodRestriction pmr) {
         ParamDescriptionMap<TestObj, String, Integer, ?> retval =
                         new ParamDescriptionMap<>(
                                         TestObj.class, Map.class, String.class, Integer.class, name,
-                                        TestObj::getTheMapStringInt, pmr);
+                                        TestObj::getTheMapStringInt, pmr, easyOverriderService);
         return retval;
     }
 
@@ -31,7 +41,7 @@ public class TestParamDescriptionMap {
         ParamDescriptionMap<TestObj, String, TestObj, ?> retval =
                         new ParamDescriptionMap<>(
                                         TestObj.class, Map.class, String.class, TestObj.class, name,
-                                        TestObj::getTheMapStringTestObj, pmr);
+                                        TestObj::getTheMapStringTestObj, pmr, easyOverriderService);
         return retval;
     }
 
@@ -388,7 +398,7 @@ public class TestParamDescriptionMap {
         Map<String, Integer> map = new HashMap<>();
         map.put("ten", 10);
         testObj.setTheMapStringInt(map);
-        assertEquals(map.toString(), paramDescriptionMap.toString(testObj, null));
+        assertEquals(map.toString(), paramDescriptionMap.paramValueToString(testObj, null));
     }
 
     @Test
@@ -397,7 +407,7 @@ public class TestParamDescriptionMap {
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.toString(testObj, null);
+            String boom = paramDescriptionMap.paramValueToString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -422,7 +432,7 @@ public class TestParamDescriptionMap {
         Map<String, TestObj> map = new HashMap<>();
         map.put("testObj", testObj);
         testObj.setTheMapStringTestObj(map);
-        String actual = paramDescriptionMap.toString(testObj, null);
+        String actual = paramDescriptionMap.paramValueToString(testObj, null);
         assertEquals(expected, actual);
     }
 
@@ -432,7 +442,7 @@ public class TestParamDescriptionMap {
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionMap.toString(testObj, new HashMap<>());
+            String boom = paramDescriptionMap.paramValueToString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected

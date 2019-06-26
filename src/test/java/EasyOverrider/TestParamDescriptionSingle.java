@@ -1,7 +1,6 @@
 package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
@@ -11,19 +10,29 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TestParamDescriptionSingle {
+
+    static EasyOverriderService easyOverriderService = null;
+
+    @Before
+    public void initTestStuff() {
+        if (easyOverriderService == null) {
+            easyOverriderService = new EasyOverriderServiceImpl();
+        }
+    }
+
     @Test
     public void isMap_something_false() {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Boolean>(
                                         TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, IGNORED_FOR_ALL);
+                                        TestObj::isTheBoolean, IGNORED_FOR_ALL, easyOverriderService);
         assertFalse(paramDescriptionSingle.isMap());
     }
 
@@ -32,7 +41,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         assertFalse(paramDescriptionSingle.isCollection());
     }
 
@@ -41,7 +50,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         assertTrue(paramDescriptionSingle.equals(paramDescriptionSingle));
     }
 
@@ -50,11 +59,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         assertTrue("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertTrue("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -64,11 +73,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj1",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj2",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         assertFalse("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertFalse("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -78,11 +87,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheOtherString, INCLUDED_IN_ALL);
+                                        TestObj::getTheOtherString, INCLUDED_IN_ALL, easyOverriderService);
         assertTrue("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertTrue("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -92,11 +101,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theString",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         assertNotEquals("1, 2", paramDescriptionSingle1, paramDescriptionSingle2);
         assertNotEquals("2, 1", paramDescriptionSingle2, paramDescriptionSingle1);
     }
@@ -106,11 +115,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, IGNORED_FOR_ALL);
+                                        TestObj::getTheString, IGNORED_FOR_ALL, easyOverriderService);
         assertFalse("1.equals(2)", paramDescriptionSingle1.equals(paramDescriptionSingle2));
         assertFalse("2.equals(1)", paramDescriptionSingle2.equals(paramDescriptionSingle1));
     }
@@ -120,7 +129,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         int actual = paramDescriptionSingle.hashCode();
         int expected = paramDescriptionSingle.hashCode();
         assertEquals(expected, actual);
@@ -131,11 +140,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         assertEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
@@ -144,11 +153,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj1",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj2",
-                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY);
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
@@ -157,11 +166,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheOtherString, INCLUDED_IN_ALL);
+                                        TestObj::getTheOtherString, INCLUDED_IN_ALL, easyOverriderService);
         assertEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
@@ -170,11 +179,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theString",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
@@ -183,11 +192,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle2 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, IGNORED_FOR_ALL);
+                                        TestObj::getTheString, IGNORED_FOR_ALL, easyOverriderService);
         assertNotEquals(paramDescriptionSingle1.hashCode(), paramDescriptionSingle2.hashCode());
     }
 
@@ -196,7 +205,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         assertTrue(paramDescriptionSingle1.toString().contains("ParamDescriptionSingle"));
     }
 
@@ -205,7 +214,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("parentClass"));
     }
@@ -215,7 +224,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("TestObj"));
     }
@@ -225,7 +234,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("String"));
     }
@@ -235,7 +244,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("theString"));
     }
@@ -245,7 +254,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("getter"));
     }
@@ -255,7 +264,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("paramMethodRestriction"));
     }
@@ -265,7 +274,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
     }
@@ -276,7 +285,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         expected, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         Class<TestObj> actual = paramDescriptionSingle1.getParentClass();
         assertEquals(expected, actual);
     }
@@ -287,7 +296,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, expected, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         Class<String> actual = paramDescriptionSingle1.getParamClass();
         assertEquals(expected, actual);
     }
@@ -298,7 +307,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, expected,
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String actual = paramDescriptionSingle1.getName();
         assertEquals(expected, actual);
     }
@@ -309,7 +318,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        expected, INCLUDED_IN_ALL);
+                                        expected, INCLUDED_IN_ALL, easyOverriderService);
         Function<? super TestObj, String> actual = paramDescriptionSingle1.getGetter();
         assertEquals(expected, actual);
     }
@@ -320,7 +329,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, expected);
+                                        TestObj::getTheString, expected, easyOverriderService);
         ParamMethodRestriction actual = paramDescriptionSingle1.getParamMethodRestriction();
         assertEquals(expected, actual);
     }
@@ -330,7 +339,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isEqualsIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -341,7 +351,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isEqualsInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -352,7 +363,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isHashCodeIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -363,7 +375,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isHashCodeInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -374,7 +387,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringIgnore();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isToStringIgnore();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -385,7 +399,8 @@ public class TestParamDescriptionSingle {
         for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
-                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString, pmr);
+                            new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
+                                                                        pmr, easyOverriderService);
             boolean actual = paramDescriptionSingle.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
@@ -396,7 +411,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         String expected = "some string or something";
         testObj.setTheString(expected);
@@ -409,7 +424,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         String expected = null;
         testObj.setTheString(expected);
@@ -422,7 +437,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         int expected = 69;
         testObj.setTheInt(expected);
@@ -435,7 +450,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         try {
             int actual = paramDescriptionSingle.get(testObj);
@@ -450,7 +465,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         String expected = "some string or something";
         testObj.setTheString(expected);
@@ -463,7 +478,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         String expected = null;
         testObj.setTheString(expected);
@@ -476,7 +491,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         int expected = 69;
         testObj.setTheInt(expected);
@@ -489,7 +504,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Integer>(
                                         TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL);
+                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         Integer expected = null;
         Integer actual = paramDescriptionSingle.safeGet(testObj);
@@ -501,7 +516,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Boolean>(
                                         TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj1 = null;
         TestObj testObj2 = null;
         assertTrue("1, 2", paramDescriptionSingle.paramsAreEqual(testObj1, testObj2));
@@ -513,7 +528,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj1 = null;
         TestObj testObj2 = new TestObj();
         testObj2.setTheString(null);
@@ -526,7 +541,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Boolean>(
                                         TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheBoolean(true);
         assertTrue(paramDescriptionSingle.paramsAreEqual(testObj, testObj));
@@ -537,7 +552,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Boolean>(
                                         TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj1 = new TestObj();
         testObj1.setTheBoolean(true);
         TestObj testObj2 = new TestObj();
@@ -550,7 +565,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, Boolean>(
                                         TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, INCLUDED_IN_ALL);
+                                        TestObj::isTheBoolean, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj1 = new TestObj();
         testObj1.setTheBoolean(true);
         TestObj testObj2 = new TestObj();
@@ -564,7 +579,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj1 = new TestObj();
         testObj1.setTheString("food");
         TestObj testObj2 = new TestObj();
@@ -578,11 +593,11 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         String expected = "theValue2";
         TestObj testObj = new TestObj();
         testObj.setTheString(expected);
-        assertEquals(expected, paramDescriptionSingle.toString(testObj, null));
+        assertEquals(expected, paramDescriptionSingle.paramValueToString(testObj, null));
     }
 
     @Test
@@ -590,10 +605,10 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.toString(testObj, null);
+            String boom = paramDescriptionSingle.paramValueToString(testObj, null);
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -605,7 +620,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         String expected = "EasyOverrider.TestObj@1171024628 [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
@@ -618,7 +633,7 @@ public class TestParamDescriptionSingle {
                           "theMapStringTestObj=null]";
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String actual = paramDescriptionSingle.toString(testObj, null);
+        String actual = paramDescriptionSingle.paramValueToString(testObj, null);
         assertEquals(expected, actual);
     }
 
@@ -627,10 +642,10 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         try {
-            String boom = paramDescriptionSingle.toString(testObj, new HashMap<>());
+            String boom = paramDescriptionSingle.paramValueToString(testObj, new HashMap<>());
             fail("IllegalArgumentException should have been thrown here.");
         } catch (IllegalArgumentException iae) {
             //expected
@@ -642,7 +657,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheString("theValue2");
         String expected = "theString2='theValue2'";
@@ -654,7 +669,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString2",
-                                        TestObj::getTheString, INCLUDED_IN_ALL);
+                                        TestObj::getTheString, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheString(null);
         String expected = "theString2=null";
@@ -666,7 +681,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         try {
             String boom = paramDescriptionSingle.getNameValueString(testObj, null);
@@ -681,7 +696,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
         String expected = "theTestObj='EasyOverrider.TestObj@1171024628 [" +
@@ -703,7 +718,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(null);
         String expected = "theTestObj=null";
@@ -715,7 +730,7 @@ public class TestParamDescriptionSingle {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
-                                        TestObj::getTheTestObj, INCLUDED_IN_ALL);
+                                        TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = null;
         try {
             String boom = paramDescriptionSingle.getNameValueString(testObj, null);

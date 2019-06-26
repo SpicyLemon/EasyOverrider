@@ -2,7 +2,6 @@ package EasyOverrider;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -31,10 +30,12 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      * @param name The name of the parameter.
      * @param getter The getter for the parameter.
      * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                                  final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction);
+                                  final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
+                                  final EasyOverriderService easyOverriderService) {
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
 
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return objectToStringPreventingRecursion(paramClass, value, seen);
+        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionSingle(value, seen, paramClass);
     }
 
     /**
@@ -74,7 +75,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * toString method for a ParamDescriptionSingle object.
+     * paramValueToString method for a ParamDescriptionSingle object.
      *
      * @return A string representation of this object.
      */

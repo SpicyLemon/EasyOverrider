@@ -24,7 +24,8 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
     private Map<String, TestObj> theMapStringTestObj;
 
     public static final ParamList<TestObj> paramList =
-                    ParamList.forClass(TestObj.class, ALLOW_UNSAFE)
+                    ParamList.forClass(TestObj.class)
+                             .allowingUnsafeParamMethodRestrictions()
                              .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
                              .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
                              .withParam("theString", TestObj::getTheString, String.class)

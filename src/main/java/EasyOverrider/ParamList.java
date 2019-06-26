@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 /**
  * Describes a list of parameters that describe the parameters in a class.
@@ -26,9 +24,9 @@ import java.util.stream.Collectors;
  * }
  * </pre>
  *
- * The above example assumes you've got a <code>public String toString(final boolean preventingRecursion)</code> method
+ * The above example assumes you've got a <code>public String paramValueToString(final boolean preventingRecursion)</code> method
  * in both Foo and WeirdThing.<br>
- * Now you can set up your equals, hashCode and toString as follows in your classes that have a ParamList.
+ * Now you can set up your equals, hashCode and paramValueToString as follows in your classes that have a ParamList.
  *
  * <pre>
  *
@@ -42,12 +40,12 @@ import java.util.stream.Collectors;
  *     return paramList.hashCode(this);
  * }
  *
- * public String toString() {
- *     return toString(false);
+ * public String paramValueToString() {
+ *     return paramValueToString(false);
  * }
  *
- * public String toString(final boolean preventingRecursion) {
- *     return paramList.toString(this, preventingRecursion);
+ * public String paramValueToString(final boolean preventingRecursion) {
+ *     return paramList.paramValueToString(this, preventingRecursion);
  * }
  * }
  * </pre>
@@ -58,6 +56,7 @@ public class ParamList<O> {
     final private Class<O> parentClass;
     final private Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
     final private List<String> paramOrder;
+    private EasyOverriderService easyOverriderService;
 
     private static ParamList<ParamList> paramList;
 
@@ -74,32 +73,24 @@ public class ParamList<O> {
     }
 
     /**
-     * Constructor for if you've already got a list of ParamDescription objects.<br>
+     * Constructor for a ParamList.<br>
      *
-     * Alternatively (preferably), you can use the static {@link ParamList#forClass(Class)} method
-     * combined with the {@link ParamListBuilder} methods,
+     * This is usually done using a {@link ParamListBuilder}.
+     * Start with the {@link ParamList#forClass(Class)} method,
+     * add in parameters using methods like {@link ParamListBuilder#withParam(String, Function, Class)},
      * and finished off with the {@link ParamListBuilder#andThatsIt()} method to create a new ParamList.
+     *
      * @param parentClass  the class of the object these parameters represent
      * @param paramDescriptionMap  a map of name to ParamDescription objects describing the parameters in the parent object
      * @param paramOrder  the order that the parameters should be in
      * @throws IllegalArgumentException if the sizes of the provided paramOrder list and paramDescriptionMap are different.
      * @throws IllegalArgumentException if an entry exists in the paramOrder that doesn't have a matching key in the paramDescriptionMap.
+     * @throws IllegalArgumentException if any of the provided parameters are null.
      */
-     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap, final List<String> paramOrder) {
-         requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
-         requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
-         requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
-         if (paramOrder.size() != paramDescriptionMap.size()) {
-             throw new IllegalArgumentException("The size of the paramDescriptionMap [" + paramDescriptionMap.size() + "] " +
-                                                "does not equal the size of the paramOrder list [" + paramOrder.size() + "]");
-         }
-         if (!paramOrder.stream().allMatch(paramDescriptionMap::containsKey)) {
-             throw new IllegalArgumentException("Parameter names were found in the order list " +
-                                                "that do not exist in the paramDescriptionMap: " +
-                                                paramOrder.stream()
-                                                          .filter(name -> !paramDescriptionMap.containsKey(name))
-                                                          .collect(Collectors.joining(", ")));
-         }
+     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
+               final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
+         this.easyOverriderService = Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new);
+         this.easyOverriderService.validateParamListConstructorOrThrow(parentClass, paramDescriptionMap, paramOrder, easyOverriderService);
          this.parentClass = parentClass;
          this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
          this.paramOrder = new LinkedList<>(paramOrder);
@@ -138,7 +129,7 @@ public class ParamList<O> {
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getAllParamDescriptions() {
-        return getFilteredParamList((p) -> true);
+        return easyOverriderService.getAllParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -147,7 +138,7 @@ public class ParamList<O> {
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getEqualsParamDescriptions() {
-        return getFilteredParamList(ParamDescription::isEqualsInclude);
+        return easyOverriderService.getEqualsParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -156,29 +147,16 @@ public class ParamList<O> {
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions() {
-        return getFilteredParamList(ParamDescription::isHashCodeInclude);
+        return easyOverriderService.getHashCodeParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
-     * Gets the list of all param descriptions that are to be used in a toString() method.
+     * Gets the list of all param descriptions that are to be used in a paramValueToString() method.
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getToStringParamDescriptions() {
-        return getFilteredParamList(ParamDescription::isToStringInclude);
-    }
-
-    /**
-     * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions.
-     *
-     * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - cannot be null
-     * @return An unmodifialbe list of ParamDescriptions.
-     */
-    private List<ParamDescription<? super O, ?>> getFilteredParamList(final Predicate<ParamDescription<? super O, ?>> filter) {
-        return Collections.unmodifiableList(paramOrder.stream()
-                                                      .map(paramDescriptionMap::get)
-                                                      .filter(filter)
-                                                      .collect(Collectors.toList()));
+        return easyOverriderService.getToStringParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -197,25 +175,7 @@ public class ParamList<O> {
      * @return True if both objects are equal. False otherwise.
      */
     public boolean equals(final Object thisObj, final Object thatObj) {
-        if (thisObj == thatObj) {
-            return true;
-        }
-        if (thisObj == null || thatObj == null) {
-            return false;
-        }
-        boolean thisIsInstance = parentClass.isInstance(thisObj);
-        boolean thatIsInstance = parentClass.isInstance(thatObj);
-        if (!thisIsInstance && !thatIsInstance) {
-            return thisObj.equals(thatObj);
-        }
-        if (!thisIsInstance || !thatIsInstance) {
-            return false;
-        }
-        @SuppressWarnings("unchecked")
-        O thisO = (O)thisObj;
-        @SuppressWarnings("unchecked")
-        O thatO = (O)thatObj;
-        return getEqualsParamDescriptions().stream().allMatch(pd -> pd.paramsAreEqual(thisO, thatO));
+        return easyOverriderService.equals(thisObj, thatObj, parentClass, paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -225,8 +185,7 @@ public class ParamList<O> {
      * @return An integer.
      */
     public int hashCode(final O thisObj) {
-        requireNonNull(thisObj, 1, "thisObj", "hashCode");
-        return Objects.hash(getHashCodeParamDescriptions().stream().map(pd -> pd.get(thisObj)).toArray());
+        return easyOverriderService.hashCode(thisObj, paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -236,7 +195,7 @@ public class ParamList<O> {
      * @return A string.
      */
     public String toString(final O thisObj) {
-        return toString(thisObj, null);
+        return easyOverriderService.toString(thisObj, null, parentClass, paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -247,8 +206,7 @@ public class ParamList<O> {
      * @return A string representation of the given object.
      */
     public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        requireNonNull(thisObj, 1, "thisObj", "toString");
-        return parentClass.getCanonicalName() + "@" + thisObj.hashCode() + " [" + getParamsString(thisObj, seen) + "]";
+        return easyOverriderService.toString(thisObj, seen, parentClass, paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -259,15 +217,7 @@ public class ParamList<O> {
      * @return A String of comma-space delimited name/value Strings.
      */
     public String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        requireNonNull(thisObj, 1, "thisObj", "getParamsString");
-        List<ParamDescription<? super O, ?>> toStringParamDescriptions = getToStringParamDescriptions();
-        if (toStringParamDescriptions.isEmpty()) {
-            return " ";
-        }
-        Map<Class, Set<Integer>> mySeen = Optional.ofNullable(seen).orElseGet(HashMap::new);
-        return toStringParamDescriptions.stream()
-                                        .map(pd -> pd.getNameValueString(thisObj, mySeen))
-                                        .collect(Collectors.joining(", "));
+        return easyOverriderService.getParamsString(thisObj, seen, paramOrder, paramDescriptionMap);
     }
 
     /**
@@ -280,24 +230,7 @@ public class ParamList<O> {
      * @return A new {@link ParamListBuilder}.
      */
     public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass) {
-        return new ParamListBuilder<C>(newParentClass, this);
-    }
-
-    /**
-     * Creates a new ParamListBuilder based on this ParamList using the provided ParamMethodRestrictionRestriction.<br>
-     *
-     * This allows you to extend an already created ParamList when, for example, extending a class, and adding new parameters.
-     * Previously created entries in the ParamList are grandfathered in with respectes to the ParamMethodRestrictionRestriction.
-     * As such, you only need to set it when your new parameters require (somehow) an <code>__UNSAFE</code> {@link ParamMethodRestriction}.
-     *
-     * @param newParentClass  the new class that extends the class that this ParamList is for
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
-     * @param <C>  the type of the new class
-     * @return A new {@link ParamListBuilder}.
-     */
-    public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass,
-                                                        ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return new ParamListBuilder<C>(newParentClass, this, paramMethodRestrictionRestriction);
+        return new ParamListBuilder<C>(newParentClass, this, easyOverriderService);
     }
 
     /**
@@ -322,7 +255,7 @@ public class ParamList<O> {
     }
 
     /**
-     * toString method for a ParamList object.
+     * paramValueToString method for a ParamList object.
      *
      * @return A String.
      */
@@ -340,37 +273,5 @@ public class ParamList<O> {
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
         return ParamListBuilder.forClass(parentClass);
-    }
-
-    /**
-     * Kicks off a ParamListBuilder for the provided class, with the provided ParamMethodRestrictionRestriction.
-     *
-     * @param parentClass  the class you're building the parameter list for
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
-     * @param <C>  the class you're building the parameter list for
-     * @return A {@link ParamListBuilder} for the specified class.
-     */
-    public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass,
-                                                   ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return ParamListBuilder.forClass(parentClass, paramMethodRestrictionRestriction);
-    }
-
-    /**
-     * Makes sure an object is not null.<br>
-     *
-     * If it is, an IllegalArgumentException is thrown with a message using the rest of the parameters.
-     * The message looks something like <code>"Argument 1 (paramName) provided to methodName cannot be null."</code>
-     *
-     * @param obj  the object that needs to not be null
-     * @param position  the position of the argument in the call to the method in question
-     * @param paramName  the name of the parameter in the method call
-     * @param methodName  the name of the method
-     * @throws IllegalArgumentException if obj == null.
-     */
-    protected static void requireNonNull(final Object obj, final int position, final String paramName, final String methodName) {
-        if (obj == null) {
-            throw new IllegalArgumentException("Argument " + String.valueOf(position) + " (" + paramName + ") " +
-                                               "provided to " + methodName + " cannot be null.");
-        }
     }
 }

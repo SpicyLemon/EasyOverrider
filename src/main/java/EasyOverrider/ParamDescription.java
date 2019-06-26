@@ -12,21 +12,21 @@ import java.util.function.Function;
  * <li><code>String name</code> - This is the name of the parameter (usually the variable name).
  * <li><code>Function getter</code> - This is a reference to the getter for the parameter.
  * <li>{@link ParamMethodRestriction}<code> paramMethodRestriction</code> - This is used to describe what method calls this parameter should be included in.
- * <li><code>boolean preventToStringRecursion</code> - A flag for whether or not this field might cause recursion in a <code>toString()</code> function.
- * If set to true on a field that is included in the <code>toString()</code>, then a <code>toString(boolean)</code> method is looked for in the parameter's class.
- * The idea is that the parameter's <code>toString(boolean)</code> method will then restrict the list of parameters used in the toString
+ * <li><code>boolean preventToStringRecursion</code> - A flag for whether or not this field might cause recursion in a <code>paramValueToString()</code> function.
+ * If set to true on a field that is included in the <code>paramValueToString()</code>, then a <code>paramValueToString(boolean)</code> method is looked for in the parameter's class.
+ * The idea is that the parameter's <code>paramValueToString(boolean)</code> method will then restrict the list of parameters used in the paramValueToString
  * so as to not call back to the object being described in here.
  * </ul>
- * Example toString methods to help prevent toString recursion:
+ * Example paramValueToString methods to help prevent paramValueToString recursion:
  * <pre>
  * {@code
  *
- * public string toString() {
- *     return toString(false);
+ * public string paramValueToString() {
+ *     return paramValueToString(false);
  * }
  *
- * public String toString(final boolean preventingRecursion) {
- *     return paramList.toString(this, preventingRecursion);
+ * public String paramValueToString(final boolean preventingRecursion) {
+ *     return paramList.paramValueToString(this, preventingRecursion);
  * }
  * }
  * </pre>
@@ -72,6 +72,13 @@ public interface ParamDescription<O, P> {
     ParamMethodRestriction getParamMethodRestriction();
 
     /**
+     * Sets the service to use for injectable functionality
+     *
+     * @param easyOverriderService  the service you want to use
+     */
+    void setService(final EasyOverriderService easyOverriderService);
+
+    /**
      * Gets whether or not this is a collection parameter.
      *
      * @return Whether or not this is a collection.
@@ -114,14 +121,14 @@ public interface ParamDescription<O, P> {
     boolean isHashCodeInclude();
 
     /**
-     * Get whether or not this should be ignored for the toString() method.
+     * Get whether or not this should be ignored for the paramValueToString() method.
      *
      * @return True if it's to be ignored. False if it's to be included.
      */
     boolean isToStringIgnore();
 
     /**
-     * Get whether or not this should be included for the toString() method.
+     * Get whether or not this should be included for the paramValueToString() method.
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
@@ -165,18 +172,18 @@ public interface ParamDescription<O, P> {
      * If there's a recursionPreventingToString available, and we ARE preventing recursion, "..." is returned.
      *
      * @param obj  the object to turn into a string - cannot be null
-     * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
+     * @param seen  the map of classes to sets of hashCodes of objects that have already been paramValueToString-ified.
      *
-     * @return A String. Either "null", "..." or the results of toString on the parameter in the provided object.
+     * @return A String. Either "null", "..." or the results of paramValueToString on the parameter in the provided object.
      * @throws IllegalArgumentException if the object is null.
      */
-    String toString(final O obj, final Map<Class, Set<Integer>> seen);
+    String paramValueToString(final O obj, final Map<Class, Set<Integer>> seen);
 
     /**
      * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.
      *
      * @param obj  the object to get the name/value string of
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been paramValueToString-ified.
      * @return A string in the form of "name='value'" or "name=null" or "name=...".
      * @throws IllegalArgumentException if the object is null.
      */

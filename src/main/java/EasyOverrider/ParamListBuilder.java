@@ -1,6 +1,7 @@
 package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
 import java.util.Collection;
@@ -33,29 +34,46 @@ import java.util.function.Function;
  */
 public class ParamListBuilder<O> {
 
-    private final Class<O> parentClass;
-    private final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
-    private final List<String> paramOrder;
-    private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
+    final Class<O> parentClass;
+    ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
+    final List<String> paramOrder;
+    final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
+    EasyOverriderService easyOverriderService;
+    EasyOverriderService defaultEasyOverriderService;
 
-    private static ParamList<ParamListBuilder> paramList;
+    static ParamList<ParamListBuilder> paramList;
 
+    /**
+     * Get the ParamList for a ParamListBuilder object.<br>
+     *
+     * This will create the ParamList if it's not already set.
+     * The reason it does this rather than just having it statically set when the variable is created,
+     * is that it uses itself. The class code needs to be loaded before it can be used.
+     * @return The ParamList for a ParamListBuilder.
+     */
     static ParamList<ParamListBuilder> getParamList() {
         if (paramList == null) {
+            //This will create the ParamList if it's not already set.
+            //The reason it does this rather than just having it statically set when the variable is created,
+            // is that it uses itself. The class code needs to be loaded before it can be used.
             paramList = ParamList.forClass(ParamListBuilder.class)
                                  .withParam("parentClass", ParamListBuilder::getParentClass, Class.class)
-                                 .withParam("paramMethodRestrictionRestriction", ParamListBuilder::getParamMethodRestrictionRestriction,
+                                 .withParam("paramMethodRestrictionRestriction",
+                                            ParamListBuilder::getParamMethodRestrictionRestriction,
                                             ParamMethodRestrictionRestriction.class)
                                  .withCollection("paramOrder", ParamListBuilder::getParamOrder, List.class, String.class)
                                  .withMap("paramDescriptionMap", ParamListBuilder::getParamDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
+                                 .withParam("easyOverriderService",
+                                            ParamListBuilder::getEasyOverriderServiceOrDefault,
+                                            EasyOverriderService.class)
                                  .andThatsIt();
         }
         return paramList;
     }
 
     /**
-     * Private constructor to do all the meat of the setting of stuff, without any validation.<br>
+     * Private constructor to do all the meat of the setting of stuff without any validation.<br>
      *
      * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.
      *
@@ -64,8 +82,10 @@ public class ParamListBuilder<O> {
      * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use -
      *                                          if null, {@link ParamMethodRestrictionRestriction#SAFE_ONLY} is used
      */
-    private ParamListBuilder(final ParamList<? super O> superParamList, final Class<O> parentClass,
+    private ParamListBuilder(final EasyOverriderService easyOverriderService,
+                             final ParamList<? super O> superParamList, final Class<O> parentClass,
                              final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+        this.easyOverriderService = easyOverriderService;
         this.parentClass = parentClass;
         this.paramMethodRestrictionRestriction = Optional.ofNullable(paramMethodRestrictionRestriction).orElse(SAFE_ONLY);
         this.paramOrder = Optional.ofNullable(superParamList)
@@ -76,6 +96,7 @@ public class ParamListBuilder<O> {
                                            .map(ParamList::getParamDescriptionMap)
                                            .map(HashMap<String, ParamDescription<? super O, ?>>::new)
                                            .orElseGet(HashMap::new);
+        defaultEasyOverriderService = new EasyOverriderServiceImpl();
     }
 
     /**
@@ -83,65 +104,32 @@ public class ParamListBuilder<O> {
      *
      * Usually this is done using {@link ParamList#forClass(Class)}
      * so that you don't have to import ParamListBuilder.
-     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}.
      *
      * @param parentClass  the class of the object being described - cannot be null
      * @see ParamList#forClass(Class)
      */
     ParamListBuilder(final Class<O> parentClass) {
-        this(null, parentClass, null);
-        ParamList.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
-    }
-
-    /**
-     * Default constructor to start.<br>
-     *
-     * Usually this is done using {@link ParamList#forClass(Class, ParamMethodRestrictionRestriction)}
-     * so that you don't have to import ParamListBuilder.
-     * It allows you to specify the {@link ParamMethodRestrictionRestriction}.
-     *
-     * @param parentClass  the class of the object being described - cannot be null
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use - cannot be null
-     * @see ParamList#forClass(Class)
-     */
-    ParamListBuilder(final Class<O> parentClass, final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        this(null, parentClass, paramMethodRestrictionRestriction);
-        ParamList.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
-        ParamList.requireNonNull(paramMethodRestrictionRestriction, 2, "paramMethodRestrictionRestriction", "ParamListBuilder Constructor");
+        this(null, null, parentClass, null);
+        getEasyOverriderServiceOrDefault().requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
     }
 
     /**
      * Constructor for basing a new list off of an existing one.<br>
      *
-     * This is usually done using {@link ParamList#extendedBy(Class)}.
-     * It uses a default {@link ParamMethodRestrictionRestriction} of {@link ParamMethodRestrictionRestriction#SAFE_ONLY}.
+     * This is usually done using {@link ParamList#extendedBy(Class)}
+     * so that you don't have to import ParamListBuilder.
      *
      * @param parentClass  the class of the object being described - cannot be null
      * @param superParamList  the existing {@link ParamList] available to the parentClass - cannot be null
      * @see ParamList#extendedBy(Class)
      */
-    ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList) {
-        this(superParamList, parentClass, null);
-        ParamList.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
-        ParamList.requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
-    }
-
-    /**
-     * Constructor for basing a new list off of an existing one.<br>
-     *
-     * This is usually done using {@link ParamList#extendedBy(Class, ParamMethodRestrictionRestriction)}.
-     *
-     * @param parentClass  the class of the object being described - cannot be null
-     * @param superParamList  the existing ParamList available to the parentClass - cannot be null
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use - cannot be null
-     * @see ParamList#extendedBy(Class, ParamMethodRestrictionRestriction)
-     */
     ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList,
-                     final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        this(superParamList, parentClass, paramMethodRestrictionRestriction);
-        ParamList.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
-        ParamList.requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
-        ParamList.requireNonNull(paramMethodRestrictionRestriction, 3, "paramMethodRestrictionRestriction", "ParamListBuilder Constructor");
+                     final EasyOverriderService easyOverriderService) {
+        this(easyOverriderService, superParamList, parentClass, null);
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        eos.requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
+        eos.requireNonNull(easyOverriderService, 3, "easyOverriderService", "ParamListBuilder Constructor");
     }
 
     /**
@@ -181,6 +169,78 @@ public class ParamListBuilder<O> {
     }
 
     /**
+     * A getter for the EasyOverriderService that ensures it isn't null.<br>
+     *
+     * If <code>this.easyOverriderService</code> is null, a <code>new EasyOverriderServiceImpl()</code> is created, set and returned.
+     * Otherwise the current value for it is returned.
+     * @return the EasyOverriderService to use.
+     */
+    private EasyOverriderService getEasyOverriderServiceOrDefault() {
+        return Optional.ofNullable(easyOverriderService).orElse(defaultEasyOverriderService);
+    }
+
+    /**
+     * Set the EasyOverriderService to use.<br>
+     *
+     * If there are already <code>ParamDescription</code> objects in this builder, they are all updated to use this new service.
+     *
+     * @param easyOverriderService  the EasyOverriderService to use for the parameters and param list.
+     * @return The current ParamListBuilder.
+     */
+    public ParamListBuilder<O> usingService(EasyOverriderService easyOverriderService) {
+        if (this.easyOverriderService != null && !paramDescriptionMap.isEmpty()) {
+            paramDescriptionMap.values().forEach(e -> e.setService(easyOverriderService));
+        }
+        this.easyOverriderService = easyOverriderService;
+        return this;
+    }
+
+    /**
+     * Set the ParamMethodRestrictionRestriction value for the builder.<br>
+     *
+     * By default, a ParamListBuilder uses <code>ParamMethodRestrictionRestriction.SAFE_ONLY</code>.<br>
+     *
+     * @param paramMethodRestrictionRestriction  the ParamMethodRestrictionRestriction to use
+     * @see #allowingOnlySafeParamMethodRestrictions()
+     * @see #allowingUnsafeParamMethodRestrictions()
+     * @return The current ParamListBuilder.
+     */
+    public ParamListBuilder<O> havingRestriction(ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+        this.paramMethodRestrictionRestriction = paramMethodRestrictionRestriction;
+        return this;
+    }
+
+    /**
+     * Allow unsafe ParamMethodRestriction values.<br>
+     *
+     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.ALLOW_UNSAFE)</code>.
+     *
+     * @return The current ParamListBuilder.
+     * @see #havingRestriction(ParamMethodRestrictionRestriction)
+     * @see #allowingOnlySafeParamMethodRestrictions()
+     */
+    public ParamListBuilder<O> allowingUnsafeParamMethodRestrictions() {
+        this.paramMethodRestrictionRestriction = ALLOW_UNSAFE;
+        return this;
+    }
+
+    /**
+     * Only allow safe ParamMethodRestriction values.<br>
+     *
+     * By default, a ParamListBuilder is in this state.<br>
+     *
+     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.SAFE_ONLY)</code>.
+     *
+     * @return The current ParamListBuilder.
+     * @see #havingRestriction(ParamMethodRestrictionRestriction)
+     * @see #allowingOnlySafeParamMethodRestrictions()
+     */
+    public ParamListBuilder<O> allowingOnlySafeParamMethodRestrictions() {
+        this.paramMethodRestrictionRestriction = SAFE_ONLY;
+        return this;
+    }
+
+    /**
      * Add a new ParamDescription to the list with the provided parameters.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -199,9 +259,10 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
                                              final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withParam");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withParam");
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withParam");
+        eos.requireNonNull(getter, 2, "getter", "withParam");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withParam");
         addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -211,13 +272,15 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withParam(String, Function, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
@@ -228,10 +291,11 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
                                              final ParamMethodRestriction paramMethodRestriction,
                                              final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withParam");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withParam");
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withParam");
+        eos.requireNonNull(getter, 2, "getter", "withParam");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withParam");
         addSingleParam(paramClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -245,11 +309,13 @@ public class ParamListBuilder<O> {
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
                                     final ParamMethodRestriction paramMethodRestriction) {
-        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction));
+        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
+                                                  getEasyOverriderServiceOrDefault()));
     }
 
     /**
@@ -273,11 +339,12 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
-                                                                                     final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withCollection");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withCollection");
-        ParamList.requireNonNull(entryClass, 4, "entryClass", "withCollection");
+                                                                        final Class<P> paramClass, final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withCollection");
+        eos.requireNonNull(getter, 2, "getter", "withCollection");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withCollection");
+        eos.requireNonNull(entryClass, 4, "entryClass", "withCollection");
         addCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -287,7 +354,8 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the collection - cannot be null
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
@@ -295,7 +363,8 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withCollection(String, Function, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
@@ -305,13 +374,14 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                                     final ParamMethodRestriction paramMethodRestriction,
-                                                                                     final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withCollection");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withCollection");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withCollection");
+                                                                        final ParamMethodRestriction paramMethodRestriction,
+                                                                        final Class<P> paramClass, final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withCollection");
+        eos.requireNonNull(getter, 2, "getter", "withCollection");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withCollection");
+        eos.requireNonNull(entryClass, 5, "entryClass", "withCollection");
         addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -327,12 +397,14 @@ public class ParamListBuilder<O> {
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                            final String name, final Function<? super O, P> getter,
                                                                            final ParamMethodRestriction paramMethodRestriction) {
-        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
+        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction,
+                                                         getEasyOverriderServiceOrDefault()));
     }
 
     /**
@@ -358,13 +430,14 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                                                       final Class<P> paramClass, final Class<K> keyClass,
-                                                                                       final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withMap");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withMap");
-        ParamList.requireNonNull(keyClass, 4, "keyClass", "withMap");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withMap");
+                                                             final Class<P> paramClass, final Class<K> keyClass,
+                                                             final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withMap");
+        eos.requireNonNull(getter, 2, "getter", "withMap");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withMap");
+        eos.requireNonNull(keyClass, 4, "keyClass", "withMap");
+        eos.requireNonNull(entryClass, 5, "entryClass", "withMap");
         addMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -374,7 +447,8 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the map's keys - cannot be null
      * @param entryClass  the class of the entries in the collection - cannot be null
@@ -384,7 +458,8 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
@@ -394,15 +469,16 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                                                       final ParamMethodRestriction paramMethodRestriction,
-                                                                                       final Class<P> paramClass, final Class<K> keyClass,
-                                                                                       final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withMap");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withMap");
-        ParamList.requireNonNull(keyClass, 5, "keyClass", "withMap");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withMap");
+                                                             final ParamMethodRestriction paramMethodRestriction,
+                                                             final Class<P> paramClass, final Class<K> keyClass,
+                                                             final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withMap");
+        eos.requireNonNull(getter, 2, "getter", "withMap");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withMap");
+        eos.requireNonNull(keyClass, 5, "keyClass", "withMap");
+        eos.requireNonNull(entryClass, 6, "entryClass", "withMap");
         addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -420,20 +496,23 @@ public class ParamListBuilder<O> {
      * @param <K>  the type of the keys in the map
      * @param <E>  the type of the entries in the map
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
                                                                              final Class<E> entryClass, final String name,
                                                                              final Function<? super O, P> getter,
                                                                              final ParamMethodRestriction paramMethodRestriction) {
-        addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter, paramMethodRestriction));
+        addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter,
+                                                     paramMethodRestriction, getEasyOverriderServiceOrDefault()));
     }
 
     /**
      * Adds a ParamDescription to what we've got.
      *
      * @param paramDescription  the ParamDescription to add
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
     private void addParam(final ParamDescription<? super O, ?> paramDescription) {
@@ -469,9 +548,10 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
                                                     final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedParam");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
         updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -484,13 +564,15 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
@@ -501,10 +583,11 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
                                                     final ParamMethodRestriction paramMethodRestriction,
                                                     final Class<P> paramClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedParam");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedParam");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
         updateSingleParam(paramClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -518,11 +601,13 @@ public class ParamListBuilder<O> {
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
                                        final ParamMethodRestriction paramMethodRestriction) {
-        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction));
+        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
+                                                     getEasyOverriderServiceOrDefault()));
     }
 
     /**
@@ -547,12 +632,14 @@ public class ParamListBuilder<O> {
      * @see #withCollection(String, Function, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                                            final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedCollection");
-        ParamList.requireNonNull(entryClass, 4, "entryClass", "withUpdatedCollection");
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(
+                    final String name, final Function<? super O, P> getter,
+                    final Class<P> paramClass, final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedCollection");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedCollection");
+        eos.requireNonNull(entryClass, 4, "entryClass", "withUpdatedCollection");
         updateCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -565,7 +652,8 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the parameter - cannot be null
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
@@ -573,7 +661,8 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
@@ -581,14 +670,16 @@ public class ParamListBuilder<O> {
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(final String name, final Function<? super O, P> getter,
-                                                                                            final ParamMethodRestriction paramMethodRestriction,
-                                                                                            final Class<P> paramClass, final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
+    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(
+                    final String name, final Function<? super O, P> getter,
+                    final ParamMethodRestriction paramMethodRestriction,
+                    final Class<P> paramClass, final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedCollection");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
+        eos.requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
         updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -604,13 +695,15 @@ public class ParamListBuilder<O> {
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
     private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                               final String name, final Function<? super O, P> getter,
                                                                               final ParamMethodRestriction paramMethodRestriction) {
-        updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
+        updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction,
+                                                            getEasyOverriderServiceOrDefault()));
     }
 
     /**
@@ -637,14 +730,16 @@ public class ParamListBuilder<O> {
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                                               final Class<P> paramClass, final Class<K> keyClass,
-                                                                                               final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        ParamList.requireNonNull(paramClass, 3, "paramClass", "withUpdatedMap");
-        ParamList.requireNonNull(keyClass, 4, "keyClass", "withUpdatedMap");
-        ParamList.requireNonNull(entryClass, 5, "entryClass", "withUpdatedMap");
+    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(
+                    final String name, final Function<? super O, P> getter,
+                    final Class<P> paramClass, final Class<K> keyClass,
+                    final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedMap");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedMap");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedMap");
+        eos.requireNonNull(keyClass, 4, "keyClass", "withUpdatedMap");
+        eos.requireNonNull(entryClass, 5, "entryClass", "withUpdatedMap");
         updateMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -657,7 +752,8 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the keys in the parameter - cannot be null
      * @param entryClass  the class of the entries in the parameter - cannot be null
@@ -667,7 +763,8 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
@@ -675,16 +772,18 @@ public class ParamListBuilder<O> {
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(final String name, final Function<? super O, P> getter,
-                                                                                               final ParamMethodRestriction paramMethodRestriction,
-                                                                                               final Class<P> paramClass, final Class<K> keyClass,
-                                                                                               final Class<E> entryClass) {
-        ParamList.requireNonNull(name, 1, "name", "withUpdatedMap");
-        ParamList.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        ParamList.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
-        ParamList.requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
-        ParamList.requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
-        ParamList.requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
+    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(
+                    final String name, final Function<? super O, P> getter,
+                    final ParamMethodRestriction paramMethodRestriction,
+                    final Class<P> paramClass, final Class<K> keyClass,
+                    final Class<E> entryClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedMap");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedMap");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
+        eos.requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
+        eos.requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
         updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -702,13 +801,16 @@ public class ParamListBuilder<O> {
      * @param <K>  the type of the keys in the parameter
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     @SuppressWarnings("unchecked")
-    private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
-                                                                                final String name, final Function<? super O, P> getter,
-                                                                                final ParamMethodRestriction paramMethodRestriction) {
-        updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter, paramMethodRestriction));
+    private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(
+                    final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
+                    final String name, final Function<? super O, P> getter,
+                    final ParamMethodRestriction paramMethodRestriction) {
+        updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter,
+                                                        paramMethodRestriction, getEasyOverriderServiceOrDefault()));
     }
 
     /**
@@ -716,7 +818,8 @@ public class ParamListBuilder<O> {
      *
      * @param paramDescription  the ParamDescription to use
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
         enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
@@ -732,13 +835,16 @@ public class ParamListBuilder<O> {
      * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.
      *
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} to check
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow the provided {@link ParamMethodRestriction}.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
      */
     private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction) {
         if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
-                                               "is not allowed while building a ParamList for a " + parentClass.getCanonicalName() + " " +
-                                               "with a ParamMethodRestrictionRestriction of [" + paramMethodRestrictionRestriction.name() + "].");
+                                               "is not allowed while building a ParamList for a " +
+                                               parentClass.getCanonicalName() + " " +
+                                               "with a ParamMethodRestrictionRestriction of " +
+                                               "[" + paramMethodRestrictionRestriction.name() + "].");
         }
     }
 
@@ -758,7 +864,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      */
     public ParamListBuilder<O> withoutParam(final String name) {
-        ParamList.requireNonNull(name, 1, "name", "withoutParam");
+        getEasyOverriderServiceOrDefault().requireNonNull(name, 1, "name", "withoutParam");
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be removed while trying to " +
                                                "build the ParamList for a " + parentClass.getCanonicalName());
@@ -774,7 +880,7 @@ public class ParamListBuilder<O> {
      * @return a ParamList object.
      */
     public ParamList<O> andThatsIt() {
-        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder);
+        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder, getEasyOverriderServiceOrDefault());
     }
 
     /**
@@ -786,19 +892,6 @@ public class ParamListBuilder<O> {
      */
     public static <C> ParamListBuilder<C> forClass(Class<C> parentClass) {
         return new ParamListBuilder<C>(parentClass);
-    }
-
-    /**
-     * Kicks off a ParamListBuilder for the provided class, with the provided ParamMethodRestrictionRestriction.
-     *
-     * @param parentClass  the class you're building the parameter list for
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use
-     * @param <C>  the class you're building the parameter list for
-     * @return A {@link ParamListBuilder} for the specified class.
-     */
-    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass,
-                                                   ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        return new ParamListBuilder<C>(parentClass, paramMethodRestrictionRestriction);
     }
 
     /**
@@ -823,7 +916,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * toString method for a ParamListBuilder.
+     * paramValueToString method for a ParamListBuilder.
      *
      * @return A String.
      */

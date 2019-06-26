@@ -22,42 +22,42 @@ package EasyOverrider;
  */
 public enum ParamMethodRestriction {
     /**
-     * Indicates a parameter that should not be included in any of the equals(), hashCode(), or toString() methods.
+     * Indicates a parameter that should not be included in any of the equals(), hashCode(), or paramValueToString() methods.
      */
     IGNORED_FOR_ALL(true, true, true),
 
     /**
-     * Indicates a parameter that should be included in the toString() method, but not in the equals() or hashCode() methods.
+     * Indicates a parameter that should be included in the paramValueToString() method, but not in the equals() or hashCode() methods.
      */
     INCLUDED_IN_TOSTRING_ONLY(true, true, false),
 
     /**
-     * Indicates a parameter that should be included in the hashCode() method, but not in the equals() or toString() methods.
+     * Indicates a parameter that should be included in the hashCode() method, but not in the equals() or paramValueToString() methods.
      */
     INCLUDED_IN_HASHCODE_ONLY__UNSAFE(true, false, true),
 
     /**
-     * Indicates a parameter that should be included in the equals() method, but not in the hashCode() or toString() methods.
+     * Indicates a parameter that should be included in the equals() method, but not in the hashCode() or paramValueToString() methods.
      */
     INCLUDED_IN_EQUALS_ONLY__UNSAFE(false, true, true),
 
     /**
-     * Indicates a parameter that should be included in the equals() and hashCode() methods, but not in the toString() method.
+     * Indicates a parameter that should be included in the equals() and hashCode() methods, but not in the paramValueToString() method.
      */
     IGNORED_FOR_TOSTRING(false, false, true),
 
     /**
-     * Indicates a parameter that should be included in the equals() and toString() methods, but not in the hashCode() method.
+     * Indicates a parameter that should be included in the equals() and paramValueToString() methods, but not in the hashCode() method.
      */
     IGNORED_FOR_HASHCODE__UNSAFE(false, true, false),
 
     /**
-     * Indicates a parameter that should be included in the toString() and hashCode() methods, but not in the equals() method.
+     * Indicates a parameter that should be included in the paramValueToString() and hashCode() methods, but not in the equals() method.
      */
     IGNORED_FOR_EQUALS__UNSAFE(true, false, false),
 
     /**
-     * Indicates a parameter that should be included in all of the equals(), hashCode(), and toString() methods.
+     * Indicates a parameter that should be included in all of the equals(), hashCode(), and paramValueToString() methods.
      */
     INCLUDED_IN_ALL(false, false, false);
 
@@ -112,7 +112,7 @@ public enum ParamMethodRestriction {
     }
 
     /**
-     * Whether or not the parameter associated with this should be included in the toString() method.
+     * Whether or not the parameter associated with this should be included in the paramValueToString() method.
      *
      * @return True if it should be ignored. False if it should be included.
      * @see #isToStringInclude()
@@ -122,7 +122,7 @@ public enum ParamMethodRestriction {
     }
 
     /**
-     * Whether or not the parameter associated with this should be included in the toString() method.
+     * Whether or not the parameter associated with this should be included in the paramValueToString() method.
      *
      * @return True if it should be included. False if it should be ignored.
      * @see #isToStringIgnore()
@@ -141,7 +141,7 @@ public enum ParamMethodRestriction {
         return this.name() + "[" +
                "equals():" + flagToString(equalsIgnore) + ", " +
                "hashCode():" + flagToString(hashCodeIgnore) + ", " +
-               "toString():" + flagToString(toStringIgnore) +
+               "paramValueToString():" + flagToString(toStringIgnore) +
                "]";
     }
 

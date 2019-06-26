@@ -1,12 +1,9 @@
 package EasyOverrider;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Describes a standard {@link Collection} parameter in an object.
@@ -43,8 +40,9 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
-                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction);
+                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
+                                      final EasyOverriderService easyOverriderService) {
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
         this.entryClass = entryClass;
     }
 
@@ -64,10 +62,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
 
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return value.stream()
-                    .map(e -> objectToStringPreventingRecursion(entryClass, e, seen))
-                    .collect(Collectors.toList())
-                    .toString();
+        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionCollection(value, seen, entryClass);
     }
 
     /**
@@ -92,7 +87,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * toString method for a ParamDescriptionCollection object.
+     * paramValueToString method for a ParamDescriptionCollection object.
      *
      * @return A string representation of this object.
      */

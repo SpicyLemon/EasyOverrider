@@ -7,8 +7,8 @@ import java.util.Set;
  * An abstract class that extends EasyOverrider and implements RecursionPreventingToString.<br>
  *
  * The {@link EasyOverrider} abstract class provides the equals and hashCode override methods.
- * This abstract class provides an override method for <code>toString()</code> that calls <code>this.toString(false)</code>.
- * It also implements the <code>toString(boolean)</code> method required by {@link RecursionPreventingToString}
+ * This abstract class provides an override method for <code>paramValueToString()</code> that calls <code>this.paramValueToString(false)</code>.
+ * It also implements the <code>paramValueToString(boolean)</code> method required by {@link RecursionPreventingToString}
  * utilizing the extending class' {@link ParamList}.<br>
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
@@ -32,7 +32,7 @@ import java.util.Set;
  *                         ParamList.forClass(Foo.class)
  *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
  *                                  .withParam("name", Foo::getName, String.class)
- *                                  .withCollection("foos", Foo::getFoos, Foo::toString, List.class, Foo.class)
+ *                                  .withCollection("foos", Foo::getFoos, Foo::paramValueToString, List.class, Foo.class)
  *                                  .andThatsIt();
  *
  *     &#64;Override
@@ -76,7 +76,7 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
     }
 
     /**
-     * An EasyOverrider version of toString() that prevents recursion.
+     * An EasyOverrider version of paramValueToString() that prevents recursion.
      *
      * @return The string representation of this object as defined by the {@link ParamList}.
      */
@@ -86,15 +86,15 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
     }
 
     /**
-     * An EasyOverrider version of toString(boolean) that prevents recrsion.<br>
+     * An EasyOverrider version of paramValueToString(boolean) that prevents recrsion.<br>
      *
-     * Basically, if the provided flag is false, then toString behaves mostly normally.
+     * Basically, if the provided flag is false, then paramValueToString behaves mostly normally.
      * That is, it will include all the values of this object.
-     * However, when it gets the string values of those objects, and they have a similar toString(boolean), that method is called
-     * providing a true flag.  If the provided flag is true, then for parameters that have a toString(boolean) function,
-     * a value of "..." is used instead of calling its toString method.
+     * However, when it gets the string values of those objects, and they have a similar paramValueToString(boolean), that method is called
+     * providing a true flag.  If the provided flag is true, then for parameters that have a paramValueToString(boolean) function,
+     * a value of "..." is used instead of calling its paramValueToString method.
      *
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been paramValueToString-ified.
      * @return The string representation of this object as defined by the {@link ParamList}.
      * @see ParamList#toString(Object, Map)
      */

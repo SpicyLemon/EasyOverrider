@@ -1,7 +1,7 @@
 package EasyOverrider;
 
 /**
- * An abstract class that overrides the equals, hashCode and toString methods using a ParamList.<br>
+ * An abstract class that overrides the equals, hashCode and paramValueToString methods using a ParamList.<br>
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
  *
@@ -118,7 +118,7 @@ public abstract class EasyOverrider<B> {
     }
 
     /**
-     * An EasyOverrider version of toString().
+     * An EasyOverrider version of paramValueToString().
      *
      * @return The string representation of this object as defined by the {@link ParamList}.
      */

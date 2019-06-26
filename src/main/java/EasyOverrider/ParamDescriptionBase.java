@@ -2,11 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -29,25 +25,32 @@ import java.util.function.Function;
  * @param <P>  the type of the parameter in question
  */
 public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, P> {
-    private static final String stringNull = "null";
-    private static final String recursionPrevented = "...";
 
     final Class<O> parentClass;
     final Class<P> paramClass;
     final String name;
     final Function<? super O, P> getter;
     final ParamMethodRestriction paramMethodRestriction;
+    EasyOverriderService easyOverriderService;
 
     private static ParamList<ParamDescriptionBase> paramList;
 
     static ParamList<ParamDescriptionBase> getBaseParamList() {
         if (paramList == null) {
+            //This will create the ParamList if it's not already set.
+            //The reason it does this rather than just having it statically set when the variable is created,
+            // is that it uses itself. The class code needs to be loaded before it can be used.
             paramList = ParamList.forClass(ParamDescriptionBase.class)
                                      .withParam("parentClass", ParamDescriptionBase::getParentClass, Class.class)
                                      .withParam("paramClass", ParamDescriptionBase::getParamClass, Class.class)
                                      .withParam("name", ParamDescriptionBase::getName, String.class)
                                      .withParam("getter", ParamDescriptionBase::getGetter, INCLUDED_IN_TOSTRING_ONLY, Function.class)
-                                     .withParam("paramMethodRestriction", ParamDescriptionBase::getParamMethodRestriction, ParamMethodRestriction.class)
+                                     .withParam("paramMethodRestriction",
+                                                ParamDescriptionBase::getParamMethodRestriction,
+                                                ParamMethodRestriction.class)
+                                     .withParam("easyOverriderService",
+                                                ParamDescriptionBase::getOrMakeEasyOverriderService,
+                                                EasyOverriderService.class)
                                      .andThatsIt();
         }
         return paramList;
@@ -61,14 +64,17 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces
      */
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                         final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+                         final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
+                         final EasyOverriderService easyOverriderService) {
         this.parentClass = parentClass;
         this.paramClass = paramClass;
         this.name = name;
         this.getter = getter;
         this.paramMethodRestriction = paramMethodRestriction;
+        this.easyOverriderService = easyOverriderService;
     }
 
     @Override
@@ -92,8 +98,20 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     @Override
+    public void setService(final EasyOverriderService easyOverriderService) {
+        this.easyOverriderService = easyOverriderService;
+    }
+
+    @Override
     public ParamMethodRestriction getParamMethodRestriction() {
         return paramMethodRestriction;
+    }
+
+    EasyOverriderService getOrMakeEasyOverriderService() {
+        if (easyOverriderService == null) {
+            easyOverriderService = new EasyOverriderServiceImpl();
+        }
+        return easyOverriderService;
     }
 
     @Override
@@ -128,41 +146,22 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
 
     @Override
     public P get(final O obj) {
-        if (obj == null) {
-            throw new IllegalArgumentException("Cannot get the " + name + " parameter from a null object.");
-        }
-        return getter.apply(obj);
+        return getOrMakeEasyOverriderService().get(obj, getter, name);
     }
 
     @Override
     public P safeGet(final O obj) {
-        if (obj == null) {
-            return null;
-        }
-        return getter.apply(obj);
+        return getOrMakeEasyOverriderService().safeGet(obj, getter);
     }
 
     @Override
     public boolean paramsAreEqual(final O thisO, final O thatO) {
-        if (thisO == thatO) {
-            return true;
-        }
-        if (thisO == null || thatO == null) {
-            return false;
-        }
-        P thisP = get(thisO);
-        P thatP = get(thatO);
-        return thisP == thatP || Objects.equals(thisP, thatP);
+        return getOrMakeEasyOverriderService().paramsAreEqual(thisO, thatO, getter, name);
     }
 
     @Override
-    public String toString(final O obj, final Map<Class, Set<Integer>> seen) {
-        ParamList.requireNonNull(obj, 1, "obj", "toString");
-        P value = getter.apply(obj);
-        if (value == null) {
-            return stringNull;
-        }
-        return valueToStringPreventingRecursion(value, Optional.ofNullable(seen).orElseGet(HashMap::new));
+    public String paramValueToString(final O obj, final Map<Class, Set<Integer>> seen) {
+        return getOrMakeEasyOverriderService().paramValueToString(obj, getter, seen, (p, s) -> valueToStringPreventingRecursion(p, s));
     }
 
     /**
@@ -186,12 +185,12 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      *                     .stream()
      *                     .collect(Collectors.toMap(e -> objectToStringPreventingRecursion(keyClass, e.getKey(), seen),
      *                                               e -> objectToStringPreventingRecursion(valueClass, e.getValue(), seen)))
-     *                     .toString();
+     *                     .paramValueToString();
      * }
      * }
      * </pre>
      * @param value  the value to convert to a String
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been paramValueToString-ified.
      * @return A string.
      */
     abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
@@ -200,42 +199,26 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * Converts an object to a string in such a way that recursion is prevented.<br>
      *
      * If the object is null, "null" is returned.<br>
-     * If the object does not implement the {@link RecursionPreventingToString} interface, the standard toString() method is called.<br>
+     * If the object does not implement the {@link RecursionPreventingToString} interface, the standard paramValueToString() method is called.<br>
      * If the object DOES implement the {@link RecursionPreventingToString} interface then we get the objects hashcode and check it
      * against the set of objects seen for the provided class.  If the hashCode is in the set, then "..." is returned.
      * If the hashCode is NOT in the list, it is added to the list, and then the object's
      * {@link RecursionPreventingToString#toString(Map)} method is called and returned.
      *
      * @param clazz  the class of the object that we're toStringing
-     * @param object  the object to toString
+     * @param obj  the object to paramValueToString
      * @param seen  the map of classes to sets of Integers containing all the hashCodes of objects already converted to a String
      * @param <C>  the type of the object that's being converted to a String
      * @return a string representation of the object
      */
-    static <C> String objectToStringPreventingRecursion(final Class<C> clazz, final C object, final Map<Class, Set<Integer>> seen) {
-        if (object == null) {
-            return stringNull;
-        }
-        if (object instanceof RecursionPreventingToString) {
-            int entryHashCode = object.hashCode();
-            Map<Class, Set<Integer>> mySeen = Optional.ofNullable(seen).orElseGet(HashMap::new);
-            if (!mySeen.containsKey(clazz)) {
-                mySeen.put(clazz, new HashSet<>());
-            }
-            if (mySeen.get(clazz).contains(entryHashCode)) {
-                return recursionPrevented;
-            }
-            mySeen.get(clazz).add(entryHashCode);
-            return ((RecursionPreventingToString)object).toString(mySeen);
-        }
-        return object.toString();
+    <C> String objectToStringPreventingRecursion(final Class<C> clazz, final C obj, final Map<Class, Set<Integer>> seen) {
+        return getOrMakeEasyOverriderService().objectToStringPreventingRecursion(clazz, obj, seen);
     }
 
     @Override
     public String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen) {
-        ParamList.requireNonNull(obj, 1, "obj", "getNameValuePair");
-        String value = toString(obj, Optional.ofNullable(seen).orElseGet(HashMap::new));
-        return name + "=" + (value.equals(stringNull) || value.equals(recursionPrevented) ? value : "'" + value + "'");
+        return getOrMakeEasyOverriderService().getNameValueString(obj, name, getter, seen,
+                                                                  (p, s) -> valueToStringPreventingRecursion(p, s));
     }
 
     /**
@@ -260,7 +243,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * toString method for a ParamDescriptionBase abstract object.
+     * paramValueToString method for a ParamDescriptionBase abstract object.
      *
      * @return A string representation of this object.
      */

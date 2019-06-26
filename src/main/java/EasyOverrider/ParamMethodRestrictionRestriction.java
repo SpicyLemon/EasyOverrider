@@ -12,6 +12,7 @@ import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This enum dictates which {@link ParamMethodRestriction} values are available for use.<br>
@@ -75,6 +76,10 @@ public enum ParamMethodRestrictionRestriction {
      */
     @Override
     public String toString() {
-        return this.name();
+        return this.name() +
+               "[" + allowedParamMethodRestrictions.stream()
+                                                   .map(ParamMethodRestriction::name)
+                                                   .sorted()
+                                                   .collect(Collectors.joining(", ")) + "]";
     }
 }

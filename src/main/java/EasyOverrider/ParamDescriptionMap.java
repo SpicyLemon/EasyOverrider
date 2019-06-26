@@ -2,9 +2,7 @@ package EasyOverrider;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Describes a standard {@link Map} parameter in an object.
@@ -45,8 +43,9 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      */
     public ParamDescriptionMap(final Class<O> parentClass, final Class<P> paramClass,
                                final Class<K> keyClass, final Class<V> valueClass, final String name,
-                               final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction);
+                               final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
+                               final EasyOverriderService easyOverriderService) {
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
         this.keyClass = keyClass;
         this.valueClass = valueClass;
     }
@@ -71,14 +70,8 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
 
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return value.entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(e -> objectToStringPreventingRecursion(keyClass, e.getKey(), seen),
-                                              e -> objectToStringPreventingRecursion(valueClass, e.getValue(), seen)))
-                    .toString();
+        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionMap(value, seen, keyClass, valueClass);
     }
-
-
 
     /**
      * equals method for a ParamDescriptionMap object.
@@ -102,7 +95,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * toString method for a ParamDescriptionMap object.
+     * paramValueToString method for a ParamDescriptionMap object.
      *
      * @return A string representation of this object.
      */
