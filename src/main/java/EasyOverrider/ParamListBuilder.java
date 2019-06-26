@@ -188,7 +188,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      */
     public ParamListBuilder<O> usingService(EasyOverriderService easyOverriderService) {
-        if (this.easyOverriderService != null && !paramDescriptionMap.isEmpty()) {
+        if (!paramDescriptionMap.isEmpty()) {
             paramDescriptionMap.values().forEach(e -> e.setService(easyOverriderService));
         }
         this.easyOverriderService = easyOverriderService;
@@ -516,7 +516,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
     private void addParam(final ParamDescription<? super O, ?> paramDescription) {
-        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
+        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction(), paramDescription.getName());
         String name = paramDescription.getName();
         if (paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("A parameter named '" + name + "' already exists while trying to " +
@@ -822,7 +822,7 @@ public class ParamListBuilder<O> {
      *                                  the provided {@link ParamMethodRestriction}.
      */
     private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
-        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction());
+        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction(), paramDescription.getName());
         String name = paramDescription.getName();
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be updated while trying to " +
@@ -838,9 +838,10 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      */
-    private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction) {
+    private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction, String name) {
         if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
+                                               "on the " + name + " parameter " +
                                                "is not allowed while building a ParamList for a " +
                                                parentClass.getCanonicalName() + " " +
                                                "with a ParamMethodRestrictionRestriction of " +
