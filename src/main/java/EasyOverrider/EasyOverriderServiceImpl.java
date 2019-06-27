@@ -194,21 +194,21 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     @Override
-    public <O> String objectToStringPreventingRecursion(Class<O> parentClass, O obj, Map<Class, Set<Integer>> seen) {
-        requireNonNull(parentClass, 1, "parentClass", "objectToStringPreventingRecursion");
+    public <O> String objectToStringPreventingRecursion(Class<O> objClass, O obj, Map<Class, Set<Integer>> seen) {
+        requireNonNull(objClass, 1, "parentClass", "objectToStringPreventingRecursion");
         requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
         if (obj == null) {
             return stringForNull;
         }
         if (obj instanceof RecursionPreventingToString) {
             int entryHashCode = obj.hashCode();
-            if (!seen.containsKey(parentClass)) {
-                seen.put(parentClass, new HashSet<>());
+            if (!seen.containsKey(objClass)) {
+                seen.put(objClass, new HashSet<>());
             }
-            if (seen.get(parentClass).contains(entryHashCode)) {
+            if (seen.get(objClass).contains(entryHashCode)) {
                 return stringForRecursionPrevented;
             }
-            seen.get(parentClass).add(entryHashCode);
+            seen.get(objClass).add(entryHashCode);
             return ((RecursionPreventingToString)obj).toString(seen);
         }
         return obj.toString();
