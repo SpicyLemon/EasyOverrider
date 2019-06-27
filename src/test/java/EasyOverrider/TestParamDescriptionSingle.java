@@ -28,24 +28,6 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void isMap_something_false() {
-        ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, Boolean>(
-                                        TestObj.class, Boolean.class, "theBoolean",
-                                        TestObj::isTheBoolean, IGNORED_FOR_ALL, easyOverriderService);
-        assertFalse(paramDescriptionSingle.isMap());
-    }
-
-    @Test
-    public void isCollection_something_false() {
-        ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
-                        new ParamDescriptionSingle<TestObj, Integer>(
-                                        TestObj.class, Integer.class, "theInt",
-                                        TestObj::getTheInt, INCLUDED_IN_ALL, easyOverriderService);
-        assertFalse(paramDescriptionSingle.isCollection());
-    }
-
-    @Test
     public void equals_sameObject_true() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(

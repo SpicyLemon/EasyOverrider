@@ -46,20 +46,6 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void isCollection_something_false() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        assertFalse(paramDescriptionMap.isCollection());
-    }
-
-    @Test
-    public void isMap_something_true() {
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        assertTrue(paramDescriptionMap.isMap());
-    }
-
-    @Test
     public void equals_sameObject_true() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);

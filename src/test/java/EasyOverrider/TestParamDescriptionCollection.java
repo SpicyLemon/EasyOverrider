@@ -48,20 +48,6 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void isCollection_something_true() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
-        assertTrue(paramDescriptionCollection.isCollection());
-    }
-
-    @Test
-    public void isMap_something_false() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
-        assertFalse(paramDescriptionCollection.isMap());
-    }
-
-    @Test
     public void equals_sameObject_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
