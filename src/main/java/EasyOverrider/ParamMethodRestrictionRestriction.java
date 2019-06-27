@@ -22,8 +22,9 @@ import java.util.stream.Collectors;
  * the <code>__UNSAFE</code> values, you can use {@link #ALLOW_UNSAFE}.
  */
 public enum ParamMethodRestrictionRestriction {
+
     /**
-     * This is the default. It only allows safe, normal {@link ParamMethodRestriction} values:
+     * This is the default. It only allows safe, {@link ParamMethodRestriction} values:
      * <ul>
      * <li>{@link ParamMethodRestriction#IGNORED_FOR_ALL}</li>
      * <li>{@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}</li>
@@ -35,9 +36,11 @@ public enum ParamMethodRestrictionRestriction {
     SAFE_ONLY(EnumSet.of(IGNORED_FOR_ALL, INCLUDED_IN_TOSTRING_ONLY, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL)),
 
     /**
-     * This allows all the {@link ParamMethodRestriction} values to be available, including the <code>__UNSAFE</code> ones. <br>
+     * This allows all the {@link ParamMethodRestriction} values to be available including the <code>__UNSAFE</code> ones.<br>
      *
-     * <B>It is not recommended that you use this, ever.</B> If you do, there should be a very good and well-thought-out reason for it.<br>
+     * <B>It is recommended that you do not use this, ever.</B> If you do, there should be a very good and well-thought-out reason for it.
+     * That reason should probably also be included in a comment so that others know why the decision was made.<br>
+     *
      * What you probably want is {@link #SAFE_ONLY}.
      */
     ALLOW_UNSAFE(EnumSet.of(IGNORED_FOR_ALL, INCLUDED_IN_TOSTRING_ONLY, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL,
@@ -80,6 +83,6 @@ public enum ParamMethodRestrictionRestriction {
                "[" + allowedParamMethodRestrictions.stream()
                                                    .map(ParamMethodRestriction::name)
                                                    .sorted()
-                                                   .collect(Collectors.joining(", ")) + "]";
+                                                   .collect(Collectors.joining(",")) + "]";
     }
 }

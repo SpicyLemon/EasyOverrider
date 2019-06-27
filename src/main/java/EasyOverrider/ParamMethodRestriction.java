@@ -18,9 +18,10 @@ package EasyOverrider;
  * The rule is that if <code>objA.equals(objB)</code> then <code>objA.hashCode()</code> must equal <code>objB.hashCode()</code>.
  * By including a parameter in equals but not hashCode, there's a very good chance of breaking that part of the contract.
  * By including a parameter in hashCode but not equals, you run the risk of things not working right when they rely on the hashCode.
- * For example, a hashSet might falsely identify to different entries as the same.
+ * For example, a hashSet might falsely identify two different entries as the same.
  */
 public enum ParamMethodRestriction {
+
     /**
      * Indicates a parameter that should not be included in any of the equals(), hashCode(), or toString() methods.
      */
