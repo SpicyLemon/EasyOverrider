@@ -22,115 +22,100 @@ import java.util.function.Function;
 public interface ParamDescription<O, P> {
 
     /**
-     * Gets the class of the parent object that this parameter is part of.
+     * Gets the class of the parent object that this parameter is part of.<br>
      *
-     * @return A Class
+     * @return A Class of the parent object.
      */
     Class<O> getParentClass();
 
     /**
-     * Gets the class of the parameter that this is describing.
+     * Gets the class of the parameter that this is describing.<br>
      *
-     * @return A Class
+     * @return A Class of the parameter.
      */
     Class<P> getParamClass();
 
     /**
-     * Gets the name of the parameter.
+     * Gets the name of the parameter.<br>
      *
      * @return The param name String as provided in the constructor.
      */
     String getName();
 
     /**
-     * Gets the getter for the parameter.
+     * Gets the getter for the parameter.<br>
      *
      * @return The getter Function as provided in the constructor.
      */
     Function<? super O, P> getGetter();
 
     /**
-     * Gets the ParamMethodRestriction for this parameter.
+     * Gets the ParamMethodRestriction for this parameter.<br>
      *
-     * @return a {@link ParamMethodRestriction} value.
+     * @return The {@link ParamMethodRestriction} value for this parameter.
      */
     ParamMethodRestriction getParamMethodRestriction();
 
     /**
-     * Sets the service to use for injectable functionality
+     * Sets the service to use for injectable functionality.<br>
      *
      * @param easyOverriderService  the service you want to use
      */
     void setService(final EasyOverriderService easyOverriderService);
 
     /**
-     * Gets whether or not this is a collection parameter.
-     *
-     * @return Whether or not this is a collection.
-     */
-    boolean isCollection();
-
-    /**
-     * Gets whether or not this is a map parameter.
-     *
-     * @return Whether or not this is a map.
-     */
-    boolean isMap();
-
-    /**
-     * Get whether or not this should be ignored for the equals() method.
+     * Get whether or not this should be ignored for the equals() method.<br>
      *
      * @return True if it's to be ignored. False if it's to be included.
      */
     boolean isEqualsIgnore();
 
     /**
-     * Get whether or not this should be included for the equals() method.
+     * Get whether or not this should be included for the equals() method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
     boolean isEqualsInclude();
 
     /**
-     * Get whether or not this should be ignored for the the hashCode() method.
+     * Get whether or not this should be ignored for the the hashCode() method.<br>
      *
      * @return True if it's to be ignored. False if it's to be included.
      */
     boolean isHashCodeIgnore();
 
     /**
-     * Get whether or not this should be included for the the hashCode() method.
+     * Get whether or not this should be included for the the hashCode() method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
     boolean isHashCodeInclude();
 
     /**
-     * Get whether or not this should be ignored for the toString() method.
+     * Get whether or not this should be ignored for the toString() method.<br>
      *
      * @return True if it's to be ignored. False if it's to be included.
      */
     boolean isToStringIgnore();
 
     /**
-     * Get whether or not this should be included for the toString() method.
+     * Get whether or not this should be included for the toString() method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
     boolean isToStringInclude();
 
     /**
-     * Runs the getter on the provided object.
+     * Runs the getter on the provided object.<br>
      *
-     * @param obj  the object you want to get the parameter from - cannot be null
+     * @param obj  the object you want to get the parameter from
      * @return The result of the getter when given the provided object.
-     * @throws IllegalArgumentException if the provided obj is null.
      * @see #safeGet(Object)
      */
     P get(final O obj);
 
     /**
-     * Runs the getter on the provided object. If the provided obj is null, null is returned.
+     * Runs the getter on the provided object. If the provided obj is null, null is returned.<br>
      *
      * @param obj  the object you want to get the parameter from
      * @return The result of the getter when given the provided object.
@@ -139,38 +124,29 @@ public interface ParamDescription<O, P> {
     P safeGet(final O obj);
 
     /**
-     * Tests whether or not this param is equal in the two objects.
+     * Tests whether or not this param is equal in the two objects.<br>
      *
      * @param thisO  the main object we're checking on
      * @param thatO  the other object we're checking on
-     * @return True if the paremeter desribed in here is the same in both objects.
+     * @return True if the parameter described in here is the same in both objects.
      */
     boolean paramsAreEqual(final O thisO, final O thatO);
 
     /**
      * Get the String of this parameter from the provided object. <br>
      *
-     * If the parameter is null, "null" is returned.<br>
-     *
-     * If there's a recursionPreventingToString available, and we're not preventing recursion, the recursionPreventingToString
-     * is called using a true preventingRecursion flag.
-     * If there's a recursionPreventingToString available, and we ARE preventing recursion, "..." is returned.
-     *
-     * @param obj  the object to turn into a string - cannot be null
+     * @param obj  the object to turn into a string
      * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
-     *
-     * @return A String. Either "null", "..." or the results of toString on the parameter in the provided object.
-     * @throws IllegalArgumentException if the object is null.
+     * @return A String.
      */
     String paramValueToString(final O obj, final Map<Class, Set<Integer>> seen);
 
     /**
-     * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.
+     * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.<br>
      *
      * @param obj  the object to get the name/value string of
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
-     * @return A string in the form of "name='value'" or "name=null" or "name=...".
-     * @throws IllegalArgumentException if the object is null.
+     * @return A String
      */
     String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen);
 }

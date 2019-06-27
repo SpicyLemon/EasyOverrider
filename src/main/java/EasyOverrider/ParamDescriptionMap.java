@@ -1,11 +1,12 @@
 package EasyOverrider;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Describes a standard {@link Map} parameter in an object.
+ * Describes a standard Map parameter in an object.
  *
  * @param <O>  the type of the object
  * @param <P>  the type of the parameter
@@ -40,37 +41,49 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
      */
     public ParamDescriptionMap(final Class<O> parentClass, final Class<P> paramClass,
                                final Class<K> keyClass, final Class<V> valueClass, final String name,
                                final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                                final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, Arrays.asList(1, 2, 5, 6, 7, 8));
         this.keyClass = keyClass;
         this.valueClass = valueClass;
+        easyOverriderService.requireNonNull(keyClass, 3, "keyClass", "ParamDescriptionMap constructor");
+        easyOverriderService.requireNonNull(valueClass, 4, "valueClass", "ParamDescriptionMap constructor");
     }
 
+    /**
+     * Gets the class of the keys in this map parameter.
+     *
+     * @return  the class of the keys in this map parameter
+     */
     public Class<K> getKeyClass() {
         return keyClass;
     }
 
+    /**
+     * Gets the class of the values in this map parameter.
+     *
+     * @return  the class of the values in this map parameter
+     */
     public Class<V> getValueClass() {
         return valueClass;
     }
 
-    @Override
-    public boolean isCollection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMap() {
-        return true;
-    }
-
+    /**
+     * {@inheritDoc}
+     *
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionMap(Map, Map, Class, Class)} method.
+     *
+     * @param value  {@inheritDoc}
+     * @param seen  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionMap(value, seen, keyClass, valueClass);
+        return easyOverriderService.valueToStringPreventingRecursionMap(value, seen, keyClass, valueClass);
     }
 
     /**

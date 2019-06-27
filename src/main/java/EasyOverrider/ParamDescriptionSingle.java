@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -24,33 +25,36 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * Standard constructor for a parameter.
+     * Standard constructor for a generic parameter.
+     *
      * @param parentClass The class of the object containing the parameter.
      * @param paramClass The class of the parameter.
      * @param name The name of the parameter.
      * @param getter The getter for the parameter.
      * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
-     * @param easyOverriderService  the easyOverriderService to use for the key pieces
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
+     * @throws IllegalArgumentException If any parameter is null.
+     * @see ParamDescriptionCollection
+     * @see ParamDescriptionMap
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
                                   final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                                   final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, Arrays.asList(1, 2, 3, 4, 5, 6));
     }
 
-    @Override
-    public boolean isCollection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     *
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionSingle(Object, Map, Class)} method.
+     *
+     * @param value  {@inheritDoc}
+     * @param seen  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionSingle(value, seen, paramClass);
+        return easyOverriderService.valueToStringPreventingRecursionSingle(value, seen, paramClass);
     }
 
     /**

@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -37,32 +38,38 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
                                       final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                                       final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService);
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, Arrays.asList(1, 2, 4, 5, 6, 7));
         this.entryClass = entryClass;
+        easyOverriderService.requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
     }
 
+    /**
+     * Gets the class of the entries in this collection parameter.
+     *
+     * @return  the class of the entries in this collection parameter
+     */
     public Class<E> getEntryClass() {
         return entryClass;
     }
 
-    @Override
-    public boolean isCollection() {
-        return true;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     *
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionCollection(Collection, Map, Class)} method.
+     *
+     * @param value  {@inheritDoc}
+     * @param seen  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return getOrMakeEasyOverriderService().valueToStringPreventingRecursionCollection(value, seen, entryClass);
+        return easyOverriderService.valueToStringPreventingRecursionCollection(value, seen, entryClass);
     }
 
     /**
@@ -77,7 +84,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * hashCode method for a ParamDescriptionCollection abstract object.
+     * hashCode method for a ParamDescriptionCollection object.
      *
      * @return an int.
      */
