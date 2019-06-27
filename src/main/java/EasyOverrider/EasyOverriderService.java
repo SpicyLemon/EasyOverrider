@@ -7,6 +7,10 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * This interface describes a class that will house the interesting functionality used to
+ * generate toString, hashCode, and equals results using ParamList objects.<br>
+ */
 public interface EasyOverriderService {
 
     /**
