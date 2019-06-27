@@ -10,7 +10,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Describes a list of parameters that describe the parameters in a class.
+ * Describes a list of parameters that describe the parameters in a class.<br>
+ *
+ * These objects can then be used to easily override the toString, hashCode, and equals methods with standard behaviors.
+ *
  * <pre>
  * {@code
  *
@@ -65,6 +68,7 @@ public class ParamList<O> {
                                  .withMap("paramDescriptionMap", ParamList::getParamDescriptionMap, Map.class,
                                           String.class, ParamDescription.class)
                                  .withCollection("paramOrder", ParamList::getParamOrder, List.class, String.class)
+                                 .withParam("easyOverriderService", (pl) -> pl.easyOverriderService, EasyOverriderService.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -76,14 +80,15 @@ public class ParamList<O> {
      * This is usually done using a {@link ParamListBuilder}.
      * Start with the {@link ParamList#forClass(Class)} method,
      * add in parameters using methods like {@link ParamListBuilder#withParam(String, Function, Class)},
-     * and finished off with the {@link ParamListBuilder#andThatsIt()} method to create a new ParamList.
+     * and finished off with the {@link ParamListBuilder#andThatsIt()} method to create a new ParamList.<br>
+     *
+     * Uses the {@link EasyOverriderService#validateParamListConstructorOrThrow(Class, Map, List, EasyOverriderService)} method.
      *
      * @param parentClass  the class of the object these parameters represent
      * @param paramDescriptionMap  a map of name to ParamDescription objects describing the parameters in the parent object
      * @param paramOrder  the order that the parameters should be in
-     * @throws IllegalArgumentException if the sizes of the provided paramOrder list and paramDescriptionMap are different.
-     * @throws IllegalArgumentException if an entry exists in the paramOrder that doesn't have a matching key in the paramDescriptionMap.
-     * @throws IllegalArgumentException if any of the provided parameters are null.
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality - cannot be null
+     * @throws IllegalArgumentException if the easyOverriderService is null.
      */
      ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
                final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
@@ -95,7 +100,7 @@ public class ParamList<O> {
     }
 
     /**
-     * Getter for the parentClass parameter that records the class this ParamList applies to.
+     * Getter for the parentClass parameter that records the class this ParamList applies to.<br>
      *
      * @return A Class.
      */
@@ -106,14 +111,14 @@ public class ParamList<O> {
     /**
      * Getter for the paramDescriptionMap parameter.
      *
-     * @return An unmodifiable Map of Strings to ParamDescription values.
+     * @return An unmodifiable Map of Strings to ParamDescription values.<br>
      */
     public Map<String, ParamDescription<? super O, ?>> getParamDescriptionMap() {
         return Collections.unmodifiableMap(paramDescriptionMap);
     }
 
     /**
-     * Getter for the order parameter.
+     * Getter for the order parameter.<br>
      *
      * @return An unmodifiable list of Strings
      */
@@ -122,36 +127,44 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets the list of all param descriptions in an unmodifiable state.
+     * Gets the list of all param descriptions in an unmodifiable state.<br>
      *
-     * @return An unmodifiable list of ParamDescription objects.
+     * Uses the {@link EasyOverriderService#getAllParamDescriptions(List, Map)} method.
+     *
+     * @return A list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getAllParamDescriptions() {
         return easyOverriderService.getAllParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
-     * Gets the list of all param descriptions that are to be used in an equals() method.
+     * Gets the list of all param descriptions that are to be used in an equals() method.<br>
      *
-     * @return An unmodifiable list of ParamDescription objects.
+     * Uses the {@link EasyOverriderService#getEqualsParamDescriptions(List, Map)} method.
+     *
+     * @return A list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getEqualsParamDescriptions() {
         return easyOverriderService.getEqualsParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
-     * Gets the list of all param descriptions that are to be used in a hashCode() method.
+     * Gets the list of all param descriptions that are to be used in a hashCode() method.<br>
      *
-     * @return An unmodifiable list of ParamDescription objects.
+     * Uses the {@link EasyOverriderService#getHashCodeParamDescriptions(List, Map)} method.
+     *
+     * @return A list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions() {
         return easyOverriderService.getHashCodeParamDescriptions(paramOrder, paramDescriptionMap);
     }
 
     /**
-     * Gets the list of all param descriptions that are to be used in a toString() method.
+     * Gets the list of all param descriptions that are to be used in a toString() method.<br>
      *
-     * @return An unmodifiable list of ParamDescription objects.
+     * Uses the {@link EasyOverriderService#getToStringParamDescriptions(List, Map)} method.
+     *
+     * @return A list of ParamDescription objects.
      */
     public List<ParamDescription<? super O, ?>> getToStringParamDescriptions() {
         return easyOverriderService.getToStringParamDescriptions(paramOrder, paramDescriptionMap);
@@ -160,13 +173,7 @@ public class ParamList<O> {
     /**
      * Checks to see if the provided objects are equal as described by this paramList.<br>
      *
-     * This first checks to see if the two provided objects are equal using <code>==</code>; if so, return true.<br>
-     * Then, if one is null, return false.<br>
-     * Then check to see which of the objects are instances of the parent class.
-     * If neither of them are, return <code>thisObj.equals(thatObj);</code>.
-     * If one of them isn't, return false.
-     * Lastly, go through all the param descriptions that are to be included in the equals function
-     * and make sure all the appropriate parameters are equal.
+     * Uses the {@link EasyOverriderService#equals(Object, Object, Class, List, Map)} method.
      *
      * @param thisObj  the main object you're checking against
      * @param thatObj  the other object you're wanting to test
@@ -177,7 +184,9 @@ public class ParamList<O> {
     }
 
     /**
-     * Generates the hashCode for the provided object using the appropriate parameters.
+     * Generates the hashCode for the provided object using the appropriate parameters.<br>
+     *
+     * Uses the {@link EasyOverriderService#hashCode(Object, List, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return An integer.
@@ -187,7 +196,9 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets a String representation of the provided object using the appropriate parameters.
+     * Gets a String representation of the provided object using the appropriate parameters.<br>
+     *
+     * Uses the {@link EasyOverriderService#toString(Object, Map, Class, List, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return A string.
@@ -197,7 +208,9 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.
+     * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.<br>
+     *
+     * Uses the {@link EasyOverriderService#toString(Object, Map, Class, List, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
@@ -208,7 +221,9 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets a String representation of the desired parameters in the provided object.
+     * Gets a String representation of the desired parameters in the provided object.<br>
+     *
+     * Uses the {@link EasyOverriderService#getParamsString(Object, Map, List, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
@@ -221,7 +236,7 @@ public class ParamList<O> {
     /**
      * Creates a new ParamListBuilder based on this ParamList.<br>
      *
-     * This allows you to extend an already created ParamList when, for example, extending a class, and adding new parameters.
+     * This allows you to extend an already created ParamList when, for example, extending a class, and adding new parameters.<br>
      *
      * @param newParentClass  the new class that extends the class that this ParamList is for
      * @param <C>  the type of the new class
@@ -232,7 +247,7 @@ public class ParamList<O> {
     }
 
     /**
-     * equals method for a ParamList object.
+     * equals method for a ParamList object.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamList equals the provided object. False otherwise.
@@ -243,7 +258,7 @@ public class ParamList<O> {
     }
 
     /**
-     * hashCode method for a ParamList object.
+     * hashCode method for a ParamList object.<br>
      *
      * @return An int.
      */
@@ -253,7 +268,7 @@ public class ParamList<O> {
     }
 
     /**
-     * toString method for a ParamList object.
+     * toString method for a ParamList object.<br>
      *
      * @return A String.
      */
@@ -263,7 +278,7 @@ public class ParamList<O> {
     }
 
     /**
-     * Kicks off a ParamListBuilder for the provided class.
+     * Kicks off a ParamListBuilder for the provided class.<br>
      *
      * @param parentClass  the class you're building the parameter list for
      * @param <C>  the class you're building the parameter list for

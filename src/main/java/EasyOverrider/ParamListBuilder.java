@@ -65,7 +65,10 @@ public class ParamListBuilder<O> {
                                  .withMap("paramDescriptionMap", ParamListBuilder::getParamDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
                                  .withParam("easyOverriderService",
-                                            ParamListBuilder::getEasyOverriderServiceOrDefault,
+                                            (plb) -> plb.easyOverriderService,
+                                            EasyOverriderService.class)
+                                 .withParam("defaultEasyOverriderService",
+                                            (plb) -> plb.defaultEasyOverriderService,
                                             EasyOverriderService.class)
                                  .andThatsIt();
         }
@@ -151,7 +154,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Getter for the ParamOrder parameter.
+     * Getter for the paramOrder parameter.
      *
      * @return A list of name strings that dictate the parameter order.
      */
@@ -171,8 +174,7 @@ public class ParamListBuilder<O> {
     /**
      * A getter for the EasyOverriderService that ensures it isn't null.<br>
      *
-     * If <code>this.easyOverriderService</code> is null, a <code>new EasyOverriderServiceImpl()</code> is created, set and returned.
-     * Otherwise the current value for it is returned.
+     * Gets <code>this.easyOverriderService</code> if not null, otherwise gets <code>this.defaultEasyOverriderService</code>.
      * @return the EasyOverriderService to use.
      */
     private EasyOverriderService getEasyOverriderServiceOrDefault() {
@@ -242,7 +244,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Add a new ParamDescription to the list with the provided parameters.
+     * Add a new ParamDescriptionSingle to the list with the provided parameters.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -251,7 +253,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withParam(String, Function, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -269,7 +270,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Add a new ParamDescription to the list with the provided parameters.
+     * Add a new ParamDescriptionSingle to the list with the provided parameters.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -283,7 +284,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withParam(String, Function, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
@@ -320,7 +320,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescription for a collection and add it to be included in the ParamList.
+     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -331,7 +331,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withCollection(String, Function, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -351,7 +350,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescription for a collection and add it to be included in the ParamList.
+     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -367,7 +366,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withCollection(String, Function, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
@@ -422,7 +420,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withMap(String, Function, Class, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
@@ -462,7 +459,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
@@ -530,7 +526,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * Specifically, a new ParamDescription is created using the given info.
+     * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -540,7 +536,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
@@ -560,7 +555,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * Specifically, a new ParamDescription is created using the given info.
+     * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -575,7 +570,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
@@ -614,7 +608,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
-     * Specifically, a new ParamDescription for a collection is created using the given info.
+     * Specifically, a new ParamDescriptionCollection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -626,7 +620,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
@@ -648,7 +641,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
-     * Specifically, a new ParamDescription for a collection is created using the given info.
+     * Specifically, a new ParamDescriptionCollection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -665,7 +658,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
@@ -710,7 +702,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
-     * Specifically, a new ParamDescription for a map is created using the given info.
+     * Specifically, a new ParamDescriptionMap is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name the name of the parameter, e.g. "id" - cannot be null
@@ -724,7 +716,6 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
@@ -748,7 +739,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
-     * Specifically, a new ParamDescription for a map is created using the given info.
+     * Specifically, a new ParamDescriptionMap is created using the given info.
      * Then the old ParamDescription is replaced with this new one.
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
@@ -767,7 +758,6 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
@@ -886,7 +876,12 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Kicks off a ParamListBuilder for the provided class.
+     * Kicks off a ParamListBuilder for the provided class.<br>
+     *
+     * This is usually done using {@link ParamList#forClass(Class)}, so that you don't have to import ParamListBuilder.
+     * That method just calls this one, and this one just calls the {@link #ParamListBuilder(Class)} constructor.
+     * This one is mainly here for ease of use in case there's some confusion between a {@link ParamListBuilder} and a {@link ParamList}.
+     * This way you can call <code>forClass</code> on either with the same results.
      *
      * @param parentClass  the class you're building the parameter list for
      * @param <C>  the class you're building the parameter list for
