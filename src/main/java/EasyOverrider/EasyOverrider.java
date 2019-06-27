@@ -92,7 +92,7 @@ public abstract class EasyOverrider<B> {
      * @return A B.
      */
     @SuppressWarnings("unchecked")
-    private B getThis() {
+    B getThis() {
         return (B)this;
     }
 

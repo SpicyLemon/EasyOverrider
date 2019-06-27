@@ -67,25 +67,6 @@ import java.util.Set;
 public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverrider<B> implements RecursionPreventingToString {
 
     /**
-     * Casts this into a B as expected by the ParamList methods.
-     * @return A B.
-     */
-    @SuppressWarnings("unchecked")
-    private B getThis() {
-        return (B)this;
-    }
-
-    /**
-     * An EasyOverrider version of toString() that prevents recursion.
-     *
-     * @return The string representation of this object as defined by the {@link ParamList}.
-     */
-    @Override
-    public String toString() {
-        return this.toString(null);
-    }
-
-    /**
      * An EasyOverrider version of toString(Map) that prevents recursion.<br>
      *
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
