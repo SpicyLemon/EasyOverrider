@@ -5,7 +5,7 @@ package EasyOverrider;
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
  *
- * Example:
+ * Example class:
  * <pre>{@code
  *
  * import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;

@@ -7,12 +7,12 @@ import java.util.Set;
  * An abstract class that extends EasyOverrider and implements RecursionPreventingToString.<br>
  *
  * The {@link EasyOverrider} abstract class provides the equals and hashCode override methods.
- * This abstract classs implements the <code>toString(Map)</code> method required by {@link RecursionPreventingToString}
- * utilizing the extending class' {@link ParamList}.<br>
+ * This abstract class implements the <code>toString(Map)</code> method required by {@link RecursionPreventingToString}
+ * utilizing the extending class' {@link #getParamList()} method.<br>
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
  *
- * Example:
+ * Example class:
  * <pre>
  * {@code
  *
@@ -33,17 +33,17 @@ import java.util.Set;
  *     &#64;Override
  *     paramList<Bar> getParamList() {
  *         if (paramList == null) {
- *             paramList = ParamList.forClass(Foo.class)
- *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
- *                                  .withParam("name", Foo::getName, String.class)
- *                                  .withParam("bar", Foo::getBar, Bar.class)
- *                                  .withCollection("foos", Foo::getBars, List.class, Bar.class)
+ *             paramList = ParamList.forClass(Bar.class)
+ *                                  .withParam("id", Bar::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                                  .withParam("name", Bar::getName, String.class)
+ *                                  .withParam("bar", Bar::getBar, Bar.class)
+ *                                  .withCollection("bars", Bar::getBars, List.class, Bar.class)
  *                                  .andThatsIt();
  *         }
  *         return paramList;
  *     }
  *
- *     public Foo(int id, String name, Bar bar, List<Bar> bars) {
+ *     public Bar(int id, String name, Bar bar, List<Bar> bars) {
  *         this.id = id;
  *         this.name = name;
  *         this.bar = bar;
@@ -62,8 +62,8 @@ import java.util.Set;
  *         return bar;
  *     }
  *
- *     public List<Bar> getFoos() {
- *         return foos;
+ *     public List<Bar> getBars() {
+ *         return bars;
  *     }
  * }
  * }
@@ -71,6 +71,7 @@ import java.util.Set;
  *
  * @param <B>  the type of object being extended.
  * @see EasyOverrider
+ * @see RecursionPreventingToString
  */
 public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverrider<B> implements RecursionPreventingToString {
 

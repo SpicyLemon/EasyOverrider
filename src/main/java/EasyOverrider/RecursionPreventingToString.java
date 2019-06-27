@@ -4,7 +4,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Interface to implement when a class might have a recursive toString() function.
+ * Interface to implement when a class might have a recursive toString() function.<br>
+ *
+ * Implementation of this interface is looked for during toString calls.
+ * If the class of a parameter that's being converted implements this interface,
+ * the {@link #toString(Map)} method is used instead of the {@link #toString()} method.
+ *
+ * @see EasyOverriderPreventingRecursiveToString
  */
 public interface RecursionPreventingToString {
 
