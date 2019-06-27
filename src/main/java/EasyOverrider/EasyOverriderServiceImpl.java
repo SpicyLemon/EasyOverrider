@@ -15,6 +15,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * The default implementation of a EasyOverriderService.<br>
+ */
 public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     String stringForNull = "null";
@@ -382,5 +385,20 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             throw new IllegalArgumentException("Argument " + position + " (" + paramName + ") " +
                                                "provided to " + methodName + " cannot be null.");
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getParamList().equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getParamList().hashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return getParamList().toString(this);
     }
 }
