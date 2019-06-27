@@ -24,9 +24,7 @@ import java.util.function.Function;
  * }
  * </pre>
  *
- * The above example assumes you've got a <code>public String paramValueToString(final boolean preventingRecursion)</code> method
- * in both Foo and WeirdThing.<br>
- * Now you can set up your equals, hashCode and paramValueToString as follows in your classes that have a ParamList.
+ * Now you can set up your equals, hashCode and toString as follows in your classes that have a ParamList.
  *
  * <pre>
  *
@@ -40,12 +38,12 @@ import java.util.function.Function;
  *     return paramList.hashCode(this);
  * }
  *
- * public String paramValueToString() {
- *     return paramValueToString(false);
+ * public String toString() {
+ *     return paramList.hashCode(this);
  * }
  *
- * public String paramValueToString(final boolean preventingRecursion) {
- *     return paramList.paramValueToString(this, preventingRecursion);
+ * public String toString(final boolean preventingRecursion) {
+ *     return paramList.toString(this, preventingRecursion);
  * }
  * }
  * </pre>
@@ -151,7 +149,7 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets the list of all param descriptions that are to be used in a paramValueToString() method.
+     * Gets the list of all param descriptions that are to be used in a toString() method.
      *
      * @return An unmodifiable list of ParamDescription objects.
      */
@@ -255,7 +253,7 @@ public class ParamList<O> {
     }
 
     /**
-     * paramValueToString method for a ParamList object.
+     * toString method for a ParamList object.
      *
      * @return A String.
      */

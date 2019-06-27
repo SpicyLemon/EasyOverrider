@@ -463,7 +463,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_objectFalse_returnsExpectedValue() {
+    public void paramValueToString_objectFalse_returnsExpectedValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         Collection<String> collection = Arrays.asList("one", "two", "ten");
@@ -473,7 +473,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_nullObjectNullMap_blowsUP() {
+    public void paramValueToString_nullObjectNullMap_blowsUP() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         TestObj testObj = null;
@@ -486,7 +486,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_nullObjectEmptyMap_blowsUP() {
+    public void paramValueToString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
                         getParamListTestObj("theCollectionTestObj", INCLUDED_IN_ALL);
         TestObj testObj = null;

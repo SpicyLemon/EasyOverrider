@@ -391,7 +391,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_nullObjectFalse_blowsUP() {
+    public void paramValueToString_nullObjectFalse_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;
@@ -404,7 +404,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
+    public void paramValueToString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
                         getParamMapStringTestObj("theMapStringTestObj", INCLUDED_IN_ALL);
         String expected = "{testObj=EasyOverrider.TestObj@1171024628 [" +
@@ -426,7 +426,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_nullObjectEmptyMap_blowsUP() {
+    public void paramValueToString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         TestObj testObj = null;

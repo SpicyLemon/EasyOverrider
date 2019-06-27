@@ -918,7 +918,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * paramValueToString method for a ParamListBuilder.
+     * toString method for a ParamListBuilder.
      *
      * @return A String.
      */

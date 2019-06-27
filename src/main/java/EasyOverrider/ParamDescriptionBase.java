@@ -185,12 +185,12 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      *                     .stream()
      *                     .collect(Collectors.toMap(e -> objectToStringPreventingRecursion(keyClass, e.getKey(), seen),
      *                                               e -> objectToStringPreventingRecursion(valueClass, e.getValue(), seen)))
-     *                     .paramValueToString();
+     *                     .toString();
      * }
      * }
      * </pre>
      * @param value  the value to convert to a String
-     * @param seen  the map of class to sets of hashCodes of objects that have already been paramValueToString-ified.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A string.
      */
     abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
@@ -199,14 +199,14 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * Converts an object to a string in such a way that recursion is prevented.<br>
      *
      * If the object is null, "null" is returned.<br>
-     * If the object does not implement the {@link RecursionPreventingToString} interface, the standard paramValueToString() method is called.<br>
+     * If the object does not implement the {@link RecursionPreventingToString} interface, the standard toString() method is called.<br>
      * If the object DOES implement the {@link RecursionPreventingToString} interface then we get the objects hashcode and check it
      * against the set of objects seen for the provided class.  If the hashCode is in the set, then "..." is returned.
      * If the hashCode is NOT in the list, it is added to the list, and then the object's
      * {@link RecursionPreventingToString#toString(Map)} method is called and returned.
      *
      * @param clazz  the class of the object that we're toStringing
-     * @param obj  the object to paramValueToString
+     * @param obj  the object to toString
      * @param seen  the map of classes to sets of Integers containing all the hashCodes of objects already converted to a String
      * @param <C>  the type of the object that's being converted to a String
      * @return a string representation of the object
@@ -243,7 +243,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * paramValueToString method for a ParamDescriptionBase abstract object.
+     * toString method for a ParamDescriptionBase abstract object.
      *
      * @return A string representation of this object.
      */

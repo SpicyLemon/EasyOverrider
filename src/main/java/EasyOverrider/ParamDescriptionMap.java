@@ -95,7 +95,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * paramValueToString method for a ParamDescriptionMap object.
+     * toString method for a ParamDescriptionMap object.
      *
      * @return A string representation of this object.
      */

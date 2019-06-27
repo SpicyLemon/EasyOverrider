@@ -75,7 +75,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * paramValueToString method for a ParamDescriptionSingle object.
+     * toString method for a ParamDescriptionSingle object.
      *
      * @return A string representation of this object.
      */

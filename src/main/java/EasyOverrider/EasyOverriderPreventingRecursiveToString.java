@@ -76,7 +76,7 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
     }
 
     /**
-     * An EasyOverrider version of paramValueToString() that prevents recursion.
+     * An EasyOverrider version of toString() that prevents recursion.
      *
      * @return The string representation of this object as defined by the {@link ParamList}.
      */
@@ -86,16 +86,10 @@ public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOv
     }
 
     /**
-     * An EasyOverrider version of paramValueToString(boolean) that prevents recrsion.<br>
+     * An EasyOverrider version of toString(Map) that prevents recursion.<br>
      *
-     * Basically, if the provided flag is false, then paramValueToString behaves mostly normally.
-     * That is, it will include all the values of this object.
-     * However, when it gets the string values of those objects, and they have a similar paramValueToString(boolean), that method is called
-     * providing a true flag.  If the provided flag is true, then for parameters that have a paramValueToString(boolean) function,
-     * a value of "..." is used instead of calling its paramValueToString method.
-     *
-     * @param seen  the map of class to sets of hashCodes of objects that have already been paramValueToString-ified.
-     * @return The string representation of this object as defined by the {@link ParamList}.
+     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
+     * @return The string representation of this object as defined by a {@link ParamList}.
      * @see ParamList#toString(Object, Map)
      */
     @Override

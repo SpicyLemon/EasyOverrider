@@ -589,7 +589,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_nullObjectFalse_blowsUP() {
+    public void paramValueToString_nullObjectFalse_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
@@ -604,7 +604,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
+    public void paramValueToString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
@@ -626,7 +626,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_nullObjectEmptyMap_blowsUP() {
+    public void paramValueToString_nullObjectEmptyMap_blowsUP() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
