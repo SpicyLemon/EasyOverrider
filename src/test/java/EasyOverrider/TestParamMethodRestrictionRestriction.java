@@ -80,7 +80,7 @@ public class TestParamMethodRestrictionRestriction {
 
     @Test
     public void toString_safeOnly_equalsExpected() {
-        String expected = "SAFE_ONLY[IGNORED_FOR_ALL, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL, INCLUDED_IN_TOSTRING_ONLY]";
+        String expected = "SAFE_ONLY[IGNORED_FOR_ALL,IGNORED_FOR_TOSTRING,INCLUDED_IN_ALL,INCLUDED_IN_TOSTRING_ONLY]";
         String actual = SAFE_ONLY.toString();
         assertEquals(expected, actual);
     }
@@ -134,7 +134,8 @@ public class TestParamMethodRestrictionRestriction {
 
     @Test
     public void toString_allowUnsafe_equalsExpected() {
-        String expected = "ALLOW_UNSAFE[IGNORED_FOR_ALL, IGNORED_FOR_EQUALS__UNSAFE, IGNORED_FOR_HASHCODE__UNSAFE, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL, INCLUDED_IN_EQUALS_ONLY__UNSAFE, INCLUDED_IN_HASHCODE_ONLY__UNSAFE, INCLUDED_IN_TOSTRING_ONLY]";
+        String expected = "ALLOW_UNSAFE[IGNORED_FOR_ALL,IGNORED_FOR_EQUALS__UNSAFE,IGNORED_FOR_HASHCODE__UNSAFE,IGNORED_FOR_TOSTRING," +
+                          "INCLUDED_IN_ALL,INCLUDED_IN_EQUALS_ONLY__UNSAFE,INCLUDED_IN_HASHCODE_ONLY__UNSAFE,INCLUDED_IN_TOSTRING_ONLY]";
         String actual = ALLOW_UNSAFE.toString();
         assertEquals(expected, actual);
     }
