@@ -7,8 +7,7 @@ import java.util.Set;
  * An abstract class that extends EasyOverrider and implements RecursionPreventingToString.<br>
  *
  * The {@link EasyOverrider} abstract class provides the equals and hashCode override methods.
- * This abstract class provides an override method for <code>paramValueToString()</code> that calls <code>this.paramValueToString(false)</code>.
- * It also implements the <code>paramValueToString(boolean)</code> method required by {@link RecursionPreventingToString}
+ * This abstract classs implements the <code>toString(Map)</code> method required by {@link RecursionPreventingToString}
  * utilizing the extending class' {@link ParamList}.<br>
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
@@ -23,38 +22,47 @@ import java.util.Set;
  * import EasyOverrider.ParamList;
  * import java.util.List;
  *
- * public class Foo extends EasyOverriderPreventingRecursiveToString<Foo> {
+ * public class Bar extends EasyOverriderPreventingRecursiveToString<Bar> {
  *     private int id;
  *     private String name;
- *     private List<Foo> foos;
+ *     private Bar bar;
+ *     private List<Bar> bars;
  *
- *     private static ParamList<Foo> paramList =
- *                         ParamList.forClass(Foo.class)
- *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
- *                                  .withParam("name", Foo::getName, String.class)
- *                                  .withCollection("foos", Foo::getFoos, Foo::paramValueToString, List.class, Foo.class)
- *                                  .andThatsIt();
+ *     private static ParamList<Bar> paramList = null;
  *
  *     &#64;Override
- *     paramList<Foo> getParamList() {
+ *     paramList<Bar> getParamList() {
+ *         if (paramList == null) {
+ *             paramList = ParamList.forClass(Foo.class)
+ *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                                  .withParam("name", Foo::getName, String.class)
+ *                                  .withParam("bar", Foo::getBar, Bar.class)
+ *                                  .withCollection("foos", Foo::getBars, List.class, Bar.class)
+ *                                  .andThatsIt();
+ *         }
  *         return paramList;
  *     }
  *
- *     public Foo(int id, String name, List<Foo> foos) {
+ *     public Foo(int id, String name, Bar bar, List<Bar> bars) {
  *         this.id = id;
  *         this.name = name;
- *         this.foos = foos;
+ *         this.bar = bar;
+ *         this.bars = bars;
  *     }
  *
  *     public int getId() {
  *         return id;
  *     }
  *
- *     public int getName() {
+ *     public String getName() {
  *         return name;
  *     }
  *
- *     public int getFoos() {
+ *     public Bar getBar() {
+ *         return bar;
+ *     }
+ *
+ *     public List<Bar> getFoos() {
  *         return foos;
  *     }
  * }

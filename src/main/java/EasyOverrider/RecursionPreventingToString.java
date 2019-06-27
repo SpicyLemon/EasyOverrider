@@ -9,7 +9,8 @@ import java.util.Set;
 public interface RecursionPreventingToString {
 
     /**
-     * A toString method indicating whether or not we need to prevent recursion when creating the String.
+     * A toString method that, as it generates the strings of parameters,
+     * records the hashCodes of objects as it goes in order to prevent a recursive toString call.
      *
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return A string representation of this object.
