@@ -79,7 +79,7 @@ public interface EasyOverriderService {
     /**
      * Setter for the format String that is used in a toString to create a name/value strings.<br>
      *
-     * @param nameValueFormat  the string to use in a toString to create a name/value string
+     * @param nameValueFormat  the format string to use in a toString to create a name/value string
      */
     void setNameValueFormat(String nameValueFormat);
 
@@ -93,7 +93,7 @@ public interface EasyOverriderService {
     /**
      * Setter for the format String that is used in a toString on each parameter value.<br>
      *
-     * @param parameterValueFormat  the string to use in a toString on each parameter value
+     * @param parameterValueFormat  the format string to use in a toString on each parameter value
      */
     void setParameterValueFormat(String parameterValueFormat);
 
@@ -107,9 +107,23 @@ public interface EasyOverriderService {
     /**
      * Setter for the format String that is used in a toString to create the final toString value.<br>
      *
-     * @param toStringFormat  the string to use in a toString to create the final toString value
+     * @param toStringFormat  the format string to use in a toString to create the final toString value
      */
     void setToStringFormat(String toStringFormat);
+
+    /**
+     * Getter for the format String that is used to create the IllegalArgumentException message.<br>
+     *
+     * @return A String
+     */
+    String getIllegalArgumentMessageFormat();
+
+    /**
+     * Setter for the format String that is used to create the IllegalArgumentException message for a missing parameter.
+     *
+     * @param illegalArgumentMessageFormat  the format string to use to create the IllegalArgumentException message for a missing parameter
+     */
+    void setIllegalArgumentMessageFormat(String illegalArgumentMessageFormat);
 
     /**
      * Getter for the function that is used to get the class name from a Class object.<br>
@@ -124,6 +138,20 @@ public interface EasyOverriderService {
      * @param classNameGetter  the function to use to get the class name from a Class object
      */
     void setClassNameGetter(Function<Class, String> classNameGetter);
+
+    /**
+     * Getter for the function that is used to convert the hashCode to a String for the toString method.<br>
+     *
+     * @return A Function that takes in an Integer and returns a String
+     */
+    Function<Integer, String> getHashCodeToString();
+
+    /**
+     * Setter for the function that is used to convert the hashCode to a String for the toString method.<br>
+     *
+     * @param hashCodeToString  the function to use to convert the hashCode to a String
+     */
+    void setHashCodeToString(Function<Integer, String> hashCodeToString);
 
     /**
      * Run the provided getter on the provided object.<br>
@@ -350,7 +378,7 @@ public interface EasyOverriderService {
                         final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
-     * Method used to make sure provided arugments aren't null.<br>
+     * Method used to make sure provided arguments aren't null.<br>
      *
      * @param obj  the object to check up on
      * @param position  the position of the argument in the list of arguments
