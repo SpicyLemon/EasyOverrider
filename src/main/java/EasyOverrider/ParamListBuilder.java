@@ -136,6 +136,22 @@ public class ParamListBuilder<O> {
     }
 
     /**
+     * Kicks off a ParamListBuilder for the provided class.<br>
+     *
+     * This is usually done using {@link ParamList#forClass(Class)}, so that you don't have to import ParamListBuilder.
+     * That method just calls this one, and this one just calls the {@link #ParamListBuilder(Class)} constructor.
+     * This one is mainly here for ease of use in case there's some confusion between a {@link ParamListBuilder} and a {@link ParamList}.
+     * This way you can call <code>forClass</code> on either with the same results.
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param <C>  the class you're building the parameter list for
+     * @return A {@link ParamListBuilder} for the specified class.
+     */
+    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass) {
+        return new ParamListBuilder<C>(parentClass);
+    }
+
+    /**
      * Getter for the parentClass parameter.
      *
      * @return A Class.
@@ -873,22 +889,6 @@ public class ParamListBuilder<O> {
      */
     public ParamList<O> andThatsIt() {
         return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder, getEasyOverriderServiceOrDefault());
-    }
-
-    /**
-     * Kicks off a ParamListBuilder for the provided class.<br>
-     *
-     * This is usually done using {@link ParamList#forClass(Class)}, so that you don't have to import ParamListBuilder.
-     * That method just calls this one, and this one just calls the {@link #ParamListBuilder(Class)} constructor.
-     * This one is mainly here for ease of use in case there's some confusion between a {@link ParamListBuilder} and a {@link ParamList}.
-     * This way you can call <code>forClass</code> on either with the same results.
-     *
-     * @param parentClass  the class you're building the parameter list for
-     * @param <C>  the class you're building the parameter list for
-     * @return A {@link ParamListBuilder} for the specified class.
-     */
-    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass) {
-        return new ParamListBuilder<C>(parentClass);
     }
 
     /**
