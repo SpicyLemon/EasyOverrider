@@ -591,7 +591,7 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
-        String expected = "EasyOverrider.TestObj@1171024628 [" +
+        String expected = "EasyOverrider.TestObj@45cc6af4 [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
                           "theString=null, " +
@@ -645,7 +645,7 @@ public class TestParamDescriptionSingle {
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String expected = "theTestObj='EasyOverrider.TestObj@1171024628 [" +
+        String expected = "theTestObj='EasyOverrider.TestObj@45cc6af4 [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
                           "theString=null, " +
