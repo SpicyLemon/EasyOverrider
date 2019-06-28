@@ -1,6 +1,7 @@
 package EasyOverrider;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -19,6 +20,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     private final Class<V> valueClass;
 
     private static ParamList<ParamDescriptionMap> paramList;
+    private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 5, 6, 7, 8);
 
     static ParamList<ParamDescriptionMap> getMapParamList() {
         if (paramList == null) {
@@ -47,7 +49,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
                                final Class<K> keyClass, final Class<V> valueClass, final String name,
                                final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                                final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, Arrays.asList(1, 2, 5, 6, 7, 8));
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
         this.keyClass = keyClass;
         this.valueClass = valueClass;
         easyOverriderService.requireNonNull(keyClass, 3, "keyClass", "ParamDescriptionMap constructor");

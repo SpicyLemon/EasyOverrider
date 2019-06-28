@@ -49,7 +49,7 @@ public enum ParamMethodRestrictionRestriction {
 
     private Set<ParamMethodRestriction> allowedParamMethodRestrictions;
 
-    ParamMethodRestrictionRestriction(EnumSet<ParamMethodRestriction> allowedParamMethodRestrictions) {
+    ParamMethodRestrictionRestriction(final Set<ParamMethodRestriction> allowedParamMethodRestrictions) {
         this.allowedParamMethodRestrictions = allowedParamMethodRestrictions;
     }
 
@@ -68,7 +68,7 @@ public enum ParamMethodRestrictionRestriction {
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value to check on
      * @return True if the provided ParamMethodRestriction is allowed. False if not.
      */
-    public boolean allows(ParamMethodRestriction paramMethodRestriction) {
+    public boolean allows(final ParamMethodRestriction paramMethodRestriction) {
         return allowedParamMethodRestrictions.contains(paramMethodRestriction);
     }
 

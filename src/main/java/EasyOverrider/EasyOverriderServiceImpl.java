@@ -99,7 +99,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #valueToStringPreventingRecursionMap(Map, Map, Class, Class)
      */
     @Override
-    public void setStringForNull(String stringForNull) {
+    public void setStringForNull(final String stringForNull) {
         requireNonNull(stringForNull, 1, "stringForNull", "setStringForNull");
         this.stringForNull = stringForNull;
     }
@@ -127,7 +127,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #objectToStringPreventingRecursion(Class, Object, Map)
      */
     @Override
-    public void setStringForRecursionPrevented(String stringForRecursionPrevented) {
+    public void setStringForRecursionPrevented(final String stringForRecursionPrevented) {
         requireNonNull(stringForRecursionPrevented, 1, "stringForRecursionPrevented", "setStringForRecursionPrevented");
         this.stringForRecursionPrevented = stringForRecursionPrevented;
     }
@@ -155,7 +155,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #getParamsString(Object, Map, List, Map)
      */
     @Override
-    public void setStringForEmptyParamList(String stringForEmptyParamList) {
+    public void setStringForEmptyParamList(final String stringForEmptyParamList) {
         requireNonNull(stringForEmptyParamList, 1, "stringForEmptyParamList", "setStringForEmptyParamList");
         this.stringForEmptyParamList = stringForEmptyParamList;
     }
@@ -183,7 +183,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #getParamsString(Object, Map, List, Map)
      */
     @Override
-    public void setParameterDelimiter(String parameterDelimiter) {
+    public void setParameterDelimiter(final String parameterDelimiter) {
         requireNonNull(parameterDelimiter, 1, "parameterDelimiter", "setParameterDelimiter");
         this.parameterDelimiter = parameterDelimiter;
     }
@@ -214,7 +214,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #getNameValueString(Object, String, Function, Map, BiFunction)
      */
     @Override
-    public void setNameValueFormat(String nameValueFormat) {
+    public void setNameValueFormat(final String nameValueFormat) {
         requireNonNull(nameValueFormat, 1, "nameValueFormat", "setNameValueFormat");
         try {
             String.format(nameValueFormat, "name", "value");
@@ -250,7 +250,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #getNameValueString(Object, String, Function, Map, BiFunction)
      */
     @Override
-    public void setParameterValueFormat(String parameterValueFormat) {
+    public void setParameterValueFormat(final String parameterValueFormat) {
         requireNonNull(parameterValueFormat, 1, "parameterValueFormat", "setParameterValueFormat");
         try {
             String.format(parameterValueFormat, "parameter");
@@ -286,7 +286,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setToStringFormat(String toStringFormat) {
+    public void setToStringFormat(final String toStringFormat) {
         requireNonNull(toStringFormat, 1, "toStringFormat", "setToStringFormat");
         try {
             String.format(toStringFormat, "class", "hashcode", "paramslist");
@@ -321,7 +321,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if the provided format is invalid
      */
     @Override
-    public void setIllegalArgumentMessageFormat(String illegalArgumentMessageFormat) {
+    public void setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat) {
         requireNonNull(illegalArgumentMessageFormat, 1, "illegalArgumentMessageFormat", "setIllegalArgumentMessageFormat");
         try {
             String.format(illegalArgumentMessageFormat, 1, "name", "method");
@@ -354,7 +354,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setClassNameGetter(Function<Class, String> classNameGetter) {
+    public void setClassNameGetter(final Function<Class, String> classNameGetter) {
         requireNonNull(classNameGetter, 1, "classNameGetter", "setClassNameGetter");
         this.classNameGetter = classNameGetter;
     }
@@ -382,7 +382,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setHashCodeToString(Function<Integer, String> hashCodeToString) {
+    public void setHashCodeToString(final Function<Integer, String> hashCodeToString) {
         this.hashCodeToString = hashCodeToString;
     }
 
@@ -398,7 +398,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if either the provided obj or getter is null
      */
     @Override
-    public <O, P> P get(O obj, Function<? super O, P> getter, String name) {
+    public <O, P> P get(final O obj, final Function<? super O, P> getter, final String name) {
         requireNonNull(obj, 1, "obj", "get: " + name);
         requireNonNull(getter, 2, "getter", "get: " + name);
         return getter.apply(obj);
@@ -414,7 +414,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @return If either the object or getter are null, null is returned. Otherwise, the result of the getter on the object is returned.
      */
     @Override
-    public <O, P> P safeGet(O obj, Function<? super O, P> getter) {
+    public <O, P> P safeGet(final O obj, final Function<? super O, P> getter) {
         if (obj == null || getter == null) {
             return null;
         }
@@ -439,7 +439,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if the provided getter is null
      */
     @Override
-    public <O, P> boolean paramsAreEqual(O thisO, O thatO, Function<? super O, P> getter, String name) {
+    public <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name) {
         requireNonNull(getter, 3, "getter", "paramsAreEqual: " + name);
         if (thisO == thatO) {
             return true;
@@ -468,8 +468,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if any parameter is null
      */
     @Override
-    public <O, P> String paramValueToString(O obj, Function<? super O, P> getter, Map<Class, Set<Integer>> seen,
-                                            BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
+    public <O, P> String paramValueToString(final O obj, final Function<? super O, P> getter, final Map<Class, Set<Integer>> seen,
+                                            final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
         requireNonNull(obj, 1, "obj", "paramValueToString");
         requireNonNull(getter, 2, "getter", "paramValueToString");
         requireNonNull(seen, 3, "seen", "paramValueToString");
@@ -502,7 +502,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see RecursionPreventingToString
      */
     @Override
-    public <O> String objectToStringPreventingRecursion(Class<O> objClass, O obj, Map<Class, Set<Integer>> seen) {
+    public <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
         requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
         if (obj == null) {
@@ -542,9 +542,9 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if the obj, getter, seen or valueToStringPreventingRecursion parameters are null
      */
     @Override
-    public <O, P> String getNameValueString(final O obj, String name, final Function<? super O, P> getter,
+    public <O, P> String getNameValueString(final O obj, final String name, final Function<? super O, P> getter,
                                             final Map<Class, Set<Integer>> seen,
-                                            BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
+                                            final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
         requireNonNull(obj, 1, "obj", "getNameValueString: " + name);
         requireNonNull(getter, 3, "getter", "getNameValueString: " + name);
         requireNonNull(seen, 4, "seen", "getNameValueString: " + name);
@@ -569,7 +569,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if the seen or paramClass parameters are null
      */
     @Override
-    public <P> String valueToStringPreventingRecursionSingle(P value, Map<Class, Set<Integer>> seen, Class<P> paramClass) {
+    public <P> String valueToStringPreventingRecursionSingle(final P value, final Map<Class, Set<Integer>> seen,
+                                                             final Class<P> paramClass) {
         return objectToStringPreventingRecursion(paramClass, value, seen);
     }
 
@@ -593,7 +594,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <E, P extends Collection<? extends E>> String valueToStringPreventingRecursionCollection(
-                    P value, Map<Class, Set<Integer>> seen, Class<E> entryClass) {
+                    final P value, final Map<Class, Set<Integer>> seen, final Class<E> entryClass) {
         requireNonNull(seen, 2, "seen", "valueToStringPreventingRecursionCollection");
         requireNonNull(entryClass, 3, "entryClass", "valueToStringPreventingRecursionCollection");
         if (value == null) {
@@ -626,7 +627,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <K, V, P extends Map<? extends K, ? extends V>> String valueToStringPreventingRecursionMap(
-                    P value, Map<Class, Set<Integer>> seen, Class<K> keyClass, Class<V> valueClass) {
+                    final P value, final Map<Class, Set<Integer>> seen, final Class<K> keyClass, final Class<V> valueClass) {
         requireNonNull(seen, 2, "seen", "valueToStringPreventingRecursionMap");
         requireNonNull(keyClass, 2, "keyClass", "valueToStringPreventingRecursionMap");
         requireNonNull(valueClass, 2, "valueClass", "valueToStringPreventingRecursionMap");
@@ -650,12 +651,14 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @param <O> {@inheritDoc}
      * @throws IllegalArgumentException if any of the parameters are null
      * @throws IllegalArgumentException if the paramOrder list is not the same size as the paramDescriptionMap
-     * @throws IllegalArgumentException if any entry in the paramOrder list does not have a corresponding entry in the paramDescriptionMap
+     * @throws IllegalArgumentException if any entry in the paramOrder list does not have a
+     * corresponding entry in the paramDescriptionMap
      */
     @Override
     public <O> void validateParamListConstructorOrThrow(final Class<O> parentClass,
                                                         final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
-                                                        final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
+                                                        final List<String> paramOrder,
+                                                        final EasyOverriderService easyOverriderService) {
         requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
         requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
         requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
@@ -691,8 +694,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if any parameters is null
      */
     @Override
-    public <O> String getParamsString(O thisObj, Map<Class, Set<Integer>> seen, List<String> paramOrder,
-                                      Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen,final  List<String> paramOrder,
+                                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
         requireNonNull(seen, 2, "seen", "getParamsString");
         requireNonNull(paramOrder, 3, "paramOrder", "getParamsString");
@@ -718,7 +721,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <O> List<ParamDescription<? super O, ?>> getAllParamDescriptions(
-                    List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getAllParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getAllParamDescriptions");
         return getFilteredParamList((p) -> true, paramOrder, paramDescriptionMap);
@@ -735,7 +738,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
-                    List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getEqualsParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getEqualsParamDescriptions");
         return getFilteredParamList(ParamDescription::isEqualsInclude, paramOrder, paramDescriptionMap);
@@ -752,7 +755,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
-                    List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getHashCodeParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getHashCodeParamDescriptions");
         return getFilteredParamList(ParamDescription::isHashCodeInclude, paramOrder, paramDescriptionMap);
@@ -769,7 +772,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      */
     @Override
     public <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
-                    List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
         return getFilteredParamList(ParamDescription::isToStringInclude, paramOrder, paramDescriptionMap);
@@ -782,8 +785,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @return An unmodifiable list of ParamDescriptions.
      */
     private <O> List<ParamDescription<? super O, ?>> getFilteredParamList(
-                    final Predicate<ParamDescription<? super O, ?>> filter, List<String> paramOrder,
-                    Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+                    final Predicate<ParamDescription<? super O, ?>> filter, final List<String> paramOrder,
+                    final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         return Collections.unmodifiableList(paramOrder.stream()
                                                       .map(paramDescriptionMap::get)
                                                       .filter(filter)
@@ -814,8 +817,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if the parentClass, paramOrder, or paramDescriptionMap parameters are null
      */
     @Override
-    public <O> boolean equals(Object thisObj, Object thatObj, Class<O> parentClass, List<String> paramOrder,
-                              Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> boolean equals(final Object thisObj, final Object thatObj, final Class<O> parentClass, final List<String> paramOrder,
+                              final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(parentClass, 3, "parentClass", "equals");
         requireNonNull(paramOrder, 4, "paramOrder", "equals");
         requireNonNull(paramDescriptionMap, 5, "paramDescriptionMap", "equals");
@@ -855,8 +858,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if any parameter is null
      */
     @Override
-    public <O> int hashCode(O thisObj, List<String> paramOrder,
-                            Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> int hashCode(final O thisObj, final List<String> paramOrder,
+                            final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "hashCode");
         requireNonNull(paramOrder, 2, "paramOrder", "hashCode");
         requireNonNull(paramDescriptionMap, 3, "paramDescriptionMap", "hashCode");
@@ -884,8 +887,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if thisObj, parentClass, paramOrder or paramDescriptionMap are null
      */
     @Override
-    public <O> String toString(O thisObj, Map<Class, Set<Integer>> seen, Class<O> parentClass,
-                               List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, final Class<O> parentClass,
+                               final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "toString");
         requireNonNull(parentClass, 3, "parentClass", "toString");
         requireNonNull(paramOrder, 4, "paramOrder", "toString");

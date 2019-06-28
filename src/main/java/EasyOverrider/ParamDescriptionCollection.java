@@ -2,6 +2,7 @@ package EasyOverrider;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -18,6 +19,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     final Class<E> entryClass;
 
     private static ParamList<ParamDescriptionCollection> paramList;
+    private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 4, 5, 6, 7);
 
     static ParamList<ParamDescriptionCollection> getCollectionParamList() {
         if (paramList == null) {
@@ -44,7 +46,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
                                       final Class<E> entryClass, final String name,
                                       final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                                       final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, Arrays.asList(1, 2, 4, 5, 6, 7));
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
         this.entryClass = entryClass;
         easyOverriderService.requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
     }

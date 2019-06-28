@@ -74,7 +74,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass, final String name,
                          final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                          final EasyOverriderService easyOverriderService,
-                         List<Integer> paramIndexNumbers) {
+                         final List<Integer> paramIndexNumbers) {
         this.parentClass = parentClass;
         this.paramClass = paramClass;
         this.name = name;
@@ -100,7 +100,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * @param entry  the entry in the list to look up
      * @return the entry in the provided list if available, otherwise the provided entry
      */
-    private int getIndexOrDefault(List<Integer> indexes, int entry) {
+    private int getIndexOrDefault(final List<Integer> indexes, final int entry) {
         return Optional.ofNullable(indexes)
                        .filter(ix -> ix.size() >= entry)
                        .map(ix -> ix.get(entry - 1))

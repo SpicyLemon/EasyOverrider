@@ -147,7 +147,7 @@ public class ParamListBuilder<O> {
      * @param <C>  the class you're building the parameter list for
      * @return A {@link ParamListBuilder} for the specified class.
      */
-    public static <C> ParamListBuilder<C> forClass(Class<C> parentClass) {
+    public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
         return new ParamListBuilder<C>(parentClass);
     }
 
@@ -205,7 +205,7 @@ public class ParamListBuilder<O> {
      * @param easyOverriderService  the EasyOverriderService to use for the parameters and param list.
      * @return The current ParamListBuilder.
      */
-    public ParamListBuilder<O> usingService(EasyOverriderService easyOverriderService) {
+    public ParamListBuilder<O> usingService(final EasyOverriderService easyOverriderService) {
         getEasyOverriderServiceOrDefault().requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
         this.easyOverriderService = easyOverriderService;
         if (!paramDescriptionMap.isEmpty()) {
@@ -224,7 +224,7 @@ public class ParamListBuilder<O> {
      * @see #allowingUnsafeParamMethodRestrictions()
      * @return The current ParamListBuilder.
      */
-    public ParamListBuilder<O> havingRestriction(ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+    public ParamListBuilder<O> havingRestriction(final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
         this.paramMethodRestrictionRestriction = paramMethodRestrictionRestriction;
         return this;
     }
@@ -845,7 +845,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      */
-    private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction, String name) {
+    private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction, final String name) {
         if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
                                                "on the " + name + " parameter " +

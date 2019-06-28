@@ -25,7 +25,7 @@ public interface EasyOverriderService {
      *
      * @param stringForNull  the string to use in a toString when a value is null
      */
-    void setStringForNull(String stringForNull);
+    void setStringForNull(final String stringForNull);
 
     /**
      * Getter for the String that is used in a toString when a previously seen object is seen again.<br>
@@ -39,7 +39,7 @@ public interface EasyOverriderService {
      *
      * @param stringForRecursionPrevented  the string to use in a toString when a previously seen object is seen again
      */
-    void setStringForRecursionPrevented(String stringForRecursionPrevented);
+    void setStringForRecursionPrevented(final String stringForRecursionPrevented);
 
     /**
      * Getter for the String that is used in a toString when an empty ParamList is encountered.<br>
@@ -53,7 +53,7 @@ public interface EasyOverriderService {
      *
      * @param stringForEmptyParamList  the string to use in a toString when an empty ParamList is encountered
      */
-    void setStringForEmptyParamList(String stringForEmptyParamList);
+    void setStringForEmptyParamList(final String stringForEmptyParamList);
 
     /**
      * Getter for the String that is used in a toString between parameters.<br>
@@ -67,7 +67,7 @@ public interface EasyOverriderService {
      *
      * @param parameterDelimiter  the string to use in a toString between parameters
      */
-    void setParameterDelimiter(String parameterDelimiter);
+    void setParameterDelimiter(final String parameterDelimiter);
 
     /**
      * Getter for the format String that is used in a toString to create a name/value string.<br>
@@ -81,7 +81,7 @@ public interface EasyOverriderService {
      *
      * @param nameValueFormat  the format string to use in a toString to create a name/value string
      */
-    void setNameValueFormat(String nameValueFormat);
+    void setNameValueFormat(final String nameValueFormat);
 
     /**
      * Getter for the format String that is used in a toString on each parameter value.<br>
@@ -95,7 +95,7 @@ public interface EasyOverriderService {
      *
      * @param parameterValueFormat  the format string to use in a toString on each parameter value
      */
-    void setParameterValueFormat(String parameterValueFormat);
+    void setParameterValueFormat(final String parameterValueFormat);
 
     /**
      * Getter for the format String that is used in a toString to create the final toString value.<br>
@@ -109,7 +109,7 @@ public interface EasyOverriderService {
      *
      * @param toStringFormat  the format string to use in a toString to create the final toString value
      */
-    void setToStringFormat(String toStringFormat);
+    void setToStringFormat(final String toStringFormat);
 
     /**
      * Getter for the format String that is used to create the IllegalArgumentException message.<br>
@@ -123,7 +123,7 @@ public interface EasyOverriderService {
      *
      * @param illegalArgumentMessageFormat  the format string to use to create the IllegalArgumentException message for a missing parameter
      */
-    void setIllegalArgumentMessageFormat(String illegalArgumentMessageFormat);
+    void setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat);
 
     /**
      * Getter for the function that is used to get the class name from a Class object.<br>
@@ -137,7 +137,7 @@ public interface EasyOverriderService {
      *
      * @param classNameGetter  the function to use to get the class name from a Class object
      */
-    void setClassNameGetter(Function<Class, String> classNameGetter);
+    void setClassNameGetter(final Function<Class, String> classNameGetter);
 
     /**
      * Getter for the function that is used to convert the hashCode to a String for the toString method.<br>
@@ -151,7 +151,7 @@ public interface EasyOverriderService {
      *
      * @param hashCodeToString  the function to use to convert the hashCode to a String
      */
-    void setHashCodeToString(Function<Integer, String> hashCodeToString);
+    void setHashCodeToString(final Function<Integer, String> hashCodeToString);
 
     /**
      * Run the provided getter on the provided object.<br>
@@ -163,7 +163,7 @@ public interface EasyOverriderService {
      * @param <P>  the type of the parameter (getter return value)
      * @return The results of the getter
      */
-    <O, P> P get(final O obj, final Function<? super O, P> getter, String name);
+    <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
 
     /**
      * Run the provided getter on the provided object in such a way that exceptions are prevented.<br>
@@ -187,7 +187,7 @@ public interface EasyOverriderService {
      * @param <P>  the type of the parameter (getter return value)
      * @return True if the parameter in each of the objects are equal. False if different.
      */
-    <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, String name);
+    <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name);
 
     /**
      * Converts a parameter value to a String.<br>
@@ -200,8 +200,8 @@ public interface EasyOverriderService {
      * @param <P>  the type of the parameter (getter return value)
      * @return A String
      */
-    <O, P> String paramValueToString(O obj, Function<? super O, P> getter, Map<Class, Set<Integer>> seen,
-                                     BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion);
+    <O, P> String paramValueToString(final O obj, final Function<? super O, P> getter, final Map<Class, Set<Integer>> seen,
+                                     final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion);
 
     /**
      * Converts an object to a String.<br>
@@ -228,7 +228,7 @@ public interface EasyOverriderService {
      */
     <O, P> String getNameValueString(final O obj, String name, final Function<? super O, P> getter,
                                      final Map<Class, Set<Integer>> seen,
-                                     BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion);
+                                     final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion);
 
     /**
      * Converts a single value to a String, preventing recursion.<br>
@@ -239,7 +239,7 @@ public interface EasyOverriderService {
      * @param <P>  the type of the parameter
      * @return A String
      */
-    <P> String valueToStringPreventingRecursionSingle(final P value, final Map<Class, Set<Integer>> seen, Class<P> paramClass);
+    <P> String valueToStringPreventingRecursionSingle(final P value, final Map<Class, Set<Integer>> seen, final Class<P> paramClass);
 
     /**
      * Converts a Collection value to a String, preventing recursion.<br>
@@ -252,7 +252,7 @@ public interface EasyOverriderService {
      * @return A String
      */
     <E, P extends Collection<? extends E>> String valueToStringPreventingRecursionCollection(
-                    final P value, final Map<Class, Set<Integer>> seen, Class<E> entryClass);
+                    final P value, final Map<Class, Set<Integer>> seen, final Class<E> entryClass);
 
     /**
      * Converts a Map value to a String, preventing recursion.<br>
@@ -267,7 +267,7 @@ public interface EasyOverriderService {
      * @return
      */
     <K, V, P extends Map<? extends K, ? extends V>> String valueToStringPreventingRecursionMap(
-                    final P value, final Map<Class, Set<Integer>> seen, Class<K> keyClass, Class<V> valueClass);
+                    final P value, final Map<Class, Set<Integer>> seen, final Class<K> keyClass, final Class<V> valueClass);
 
     /**
      * Checks the provided parameters and makes sure there's nothing wrong with them.<br>
@@ -293,7 +293,7 @@ public interface EasyOverriderService {
      * @return A String
      */
     <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
-                               Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+                               final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Gets a list of all the parameter descriptions.<br>
@@ -303,8 +303,8 @@ public interface EasyOverriderService {
      * @param <O>  the type of the object in question
      * @return A list of ParamDescription objects
      */
-    <O> List<ParamDescription<? super O, ?>> getAllParamDescriptions(final List<String> paramOrder,
-                                                                     Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> List<ParamDescription<? super O, ?>> getAllParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Gets a list of all the parameter descriptions that should be used in an equals method.<br>
@@ -314,8 +314,8 @@ public interface EasyOverriderService {
      * @param <O>  the type of the object in question
      * @return A list of ParamDescription objects
      */
-    <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(final List<String> paramOrder,
-                                                                        Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Gets a list of all the parameter descriptions that should be in a hashCode method.<br>
@@ -325,8 +325,8 @@ public interface EasyOverriderService {
      * @param <O>  the type of the object in question
      * @return A list of ParamDescription objects
      */
-    <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(final List<String> paramOrder,
-                                                                          Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Gets a list of all the parameter descriptions that should be in a toString method.<br>
@@ -336,8 +336,8 @@ public interface EasyOverriderService {
      * @param <O>  the type of the object in question
      * @return A list of ParamDescription objects
      */
-    <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(final List<String> paramOrder,
-                                                                          Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Tests if two objects are the same given the provided param description map.<br>
@@ -349,8 +349,8 @@ public interface EasyOverriderService {
      * @param paramDescriptionMap  the map of names to ParamDescriptions
      * @return A list of ParamDescription objects
      */
-    <O> boolean equals(final Object thisObj, final Object thatObj, Class<O> parentClass, final List<String> paramOrder,
-                       Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> boolean equals(final Object thisObj, final Object thatObj, final Class<O> parentClass, final List<String> paramOrder,
+                       final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Creates a hashCode for an object.<br>
@@ -361,7 +361,8 @@ public interface EasyOverriderService {
      * @param <O>  the class of the object
      * @return a hashcode
      */
-    <O> int hashCode(final O thisObj, final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> int hashCode(final O thisObj, final List<String> paramOrder,
+                     final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Creates a String representation of the provided objecct.<br>
@@ -374,7 +375,7 @@ public interface EasyOverriderService {
      * @param <O>  the class of the object
      * @return
      */
-    <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, Class<O> parentClass,
+    <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, final Class<O> parentClass,
                         final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**

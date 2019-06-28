@@ -66,7 +66,7 @@ public enum ParamMethodRestriction {
     private final boolean hashCodeIgnore;
     private final boolean toStringIgnore;
 
-    ParamMethodRestriction(boolean equalsIgnore, boolean hashCodeIgnore, boolean toStringIgnore) {
+    ParamMethodRestriction(final boolean equalsIgnore, final boolean hashCodeIgnore, final boolean toStringIgnore) {
         this.equalsIgnore = equalsIgnore;
         this.toStringIgnore = toStringIgnore;
         this.hashCodeIgnore = hashCodeIgnore;
@@ -152,7 +152,7 @@ public enum ParamMethodRestriction {
      * @param flag  the ignore flag
      * @return "Ignored" if the flag is true, "Included" if the flag is false.
      */
-    private static String flagToString(boolean flag) {
+    private static String flagToString(final boolean flag) {
         return flag ? "Ignored" : "Included";
     }
 }

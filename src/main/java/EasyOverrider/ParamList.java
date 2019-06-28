@@ -253,7 +253,7 @@ public class ParamList<O> {
      * @param <C>  the type of the new class
      * @return A new {@link ParamListBuilder}.
      */
-    public <C extends O> ParamListBuilder<C> extendedBy(Class<C> newParentClass) {
+    public <C extends O> ParamListBuilder<C> extendedBy(final Class<C> newParentClass) {
         return new ParamListBuilder<C>(newParentClass, this, easyOverriderService);
     }
 
