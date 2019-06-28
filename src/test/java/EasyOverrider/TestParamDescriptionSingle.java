@@ -28,6 +28,102 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
+    public void constructor_nullParentClass_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                                            null, TestObj.class, "theTestObj", TestObj::getTheTestObj,
+                                            INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 1 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("parentClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamClass_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                            TestObj.class, null, "theTestObj", TestObj::getTheTestObj,
+                            INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 2 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamName_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                            TestObj.class, TestObj.class, null, TestObj::getTheTestObj,
+                            INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 3 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("name"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullGetter_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                            TestObj.class, TestObj.class, "theTestObj", null,
+                            INCLUDED_IN_TOSTRING_ONLY, easyOverriderService);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 4 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("getter"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamMethodRestriction_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                            TestObj.class, TestObj.class, "theTestObj", TestObj::getTheTestObj,
+                            null, easyOverriderService);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullService_throwsException() {
+        try {
+            ParamDescriptionSingle<TestObj, TestObj>
+                            paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
+                            TestObj.class, TestObj.class, "theTestObj", TestObj::getTheTestObj,
+                            INCLUDED_IN_TOSTRING_ONLY, null);
+            fail("Constructor given null parentClass did not throw exception.");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("easyOverriderService"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
     public void equals_sameObject_true() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
