@@ -3,7 +3,6 @@ package EasyOverrider;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
-import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 
 import org.junit.Ignore;
 
@@ -13,6 +12,9 @@ import java.util.Map;
 
 @Ignore
 public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
+
+    private static final EasyOverriderService easyOverriderService = new EasyOverriderServiceImpl();
+
     private boolean theBoolean;
     private int theInt;
     private String theString;
@@ -23,8 +25,9 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
     private List<TestObj> theCollectionTestObj;
     private Map<String, TestObj> theMapStringTestObj;
 
-    public static final ParamList<TestObj> paramList =
+    private static final ParamList<TestObj> paramList =
                     ParamList.forClass(TestObj.class)
+                             .usingService(easyOverriderService)
                              .allowingUnsafeParamMethodRestrictions()
                              .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
                              .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
@@ -38,8 +41,12 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
                              .andThatsIt();
 
     @Override
-    ParamList<TestObj> getParamList() {
+    public ParamList<TestObj> getParamList() {
         return paramList;
+    }
+
+    public EasyOverriderService getEasyOverriderService() {
+        return easyOverriderService;
     }
 
     public TestObj() { }
