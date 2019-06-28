@@ -103,7 +103,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * @return the entry in the provided list if available, otherwise the provided entry
      */
     private int getIndexOrDefault(List<Integer> indexes, int entry) {
-        return Optional.ofNullable(indexes).filter(ix -> ix.size() > entry).map(ix -> ix.get(entry)).orElse(entry);
+        return Optional.ofNullable(indexes).filter(ix -> ix.size() >= entry).map(ix -> ix.get(entry - 1)).orElse(entry);
     }
 
     @Override
