@@ -1,5 +1,7 @@
 package EasyOverrider;
 
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,13 +39,27 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         if (paramList == null) {
             paramList = ParamList.forClass(EasyOverriderServiceImpl.class)
                                  .withParam("stringForNull", EasyOverriderServiceImpl::getStringForNull, String.class)
-                                 .withParam("stringForRecursionPrevented", EasyOverriderServiceImpl::getStringForRecursionPrevented, String.class)
-                                 .withParam("stringForEmptyParamList", EasyOverriderServiceImpl::getStringForEmptyParamList, String.class)
+                                 .withParam("stringForRecursionPrevented",
+                                            EasyOverriderServiceImpl::getStringForRecursionPrevented,
+                                            String.class)
+                                 .withParam("stringForEmptyParamList",
+                                            EasyOverriderServiceImpl::getStringForEmptyParamList,
+                                            String.class)
                                  .withParam("parameterDelimiter", EasyOverriderServiceImpl::getParameterDelimiter, String.class)
                                  .withParam("nameValueFormat", EasyOverriderServiceImpl::getNameValueFormat, String.class)
                                  .withParam("parameterValueFormat", EasyOverriderServiceImpl::getParameterValueFormat, String.class)
                                  .withParam("toStringFormat", EasyOverriderServiceImpl::getToStringFormat, String.class)
-                                 .withParam("classNameGetter", EasyOverriderServiceImpl::getClassNameGetter, Function.class)
+                                 .withParam("illegalArgumentMessageFormat",
+                                            EasyOverriderServiceImpl::getIllegalArgumentMessageFormat,
+                                            String.class)
+                                 .withParam("classNameGetter",
+                                            EasyOverriderServiceImpl::getClassNameGetter,
+                                            INCLUDED_IN_TOSTRING_ONLY,
+                                            Function.class)
+                                 .withParam("hashCodeToString",
+                                            EasyOverriderServiceImpl::getHashCodeToString,
+                                            INCLUDED_IN_TOSTRING_ONLY,
+                                            Function.class)
                                  .andThatsIt();
         }
         return paramList;
