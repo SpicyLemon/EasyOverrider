@@ -47,6 +47,8 @@ public class TestParamDescriptionCollection {
         return retval;
     }
 
+    //TODO: Clean up and make sure there's enough test coverage.
+
     @Test
     public void equals_sameObject_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
