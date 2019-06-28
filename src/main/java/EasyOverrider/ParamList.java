@@ -75,6 +75,17 @@ public class ParamList<O> {
     }
 
     /**
+     * Kicks off a ParamListBuilder for the provided class.<br>
+     *
+     * @param parentClass  the class you're building the parameter list for
+     * @param <C>  the class you're building the parameter list for
+     * @return A {@link ParamListBuilder} for the specified class.
+     */
+    public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
+        return ParamListBuilder.forClass(parentClass);
+    }
+
+    /**
      * Constructor for a ParamList.<br>
      *
      * This is usually done using a {@link ParamListBuilder}.
@@ -90,8 +101,8 @@ public class ParamList<O> {
      * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality - cannot be null
      * @throws IllegalArgumentException if the easyOverriderService is null.
      */
-     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
-               final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
+    ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
+              final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
          this.easyOverriderService = Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new);
          this.easyOverriderService.validateParamListConstructorOrThrow(parentClass, paramDescriptionMap, paramOrder, easyOverriderService);
          this.parentClass = parentClass;
@@ -275,16 +286,5 @@ public class ParamList<O> {
     @Override
     public String toString() {
         return getParamList().toString(this);
-    }
-
-    /**
-     * Kicks off a ParamListBuilder for the provided class.<br>
-     *
-     * @param parentClass  the class you're building the parameter list for
-     * @param <C>  the class you're building the parameter list for
-     * @return A {@link ParamListBuilder} for the specified class.
-     */
-    public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
-        return ParamListBuilder.forClass(parentClass);
     }
 }
