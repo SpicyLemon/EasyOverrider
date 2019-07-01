@@ -24,8 +24,9 @@ public interface EasyOverriderService {
      * Setter for the String that is used when a value is null.<br>
      *
      * @param stringForNull  the string to use in a toString when a value is null
+     * @return the current EasyOverriderService
      */
-    void setStringForNull(final String stringForNull);
+    EasyOverriderService setStringForNull(final String stringForNull);
 
     /**
      * Getter for the String that is used in a toString when a previously seen object is seen again.<br>
@@ -38,8 +39,9 @@ public interface EasyOverriderService {
      * Setter for the String that is used when a previously seen object is seen again.<br>
      *
      * @param stringForRecursionPrevented  the string to use in a toString when a previously seen object is seen again
+     * @return the current EasyOverriderService
      */
-    void setStringForRecursionPrevented(final String stringForRecursionPrevented);
+    EasyOverriderService setStringForRecursionPrevented(final String stringForRecursionPrevented);
 
     /**
      * Getter for the String that is used in a toString when an empty ParamList is encountered.<br>
@@ -52,8 +54,9 @@ public interface EasyOverriderService {
      * Setter for the String that is used when an empty ParamList is encountered.<br>
      *
      * @param stringForEmptyParamList  the string to use in a toString when an empty ParamList is encountered
+     * @return the current EasyOverriderService
      */
-    void setStringForEmptyParamList(final String stringForEmptyParamList);
+    EasyOverriderService setStringForEmptyParamList(final String stringForEmptyParamList);
 
     /**
      * Getter for the String that is used in a toString between parameters.<br>
@@ -66,8 +69,9 @@ public interface EasyOverriderService {
      * Setter for the String that is used between parameters.<br>
      *
      * @param parameterDelimiter  the string to use in a toString between parameters
+     * @return the current EasyOverriderService
      */
-    void setParameterDelimiter(final String parameterDelimiter);
+    EasyOverriderService setParameterDelimiter(final String parameterDelimiter);
 
     /**
      * Getter for the format String that is used in a toString to create a name/value string.<br>
@@ -80,8 +84,9 @@ public interface EasyOverriderService {
      * Setter for the format String that is used in a toString to create a name/value strings.<br>
      *
      * @param nameValueFormat  the format string to use in a toString to create a name/value string
+     * @return the current EasyOverriderService
      */
-    void setNameValueFormat(final String nameValueFormat);
+    EasyOverriderService setNameValueFormat(final String nameValueFormat);
 
     /**
      * Getter for the format String that is used in a toString on each parameter value.<br>
@@ -94,8 +99,9 @@ public interface EasyOverriderService {
      * Setter for the format String that is used in a toString on each parameter value.<br>
      *
      * @param parameterValueFormat  the format string to use in a toString on each parameter value
+     * @return the current EasyOverriderService
      */
-    void setParameterValueFormat(final String parameterValueFormat);
+    EasyOverriderService setParameterValueFormat(final String parameterValueFormat);
 
     /**
      * Getter for the format String that is used in a toString to create the final toString value.<br>
@@ -108,8 +114,9 @@ public interface EasyOverriderService {
      * Setter for the format String that is used in a toString to create the final toString value.<br>
      *
      * @param toStringFormat  the format string to use in a toString to create the final toString value
+     * @return the current EasyOverriderService
      */
-    void setToStringFormat(final String toStringFormat);
+    EasyOverriderService setToStringFormat(final String toStringFormat);
 
     /**
      * Getter for the format String that is used to create the IllegalArgumentException message.<br>
@@ -122,8 +129,9 @@ public interface EasyOverriderService {
      * Setter for the format String that is used to create the IllegalArgumentException message for a missing parameter.
      *
      * @param illegalArgumentMessageFormat  the format string to use to create the IllegalArgumentException message for a missing parameter
+     * @return the current EasyOverriderService
      */
-    void setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat);
+    EasyOverriderService setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat);
 
     /**
      * Getter for the function that is used to get the class name from a Class object.<br>
@@ -136,8 +144,9 @@ public interface EasyOverriderService {
      * Setter for the function that is used to get the class name from a Class object.<br>
      *
      * @param classNameGetter  the function to use to get the class name from a Class object
+     * @return the current EasyOverriderService
      */
-    void setClassNameGetter(final Function<Class, String> classNameGetter);
+    EasyOverriderService setClassNameGetter(final Function<Class, String> classNameGetter);
 
     /**
      * Getter for the function that is used to convert the hashCode to a String for the toString method.<br>
@@ -150,8 +159,9 @@ public interface EasyOverriderService {
      * Setter for the function that is used to convert the hashCode to a String for the toString method.<br>
      *
      * @param hashCodeToString  the function to use to convert the hashCode to a String
+     * @return the current EasyOverriderService
      */
-    void setHashCodeToString(final Function<Integer, String> hashCodeToString);
+    EasyOverriderService setHashCodeToString(final Function<Integer, String> hashCodeToString);
 
     /**
      * Run the provided getter on the provided object.<br>

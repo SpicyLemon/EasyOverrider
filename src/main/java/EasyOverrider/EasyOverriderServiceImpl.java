@@ -92,6 +92,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"null"</code>.<br>
      *
      * @param stringForNull  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @see #paramValueToString(Object, Function, Map, BiFunction)
      * @see #objectToStringPreventingRecursion(Class, Object, Map)
@@ -99,9 +100,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @see #valueToStringPreventingRecursionMap(Map, Map, Class, Class)
      */
     @Override
-    public void setStringForNull(final String stringForNull) {
+    public EasyOverriderService setStringForNull(final String stringForNull) {
         requireNonNull(stringForNull, 1, "stringForNull", "setStringForNull");
         this.stringForNull = stringForNull;
+        return this;
     }
 
     /**
@@ -123,13 +125,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"..."</code>.<br>
      *
      * @param stringForRecursionPrevented  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @see #objectToStringPreventingRecursion(Class, Object, Map)
      */
     @Override
-    public void setStringForRecursionPrevented(final String stringForRecursionPrevented) {
+    public EasyOverriderService setStringForRecursionPrevented(final String stringForRecursionPrevented) {
         requireNonNull(stringForRecursionPrevented, 1, "stringForRecursionPrevented", "setStringForRecursionPrevented");
         this.stringForRecursionPrevented = stringForRecursionPrevented;
+        return this;
     }
 
     /**
@@ -151,13 +155,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>" "</code>.<br>
      *
      * @param stringForEmptyParamList  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @see #getParamsString(Object, Map, List, Map)
      */
     @Override
-    public void setStringForEmptyParamList(final String stringForEmptyParamList) {
+    public EasyOverriderService setStringForEmptyParamList(final String stringForEmptyParamList) {
         requireNonNull(stringForEmptyParamList, 1, "stringForEmptyParamList", "setStringForEmptyParamList");
         this.stringForEmptyParamList = stringForEmptyParamList;
+        return this;
     }
 
     /**
@@ -179,13 +185,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>", "</code>.<br>
      *
      * @param parameterDelimiter  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @see #getParamsString(Object, Map, List, Map)
      */
     @Override
-    public void setParameterDelimiter(final String parameterDelimiter) {
+    public EasyOverriderService setParameterDelimiter(final String parameterDelimiter) {
         requireNonNull(parameterDelimiter, 1, "parameterDelimiter", "setParameterDelimiter");
         this.parameterDelimiter = parameterDelimiter;
+        return this;
     }
 
     /**
@@ -209,12 +217,13 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"%1$s=%2$s"</code>.<br>
      *
      * @param nameValueFormat  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      * @see #getNameValueString(Object, String, Function, Map, BiFunction)
      */
     @Override
-    public void setNameValueFormat(final String nameValueFormat) {
+    public EasyOverriderService setNameValueFormat(final String nameValueFormat) {
         requireNonNull(nameValueFormat, 1, "nameValueFormat", "setNameValueFormat");
         try {
             String.format(nameValueFormat, "name", "value");
@@ -222,6 +231,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             throw new IllegalArgumentException("The string provided to setNameValueFormat is not a valid format string.", e);
         }
         this.nameValueFormat = nameValueFormat;
+        return this;
     }
 
     /**
@@ -245,12 +255,13 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"'%1$s'"</code>.<br>
      *
      * @param parameterValueFormat  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      * @see #getNameValueString(Object, String, Function, Map, BiFunction)
      */
     @Override
-    public void setParameterValueFormat(final String parameterValueFormat) {
+    public EasyOverriderService setParameterValueFormat(final String parameterValueFormat) {
         requireNonNull(parameterValueFormat, 1, "parameterValueFormat", "setParameterValueFormat");
         try {
             String.format(parameterValueFormat, "parameter");
@@ -258,6 +269,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             throw new IllegalArgumentException("The string provided to setParameterValueFormat is not a valid format string.", e);
         }
         this.parameterValueFormat = parameterValueFormat;
+        return this;
     }
 
     /**
@@ -281,12 +293,13 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"%1$s@%2$s [%3$s]"</code>.<br>
      *
      * @param toStringFormat  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setToStringFormat(final String toStringFormat) {
+    public EasyOverriderService setToStringFormat(final String toStringFormat) {
         requireNonNull(toStringFormat, 1, "toStringFormat", "setToStringFormat");
         try {
             String.format(toStringFormat, "class", "hashcode", "paramslist");
@@ -294,6 +307,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             throw new IllegalArgumentException("The string provided to setToStringFormat is not a valid format string.", e);
         }
         this.toStringFormat = toStringFormat;
+        return this;
     }
 
     /**
@@ -317,11 +331,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>"Argument %1$s (%2$s) provided to %3$s cannot be null."</code>.<br>
      *
      * @param illegalArgumentMessageFormat  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      */
     @Override
-    public void setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat) {
+    public EasyOverriderService setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat) {
         requireNonNull(illegalArgumentMessageFormat, 1, "illegalArgumentMessageFormat", "setIllegalArgumentMessageFormat");
         try {
             String.format(illegalArgumentMessageFormat, 1, "name", "method");
@@ -329,6 +344,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             throw new IllegalArgumentException("The string provided to setIllegalArgumentMessageFormat is not a valid format string.", e);
         }
         this.illegalArgumentMessageFormat = illegalArgumentMessageFormat;
+        return this;
     }
 
     /**
@@ -350,13 +366,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>Class::getCanonicalName</code>.<br>
      *
      * @param classNameGetter  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided Function is null
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setClassNameGetter(final Function<Class, String> classNameGetter) {
+    public EasyOverriderService setClassNameGetter(final Function<Class, String> classNameGetter) {
         requireNonNull(classNameGetter, 1, "classNameGetter", "setClassNameGetter");
         this.classNameGetter = classNameGetter;
+        return this;
     }
 
     /**
@@ -378,12 +396,14 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Default value is <code>Integer::toHexString</code>.<br>
      *
      * @param hashCodeToString  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided Function is null
      * @see #toString(Object, Map, Class, List, Map)
      */
     @Override
-    public void setHashCodeToString(final Function<Integer, String> hashCodeToString) {
+    public EasyOverriderService setHashCodeToString(final Function<Integer, String> hashCodeToString) {
         this.hashCodeToString = hashCodeToString;
+        return this;
     }
 
     /**
