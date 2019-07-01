@@ -1,6 +1,7 @@
 package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
@@ -48,7 +49,8 @@ public class ParamListBuilder<O> {
      *
      * This will create the ParamList if it's not already set.
      * The reason it does this rather than just having it statically set when the variable is created,
-     * is that it uses itself. The class code needs to be loaded before it can be used.
+     * is that it uses itself. The class code needs to be loaded before it can be used.<br>
+     *
      * @return The ParamList for a ParamListBuilder.
      */
     static ParamList<ParamListBuilder> getParamList() {
@@ -78,7 +80,7 @@ public class ParamListBuilder<O> {
     /**
      * Private constructor to do all the meat of the setting of stuff without any validation.<br>
      *
-     * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.
+     * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.<br>
      *
      * @param superParamList  any existing ParamList available to the parentClass
      * @param parentClass  the class of the object being described
@@ -106,7 +108,7 @@ public class ParamListBuilder<O> {
      * Default constructor to start.<br>
      *
      * Usually this is done using {@link ParamList#forClass(Class)}
-     * so that you don't have to import ParamListBuilder.
+     * so that you don't have to import ParamListBuilder.<br>
      *
      * @param parentClass  the class of the object being described - cannot be null
      * @see ParamList#forClass(Class)
@@ -120,7 +122,7 @@ public class ParamListBuilder<O> {
      * Constructor for basing a new list off of an existing one.<br>
      *
      * This is usually done using {@link ParamList#extendedBy(Class)}
-     * so that you don't have to import ParamListBuilder.
+     * so that you don't have to import ParamListBuilder.<br>
      *
      * @param parentClass  the class of the object being described - cannot be null
      * @param superParamList  the existing {@link ParamList] available to the parentClass - cannot be null
@@ -141,7 +143,7 @@ public class ParamListBuilder<O> {
      * This is usually done using {@link ParamList#forClass(Class)}, so that you don't have to import ParamListBuilder.
      * That method just calls this one, and this one just calls the {@link #ParamListBuilder(Class)} constructor.
      * This one is mainly here for ease of use in case there's some confusion between a {@link ParamListBuilder} and a {@link ParamList}.
-     * This way you can call <code>forClass</code> on either with the same results.
+     * This way you can call <code>forClass</code> on either with the same results.<br>
      *
      * @param parentClass  the class you're building the parameter list for
      * @param <C>  the class you're building the parameter list for
@@ -152,7 +154,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Getter for the parentClass parameter.
+     * Getter for the parentClass parameter.<br>
      *
      * @return A Class.
      */
@@ -161,7 +163,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Getter for the paramMethodRestrictionRestriction parameter.
+     * Getter for the paramMethodRestrictionRestriction parameter.<br>
      *
      * @return A {@link ParamMethodRestrictionRestriction} value.
      */
@@ -170,7 +172,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Getter for the paramOrder parameter.
+     * Getter for the paramOrder parameter.<br>
      *
      * @return A list of name strings that dictate the parameter order.
      */
@@ -179,7 +181,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Getter for the map of parameter names to their descriptions.
+     * Getter for the map of parameter names to their descriptions.<br>
      *
      * @return A map of name strings to ParamDescription objects.
      */
@@ -190,7 +192,8 @@ public class ParamListBuilder<O> {
     /**
      * A getter for the EasyOverriderService that ensures it isn't null.<br>
      *
-     * Gets <code>this.easyOverriderService</code> if not null, otherwise gets <code>this.defaultEasyOverriderService</code>.
+     * Gets <code>this.easyOverriderService</code> if not null, otherwise gets <code>this.defaultEasyOverriderService</code>.<br>
+     *
      * @return the EasyOverriderService to use.
      */
     private EasyOverriderService getEasyOverriderServiceOrDefault() {
@@ -200,7 +203,7 @@ public class ParamListBuilder<O> {
     /**
      * Set the EasyOverriderService to use.<br>
      *
-     * If there are already <code>ParamDescription</code> objects in this builder, they are all updated to use this new service.
+     * If there are already <code>ParamDescription</code> entries in this builder, they are all updated to use this new service.<br>
      *
      * @param easyOverriderService  the EasyOverriderService to use for the parameters and param list.
      * @return The current ParamListBuilder.
@@ -232,7 +235,7 @@ public class ParamListBuilder<O> {
     /**
      * Allow unsafe ParamMethodRestriction values.<br>
      *
-     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.ALLOW_UNSAFE)</code>.
+     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.ALLOW_UNSAFE)</code>.<br>
      *
      * @return The current ParamListBuilder.
      * @see #havingRestriction(ParamMethodRestrictionRestriction)
@@ -260,7 +263,9 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Add a new ParamDescriptionSingle to the list with the provided parameters.
+     * Add a new ParamDescriptionSingle to the list with the provided parameters.<br>
+     *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -270,6 +275,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withPrimaryParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
@@ -281,12 +287,12 @@ public class ParamListBuilder<O> {
         eos.requireNonNull(name, 1, "name", "withParam");
         eos.requireNonNull(getter, 2, "getter", "withParam");
         eos.requireNonNull(paramClass, 3, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
+        addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, false);
         return this;
     }
 
     /**
-     * Add a new ParamDescriptionSingle to the list with the provided parameters.
+     * Add a new ParamDescriptionSingle to the list with the provided parameters.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -313,12 +319,82 @@ public class ParamListBuilder<O> {
         eos.requireNonNull(getter, 2, "getter", "withParam");
         eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
         eos.requireNonNull(paramClass, 4, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, paramMethodRestriction);
+        addSingleParam(paramClass, name, getter, paramMethodRestriction, false);
         return this;
     }
 
     /**
-     * Create a new ParamDescriptionSingle and add it to be included in the ParamList.
+     * Add a new ParamDescriptionSingle that represents a primary parameter.<br>
+     *
+     * The default ParamMethodRestriction is {@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}.<br>
+     *
+     * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
+     * the containing object, even if a recursive toString is detected.
+     * The idea is that, if the full contents of the containing object are included elsewhere in the string,
+     * this parameter can be used to identify that entry.<br>
+     *
+     * <B>Caution:</B><br>
+     * Primary Parameters should be used sparingly as they bypass recursion prevention.
+     * Usually these are identifier parameters with simple types such as int or String.<br>
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
+     * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
+     * @throws IllegalArgumentException if any parameter is null.
+     */
+    public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
+                                                    final Class<P> paramClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withPrimaryParam");
+        eos.requireNonNull(getter, 2, "getter", "withPrimaryParam");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withPrimaryParam");
+        addSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
+        return this;
+    }
+
+    /**
+     * Add a new ParamDescriptionSingle that represents a primary parameter.<br>
+     *
+     * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
+     * the containing object, even if a recursive toString is detected.
+     * The idea is that, if the full contents of the containing object are included elsewhere in the string,
+     * this parameter can be used to identify that entry.<br>
+     *
+     * <B>Caution 1:</B><br>
+     * Primary Parameters should be used sparingly as they bypass recursion prevention.
+     * Usually these are identifier parameters with simple types such as int or String.<br>
+     *
+     * <B>Caution 2:</B><br>
+     * It is usually unwise to include the primary key column(s) of database entities in <code>equals()</code> and <code>hashCode()</code>.
+     * This is because saving the entity can alter the parameter, causing strange inequalities and changing hashCodes.<br>
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
+     * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
+     * @throws IllegalArgumentException if any parameter is null.
+     */
+    public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
+                                                    final ParamMethodRestriction paramMethodRestriction,
+                                                    final Class<P> paramClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withPrimaryParam");
+        eos.requireNonNull(getter, 2, "getter", "withPrimaryParam");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withPrimaryParam");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withPrimaryParam");
+        addSingleParam(paramClass, name, getter, paramMethodRestriction, true);
+        return this;
+    }
+
+    /**
+     * Create a new ParamDescriptionSingle and add it to be included in the ParamList.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
@@ -330,13 +406,15 @@ public class ParamListBuilder<O> {
      *                                  the provided {@link ParamMethodRestriction}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                    final ParamMethodRestriction paramMethodRestriction) {
+                                    final ParamMethodRestriction paramMethodRestriction, final boolean isPrimaryKey) {
         addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
-                                                  getEasyOverriderServiceOrDefault()));
+                                                  getEasyOverriderServiceOrDefault(), isPrimaryKey));
     }
 
     /**
-     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.
+     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.<br>
+     *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -366,7 +444,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.
+     * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -402,7 +480,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionCollection and add it to be included in the ParamList.
+     * Create a new ParamDescriptionCollection and add it to be included in the ParamList.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param entryClass  the class of the entries in the collection
@@ -423,7 +501,9 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionMap and add it to be included in the ParamList.
+     * Create a new ParamDescriptionMap and add it to be included in the ParamList.<br>
+     *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -457,7 +537,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionMap and add it to be included in the ParamList.
+     * Create a new ParamDescriptionMap and add it to be included in the ParamList.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -497,7 +577,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionMap and add it to be included in the ParamList.
+     * Create a new ParamDescriptionMap and add it to be included in the ParamList.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param keyClass  the class of the keys in the map
@@ -521,7 +601,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Adds a ParamDescription to what we've got.
+     * Adds a ParamDescription to what we've got.<br>
      *
      * @param paramDescription  the ParamDescription to add
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
@@ -542,8 +622,10 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -564,7 +646,7 @@ public class ParamListBuilder<O> {
         eos.requireNonNull(name, 1, "name", "withUpdatedParam");
         eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
         eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL);
+        updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, false);
         return this;
     }
 
@@ -572,7 +654,7 @@ public class ParamListBuilder<O> {
      * Updates the parameter having the provided name with the new values given.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -599,12 +681,90 @@ public class ParamListBuilder<O> {
         eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
         eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
         eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, paramMethodRestriction);
+        updateSingleParam(paramClass, name, getter, paramMethodRestriction, false);
         return this;
     }
 
     /**
-     * Create a new ParamDescriptionSingle and replace the existing ParamDescription with the same name.
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
+     * The default ParamMethodRestriction is {@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}.<br>
+     *
+     * Specifically, a new ParamDescriptionSingle is created using the given info.
+     * Then the old ParamDescription is replaced with this new one.<br>
+     *
+     * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
+     * the containing object, even if a recursive toString is detected.
+     * The idea is that, if the full contents of the containing object are included elsewhere in the string,
+     * this parameter can be used to identify that entry.<br>
+     *
+     * <B>Caution:</B><br>
+     * Primary Parameters should be used sparingly as they bypass recursion prevention.
+     * Usually these are identifier parameters with simple types such as int or String.<br>
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
+     * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if the provided name is not already defined.
+     * @throws IllegalArgumentException if any parameter is null.
+     */
+    public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
+                                                           final Class<P> paramClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
+        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedPrimaryParam");
+        updateSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
+        return this;
+    }
+
+    /**
+     * Updates the parameter having the provided name with the new values given.<br>
+     *
+     * Specifically, a new ParamDescriptionSingle is created using the given info.
+     * Then the old ParamDescription is replaced with this new one.<br>
+     *
+     * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
+     * the containing object, even if a recursive toString is detected.
+     * The idea is that, if the full contents of the containing object are included elsewhere in the string,
+     * this parameter can be used to identify that entry.<br>
+     *
+     * <B>Caution 1:</B><br>
+     * Primary Parameters should be used sparingly as they bypass recursion prevention.
+     * Usually these are identifier parameters with simple types such as int or String.<br>
+     *
+     * <B>Caution 2:</B><br>
+     * It is usually unwise to include the primary key column(s) of database entities in <code>equals()</code> and <code>hashCode()</code>.
+     * This is because saving the entity can alter the parameter, causing strange inequalities and changing hashCodes.
+     *
+     * @param name  the name of the parameter, e.g. "id" - cannot be null
+     * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     *                                - cannot be null
+     * @param paramClass  the class of the parameter in question - cannot be null
+     * @param <P>  the type of the parameter being described
+     * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if the provided name is not already defined.
+     * @throws IllegalArgumentException if any parameter is null.
+     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     *                                  the provided {@link ParamMethodRestriction}.
+     */
+    public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
+                                                           final ParamMethodRestriction paramMethodRestriction,
+                                                           final Class<P> paramClass) {
+        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
+        eos.requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
+        eos.requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
+        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedPrimaryParam");
+        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedPrimaryParam");
+        updateSingleParam(paramClass, name, getter, paramMethodRestriction, true);
+        return this;
+    }
+
+    /**
+     * Create a new ParamDescriptionSingle and replace the existing ParamDescription with the same name.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
@@ -616,16 +776,18 @@ public class ParamListBuilder<O> {
      *                                  the provided {@link ParamMethodRestriction}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                       final ParamMethodRestriction paramMethodRestriction) {
+                                       final ParamMethodRestriction paramMethodRestriction, boolean isPrimaryKey) {
         updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
-                                                     getEasyOverriderServiceOrDefault()));
+                                                     getEasyOverriderServiceOrDefault(), isPrimaryKey));
     }
 
     /**
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     *
      * Specifically, a new ParamDescriptionCollection is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -658,7 +820,7 @@ public class ParamListBuilder<O> {
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
      * Specifically, a new ParamDescriptionCollection is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -694,7 +856,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionCollection and replace the existing ParamDescription with the same name.
+     * Create a new ParamDescriptionCollection and replace the existing ParamDescription with the same name.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param entryClass  the class of the entries in the parameter
@@ -718,8 +880,10 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
+     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     *
      * Specifically, a new ParamDescriptionMap is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -756,7 +920,7 @@ public class ParamListBuilder<O> {
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
      * Specifically, a new ParamDescriptionMap is created using the given info.
-     * Then the old ParamDescription is replaced with this new one.
+     * Then the old ParamDescription is replaced with this new one.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -796,7 +960,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Create a new ParamDescriptionMap and replace the existing ParamDescription with the same name.
+     * Create a new ParamDescriptionMap and replace the existing ParamDescription with the same name.<br>
      *
      * @param paramClass  the class of the parameter in question
      * @param keyClass  the class of the keys in the parameter
@@ -821,7 +985,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Replaces the existing ParamDescription with the same name as the provided ParamDescription.
+     * Replaces the existing ParamDescription with the same name as the provided ParamDescription.<br>
      *
      * @param paramDescription  the ParamDescription to use
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
@@ -839,7 +1003,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.
+     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.<br>
      *
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} to check
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
@@ -857,7 +1021,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Removes the parameter with the provided name.
+     * Removes the parameter with the provided name.<br>
      *
      * @param name  the name of the parameter to remove - cannot be null
      * @return The current ParamListBuilder.
@@ -883,7 +1047,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Finalizes the builder and returns the final ParamList.
+     * Finalizes the builder and returns the final ParamList.<br>
      *
      * @return a ParamList object.
      */
@@ -892,7 +1056,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * equals method for a ParamListBuilder.
+     * equals method for a ParamListBuilder.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamListBuilder equals the provided object. False otherwise.
@@ -903,7 +1067,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * hashCode method for a ParamListBuilder.
+     * hashCode method for a ParamListBuilder.<br>
      *
      * @return An int.
      */
@@ -913,7 +1077,7 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * toString method for a ParamListBuilder.
+     * toString method for a ParamListBuilder.<br>
      *
      * @return A String.
      */

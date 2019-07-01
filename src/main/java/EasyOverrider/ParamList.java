@@ -138,50 +138,6 @@ public class ParamList<O> {
     }
 
     /**
-     * Gets the list of all param descriptions in an unmodifiable state.<br>
-     *
-     * Uses the {@link EasyOverriderService#getAllParamDescriptions(List, Map)} method.
-     *
-     * @return A list of ParamDescription objects.
-     */
-    public List<ParamDescription<? super O, ?>> getAllParamDescriptions() {
-        return easyOverriderService.getAllParamDescriptions(paramOrder, paramDescriptionMap);
-    }
-
-    /**
-     * Gets the list of all param descriptions that are to be used in an equals() method.<br>
-     *
-     * Uses the {@link EasyOverriderService#getEqualsParamDescriptions(List, Map)} method.
-     *
-     * @return A list of ParamDescription objects.
-     */
-    public List<ParamDescription<? super O, ?>> getEqualsParamDescriptions() {
-        return easyOverriderService.getEqualsParamDescriptions(paramOrder, paramDescriptionMap);
-    }
-
-    /**
-     * Gets the list of all param descriptions that are to be used in a hashCode() method.<br>
-     *
-     * Uses the {@link EasyOverriderService#getHashCodeParamDescriptions(List, Map)} method.
-     *
-     * @return A list of ParamDescription objects.
-     */
-    public List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions() {
-        return easyOverriderService.getHashCodeParamDescriptions(paramOrder, paramDescriptionMap);
-    }
-
-    /**
-     * Gets the list of all param descriptions that are to be used in a toString() method.<br>
-     *
-     * Uses the {@link EasyOverriderService#getToStringParamDescriptions(List, Map)} method.
-     *
-     * @return A list of ParamDescription objects.
-     */
-    public List<ParamDescription<? super O, ?>> getToStringParamDescriptions() {
-        return easyOverriderService.getToStringParamDescriptions(paramOrder, paramDescriptionMap);
-    }
-
-    /**
      * Checks to see if the provided objects are equal as described by this paramList.<br>
      *
      * Uses the {@link EasyOverriderService#equals(Object, Object, Class, List, Map)} method.
@@ -231,17 +187,8 @@ public class ParamList<O> {
         return easyOverriderService.toString(thisObj, seen, parentClass, paramOrder, paramDescriptionMap);
     }
 
-    /**
-     * Gets a String representation of the desired parameters in the provided object.<br>
-     *
-     * Uses the {@link EasyOverriderService#getParamsString(Object, Map, List, Map)} method.
-     *
-     * @param thisObj  the object to get the parameter values from
-     * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
-     * @return A String of comma-space delimited name/value Strings.
-     */
-    public String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.getParamsString(thisObj, seen, paramOrder, paramDescriptionMap);
+    public String primaryToString(final O thisObj) {
+        return easyOverriderService.primaryToString(thisObj, parentClass, paramOrder, paramDescriptionMap);
     }
 
     /**

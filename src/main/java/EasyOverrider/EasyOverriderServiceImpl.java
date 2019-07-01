@@ -29,6 +29,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     String nameValueFormat = "%1$s=%2$s";
     String parameterValueFormat = "'%1$s'";
     String toStringFormat = "%1$s@%2$s [%3$s]";
+    String primaryToStringFormat = "%1$s [%2$s]";
     String illegalArgumentMessageFormat = "Argument %1$s (%2$s) provided to %3$s cannot be null.";
     Function<Class, String> classNameGetter = Class::getCanonicalName;
     Function<Integer, String> hashCodeToString = Integer::toHexString;
@@ -49,6 +50,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
                                  .withParam("nameValueFormat", EasyOverriderServiceImpl::getNameValueFormat, String.class)
                                  .withParam("parameterValueFormat", EasyOverriderServiceImpl::getParameterValueFormat, String.class)
                                  .withParam("toStringFormat", EasyOverriderServiceImpl::getToStringFormat, String.class)
+                                 .withParam("primaryToStringFormat", EasyOverriderServiceImpl::getPrimaryToStringFormat, String.class)
                                  .withParam("illegalArgumentMessageFormat",
                                             EasyOverriderServiceImpl::getIllegalArgumentMessageFormat,
                                             String.class)
@@ -66,7 +68,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Standard constructor that just uses all the default values.
+     * Standard constructor that just uses all the default values.<br>
      */
     public EasyOverriderServiceImpl() { }
 
@@ -313,6 +315,44 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
+     * Default value is <code>"%1$s [%2$s]"</code>.<br>
+     *
+     * @return {@inheritDoc}
+     * @see #primaryToString(Object, Class, List, Map)
+     */
+    @Override
+    public String getPrimaryToStringFormat() {
+        return primaryToStringFormat;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * When using this format String, two values will be provided in this order: class, parameter name/value pairs.<br>
+     *
+     * Default value is <code>"%1$s [%2$s]"</code>.<br>
+     *
+     * @param primaryToStringFormat  {@inheritDoc} - cannot be null
+     * @return {@inheritDoc}
+     * @throws IllegalArgumentException if the provided String is null
+     * @throws IllegalArgumentException if the provided format is invalid
+     * @see #primaryToString(Object, Class, List, Map)
+     */
+    @Override
+    public EasyOverriderService setPrimaryToStringFormat(final String primaryToStringFormat) {
+        requireNonNull(primaryToStringFormat, 1, "primaryToStringFormat", "setPrimaryToStringFormat");
+        try {
+            String.format(primaryToStringFormat, "class", "paramslist");
+        } catch (IllegalFormatException e) {
+            throw new IllegalArgumentException("The string provided to setPrimaryToStringFormat is not a valid format string.", e);
+        }
+        this.primaryToStringFormat = primaryToStringFormat;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * Default value is <code>"Argument %1$s (%2$s) provided to %3$s cannot be null."</code>.<br>
      *
      * @return {@inheritDoc}
@@ -475,7 +515,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * Runs the getter on the object. If that value is null, <code>stringForNull</code> is used.
+     * Runs the getter on the object. If that value is null, {@link #getStringForNull()} is used.
      * Otherwise the provided <code>valueToStringPreventingRecursion</code> method is called with the value and the provided seen map.<br>
      *
      * @param obj  {@inheritDoc} - cannot be null
@@ -496,7 +536,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(getter, 4, "valueToStringPreventingRecursion", "paramValueToString");
         P value = getter.apply(obj);
         if (value == null) {
-            return stringForNull;
+            return getStringForNull();
         }
         return valueToStringPreventingRecursion.apply(value, seen);
     }
@@ -504,11 +544,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * If the provided object is null, stringForNull is returned.<br>
+     * If the provided object is null, {@link #getStringForNull()} is returned.<br>
      * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
      * the hashCode of the object is calculated.
-     * If the hashCode is already in the seen map, <code>stringForRecursionPrevented</code> is returned.
-     * Otherwise, the hashCode is added to the seen map, and the object's
+     * If the hashCode is already in the seen map, {@link RecursionPreventingToString#primaryToString()} is called.
+     * If that is not null, it is returned. Otherwise, {@link #getStringForRecursionPrevented()} is returned.
+     * If the hashCode is NOT already in the seen map, the hashCode is added to the seen map, the object's
      * {@link RecursionPreventingToString#toString(Map)} method is called and it's result is returned.<br>
      * If the object is NOT an instance of {@link RecursionPreventingToString},
      * then the standard {@link Object#toString()} method is called on the object and returned.<br>
@@ -526,18 +567,19 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
         requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
         if (obj == null) {
-            return stringForNull;
+            return getStringForNull();
         }
         if (obj instanceof RecursionPreventingToString) {
-            int entryHashCode = obj.hashCode();
             if (!seen.containsKey(objClass)) {
                 seen.put(objClass, new HashSet<>());
             }
+            RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
+            int entryHashCode = obj.hashCode();
             if (seen.get(objClass).contains(entryHashCode)) {
-                return stringForRecursionPrevented;
+                return Optional.ofNullable(recursiveObject.primaryToString()).orElseGet(() -> getStringForRecursionPrevented());
             }
             seen.get(objClass).add(entryHashCode);
-            return ((RecursionPreventingToString)obj).toString(seen);
+            return recursiveObject.toString(seen);
         }
         return obj.toString();
     }
@@ -546,10 +588,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * {@inheritDoc}
      *
      * First, the value is converted to a String using {@link #paramValueToString(Object, Function, Map, BiFunction)}.
-     * Then, if that result is not the <code>stringForNull</code> or <code>stringForRecursionPrevented</code> values,
-     * the <code>parameterValueFormat</code> is applied to it.<br>
+     * Then, if that result is not the {@link #getStringForNull()} or {@link #getStringForRecursionPrevented()} values,
+     * the {@link #getParameterValueFormat()} is applied to it.<br>
      *
-     * Finally, the <code>nameValueFormat</code> is applied, being provided the <code>name</code> and value created above.<br>
+     * Finally, the {@link #getNameValueFormat()} is applied, being provided the <code>name</code> and value created above.<br>
      *
      * @param obj  {@inheritDoc} - cannot be null
      * @param name  {@inheritDoc}
@@ -570,10 +612,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(seen, 4, "seen", "getNameValueString: " + name);
         requireNonNull(valueToStringPreventingRecursion, 5, "valueToStringPreventingRecursion", "getNameValueString: " + name);
         String value = paramValueToString(obj, getter, seen, valueToStringPreventingRecursion);
-        if (!value.equals(stringForNull) && !value.equals(stringForRecursionPrevented)) {
-            value = String.format(parameterValueFormat, value);
+        if (!value.equals(getStringForNull()) && !value.equals(getStringForRecursionPrevented())) {
+            value = String.format(getParameterValueFormat(), value);
         }
-        return String.format(nameValueFormat, name, value);
+        return String.format(getNameValueFormat(), name, value);
     }
 
     /**
@@ -597,7 +639,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * If the provided value is null, <code>stringForNull</code> is returned.<br>
+     * If the provided value is null, {@link #getStringForNull()} is returned.<br>
      *
      * Otherwise, it is looped through and all entries are converted to
      * Strings using {@link #objectToStringPreventingRecursion(Class, Object, Map)}.
@@ -618,7 +660,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(seen, 2, "seen", "valueToStringPreventingRecursionCollection");
         requireNonNull(entryClass, 3, "entryClass", "valueToStringPreventingRecursionCollection");
         if (value == null) {
-            return stringForNull;
+            return getStringForNull();
         }
         return value.stream()
                     .map(e -> objectToStringPreventingRecursion(entryClass, e, seen))
@@ -629,7 +671,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * If the provided value is null, <code>stringForNull</code> is returned.<br>
+     * If the provided value is null, {@link #getStringForNull()} is returned.<br>
      *
      * Otherwise, all entries are looped through and all keys and values are converted to
      * Strings using {@link #objectToStringPreventingRecursion(Class, Object, Map)}.
@@ -652,7 +694,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(keyClass, 2, "keyClass", "valueToStringPreventingRecursionMap");
         requireNonNull(valueClass, 2, "valueClass", "valueToStringPreventingRecursionMap");
         if (value == null) {
-            return stringForNull;
+            return getStringForNull();
         }
         return value.entrySet()
                     .stream()
@@ -701,20 +743,20 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      *
      * This gets the list of parameters that are to be included in the toString result
      * using {@link #getToStringParamDescriptions(List, Map)}.
-     * If that list is empty, <code>stringForEmptyParamList</code> is returned.
+     * If that list is empty, {@link #getStringForEmptyParamList()} is returned.
      * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
-     * The resulting strings are then joined together into one string using the <code>parameterDelimiter</code>.
+     * The resulting strings are then joined together into one string using the {@link #getParameterDelimiter()}.<br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
      * @param seen  {@inheritDoc} - cannot be null
      * @param paramOrder  {@inheritDoc} - cannot be null
      * @param paramDescriptionMap  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
-     * @return {@inheritDoc}
+     * @return {@inheritDoc} If no toString() parameters are in the map, {@link #getStringForEmptyParamList()} is returned.
      * @throws IllegalArgumentException if any parameters is null
      */
     @Override
-    public <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen,final  List<String> paramOrder,
+    public <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
                                       final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
         requireNonNull(seen, 2, "seen", "getParamsString");
@@ -723,15 +765,49 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         List<ParamDescription<? super O, ?>> toStringParamDescriptions = getToStringParamDescriptions(paramOrder,
                                                                                                       paramDescriptionMap);
         if (toStringParamDescriptions.isEmpty()) {
-            return stringForEmptyParamList;
+            return getStringForEmptyParamList();
         }
         return toStringParamDescriptions.stream()
                                         .map(pd -> pd.getNameValueString(thisObj, seen))
-                                        .collect(Collectors.joining(parameterDelimiter));
+                                        .collect(Collectors.joining(getParameterDelimiter()));
     }
 
     /**
      * {@inheritDoc}
+     *
+     * This gets the list primary parameters that are to be included in the toString result
+     * using {@link #getPrimaryToStringParamDescriptions(List, Map)}.
+     * If that list is empty, {@link #getStringForRecursionPrevented()} is returned.
+     * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
+     * The resulting strings are then joined together into one string using the {@link #getParameterDelimiter()}.<br>
+     *
+     * @param thisObj  {@inheritDoc} - cannot be null
+     * @param paramOrder  {@inheritDoc} - cannot be null
+     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param <O>  {@inheritDoc}
+     * @return {@inheritDoc} If no primary toString() parameters are in the map, {@link #getStringForRecursionPrevented()} is returned.
+     * @throws IllegalArgumentException if any parameters is null
+     */
+    @Override
+    public <O> String getPrimaryParamsString(final O thisObj, final List<String> paramOrder,
+                                             final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+        requireNonNull(thisObj, 1, "thisObj", "getPrimaryParamsString");
+        requireNonNull(paramOrder, 2, "paramOrder", "getPrimaryParamsString");
+        requireNonNull(paramDescriptionMap, 3, "paramDescriptionMap", "getPrimaryParamsString");
+        List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramOrder,
+                                                                                                     paramDescriptionMap);
+        if (paramDescriptions.isEmpty()) {
+            return getStringForRecursionPrevented();
+        }
+        return paramDescriptions.stream()
+                                .map(pd -> pd.getNameValueString(thisObj, new HashMap<>()))
+                                .collect(Collectors.joining(getParameterDelimiter()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Resulting list is unmodifiable.<br>
      *
      * @param paramOrder  {@inheritDoc} - cannot be null
      * @param paramDescriptionMap  {@inheritDoc} - cannot be null
@@ -750,6 +826,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
+     * Resulting list is unmodifiable.<br>
+     *
      * @param paramOrder  {@inheritDoc} - cannot be null
      * @param paramDescriptionMap  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
@@ -766,6 +844,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
 
     /**
      * {@inheritDoc}
+     *
+     * Resulting list is unmodifiable.<br>
      *
      * @param paramOrder  {@inheritDoc} - cannot be null
      * @param paramDescriptionMap  {@inheritDoc} - cannot be null
@@ -784,6 +864,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
+     * Resulting list is unmodifiable.<br>
+     *
      * @param paramOrder  {@inheritDoc} - cannot be null
      * @param paramDescriptionMap  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
@@ -799,7 +881,27 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions.
+     * {@inheritDoc}
+     *
+     * Resulting list is unmodifiable.<br>
+     *
+     * @param paramOrder  {@inheritDoc} - cannot be null
+     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param <O> {@inheritDoc}
+     * @return An unmodifiable list of ParamDescription objects
+     * @throws IllegalArgumentException if either parameter is null
+     */
+    @Override
+    public <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+        requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
+        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
+        return getFilteredParamList(pd -> pd instanceof ParamDescriptionSingle && ((ParamDescriptionSingle)pd).isPrimary(),
+                                    paramOrder, paramDescriptionMap);
+    }
+
+    /**
+     * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions.<br>
      *
      * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - cannot be null
      * @return An unmodifiable list of ParamDescriptions.
@@ -889,12 +991,12 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * First, the class name String is retrieved using the <code>classNameGetter</code>.<br>
+     * First, the class name String is retrieved using the {@link #getClassNameGetter()}.<br>
      * Then, the hashCode is calculated using <code>thisObj.hashCode()</code>,
-     * and converted to a string using <code>hashCodeToString</code>.<br>
+     * and converted to a string using {@link #getHashCodeToString()}.<br>
      * Then, the parameters String is created using {@link #getParamsString(Object, Map, List, Map)}.<br>
-     * Lastly, <code>toStringFormat</code> is used to create the final String.
-     * Arguments are provided to the <code>toStringFormat</code> in this order:
+     * Lastly, {@link #getToStringFormat()} is used to create the final String.
+     * Arguments are provided to the {@link #getToStringFormat()} in this order:
      * <code>class name</code>, <code>hash code String</code>, <code>parameters String</code><br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
@@ -913,11 +1015,40 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(parentClass, 3, "parentClass", "toString");
         requireNonNull(paramOrder, 4, "paramOrder", "toString");
         requireNonNull(paramDescriptionMap, 5, "paramDescriptionMap", "toString");
-        String className = classNameGetter.apply(parentClass);
-        String hashCode = hashCodeToString.apply(thisObj.hashCode());
+        String className = getClassNameGetter().apply(parentClass);
+        String hashCode = getHashCodeToString().apply(thisObj.hashCode());
         String paramsString = getParamsString(thisObj, Optional.ofNullable(seen).orElseGet(HashMap::new),
                                               paramOrder, paramDescriptionMap);
-        return String.format(toStringFormat, className, hashCode, paramsString);
+        return String.format(getToStringFormat(), className, hashCode, paramsString);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * First, the class name String is retrieved using the {@link #getClassNameGetter()}.<br>
+     * Then, the parameters String is created using {@link #getParamsString(Object, Map, List, Map)}.<br>
+     * Lastly, {@link #getPrimaryToStringFormat()} is used to create the final String.
+     * Arguments are provided to the  {@link #getPrimaryToStringFormat()} in this order:
+     * <code>class name</code>, <code>parameters String</code><br>
+     *
+     * @param thisObj  {@inheritDoc} - cannot be null
+     * @param parentClass  {@inheritDoc} - cannot be null
+     * @param paramOrder  {@inheritDoc} - cannot be null
+     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param <O>  {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IllegalArgumentException if thisObj, parentClass, paramOrder or paramDescriptionMap are null
+     */
+    @Override
+    public <O> String primaryToString(final O thisObj, final Class<O> parentClass, final List<String> paramOrder,
+                                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+        requireNonNull(thisObj, 1, "thisObj", "primaryToString");
+        requireNonNull(parentClass, 2, "parentClass", "primaryToString");
+        requireNonNull(paramOrder, 3, "paramOrder", "primaryToString");
+        requireNonNull(paramDescriptionMap, 4, "paramDescriptionMap", "primaryToString");
+        String className = getClassNameGetter().apply(parentClass);
+        String paramsString = getPrimaryParamsString(thisObj, paramOrder, paramDescriptionMap);
+        return String.format(getPrimaryToStringFormat(), className, paramsString);
     }
 
     /**

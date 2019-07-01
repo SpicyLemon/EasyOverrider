@@ -119,6 +119,21 @@ public interface EasyOverriderService {
     EasyOverriderService setToStringFormat(final String toStringFormat);
 
     /**
+     * Getter for the format String that is used in a primaryToString to create the final value.<br>
+     *
+     * @return A String
+     */
+    String getPrimaryToStringFormat();
+
+    /**
+     * Setter for the format String that is used in a primaryToString to create the final value.<br>
+     *
+     * @param primaryToStringFormat  the format string to use in a primaryToString to create the final value
+     * @return the current EasyOverriderService
+     */
+    EasyOverriderService setPrimaryToStringFormat(final String primaryToStringFormat);
+
+    /**
      * Getter for the format String that is used to create the IllegalArgumentException message.<br>
      *
      * @return A String
@@ -300,10 +315,22 @@ public interface EasyOverriderService {
      * @param paramOrder  the list of parameter names in the order they should be used
      * @param paramDescriptionMap  the map of names to ParamDescriptions
      * @param <O>  the type of the object in question
-     * @return A String
+     * @return A String.
      */
     <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
                                final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+
+    /**
+     * Gets a string of all the primary parameters in the provided object.<br>
+     *
+     * @param thisObj  the object to get the parameters from
+     * @param paramOrder  the list of parameter names in the order they should be used
+     * @param paramDescriptionMap  the map of names to ParamDescriptions
+     * @param <O>  the type of the object in question
+     * @return A String.
+     */
+    <O> String getPrimaryParamsString(final O thisObj, final List<String> paramOrder,
+                                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Gets a list of all the parameter descriptions.<br>
@@ -350,6 +377,17 @@ public interface EasyOverriderService {
                     final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
+     * Gets a list of just the primary parameter descriptions that should be in a toString method.<br>
+     *
+     * @param paramOrder  the list of parameter names in the order they should be used
+     * @param paramDescriptionMap  the map of names to ParamDescriptions
+     * @param <O>  the type of the object in question
+     * @return A list of ParamDescription objects
+     */
+    <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
+                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+
+    /**
      * Tests if two objects are the same given the provided param description map.<br>
      *
      * @param thisObj  the first object in the comparison
@@ -375,7 +413,7 @@ public interface EasyOverriderService {
                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
-     * Creates a String representation of the provided objecct.<br>
+     * Creates a String representation of the provided object.<br>
      *
      * @param thisObj  the object to convert
      * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string
@@ -383,10 +421,23 @@ public interface EasyOverriderService {
      * @param paramOrder  the list of parameter names in the order they should be used
      * @param paramDescriptionMap  the map of names to ParamDescriptions
      * @param <O>  the class of the object
-     * @return
+     * @return A String.
      */
     <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, final Class<O> parentClass,
                         final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+
+    /**
+     * Creates a String representation of the provided object using only primary parameters.<br>
+     *
+     * @param thisObj  the object to convert
+     * @param parentClass  the class of the parent object
+     * @param paramOrder  the list of parameter names in the order they should be used
+     * @param paramDescriptionMap  the map of names to ParamDescriptions
+     * @param <O>  the class of the object
+     * @return A String.
+     */
+    <O> String primaryToString(final O thisObj, final Class<O> parentClass,
+                               final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
      * Method used to make sure provided arguments aren't null.<br>

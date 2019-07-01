@@ -14,6 +14,8 @@ import java.util.function.Function;
  */
 public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
 
+    private boolean isPrimary;
+
     private static ParamList<ParamDescriptionSingle> paramList;
     private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 3, 4, 5, 6);
 
@@ -21,6 +23,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
         if (paramList == null) {
             paramList = ParamDescriptionBase.getBaseParamList()
                                             .extendedBy(ParamDescriptionSingle.class)
+                                            .withParam("isPrimary", ParamDescriptionSingle::isPrimary, Boolean.class)
                                             .andThatsIt();
         }
         return paramList;
@@ -35,14 +38,25 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      * @param getter The getter for the parameter.
      * @param paramMethodRestriction The {@link ParamMethodRestriction} value for the parameter.
      * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
+     * @param isPrimary  whether or not this parameter is a primary one
      * @throws IllegalArgumentException If any parameter is null.
      * @see ParamDescriptionCollection
      * @see ParamDescriptionMap
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
                                   final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                                  final EasyOverriderService easyOverriderService) {
+                                  final EasyOverriderService easyOverriderService, final boolean isPrimary) {
         super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
+        this.isPrimary = isPrimary;
+    }
+
+    /**
+     * Returns whether or not this ParamDescription is [part of] a primary key.
+     *
+     * @return True if it repesents a key component. False otherwise.
+     */
+    public boolean isPrimary() {
+        return isPrimary;
     }
 
     /**
