@@ -119,21 +119,6 @@ public interface EasyOverriderService {
     EasyOverriderService setToStringFormat(final String toStringFormat);
 
     /**
-     * Getter for the format String that is used in a primaryToString to create the final value.<br>
-     *
-     * @return A String
-     */
-    String getPrimaryToStringFormat();
-
-    /**
-     * Setter for the format String that is used in a primaryToString to create the final value.<br>
-     *
-     * @param primaryToStringFormat  the format string to use in a primaryToString to create the final value
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setPrimaryToStringFormat(final String primaryToStringFormat);
-
-    /**
      * Getter for the format String that is used to create the IllegalArgumentException message.<br>
      *
      * @return A String
