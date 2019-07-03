@@ -1,6 +1,8 @@
 # EasyOverrider
 An easier, better way to override `equals(Object)`, `hashCode()`, and `toString()` in Java objects.
 
+TODO: Completely update most, if not all of this due to recent changes.
+
 TODO: Add a bit of an overview
 
 ## Installing / Getting started
