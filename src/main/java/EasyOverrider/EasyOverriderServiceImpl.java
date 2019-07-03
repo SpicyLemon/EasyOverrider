@@ -335,10 +335,11 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     @Override
     public <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "toString");
-        requireNonNull(paramList, 3, "paramList", "toString");
+        requireNonNull(paramList, 2, "paramList", "toString");
         List<ParamDescription<? super O, ?>> paramDescriptions = getFilteredParamList(ParamDescription::isToStringInclude, paramList);
         return createToStringResult(thisObj, paramList.getParentClass(), paramDescriptions,
-                                    easyOverriderConfig.getStringForEmptyParamList(), seen);
+                                    easyOverriderConfig.getStringForEmptyParamList(),
+                                    Optional.ofNullable(seen).orElseGet(HashMap::new));
     }
 
     /**
