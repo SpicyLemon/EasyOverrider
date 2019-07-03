@@ -126,12 +126,9 @@ public interface EasyOverriderService {
      * Creates a String representation of the provided object using only primary parameters.<br>
      *
      * @param thisObj  the object to convert
-     * @param parentClass  the class of the parent object
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
+     * @param paramList  the ParamList to operate on
      * @param <O>  the class of the object
      * @return A String.
      */
-    <O> String primaryToString(final O thisObj, final Class<O> parentClass,
-                               final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> String primaryToString(final O thisObj, ParamList<O> paramList);
 }

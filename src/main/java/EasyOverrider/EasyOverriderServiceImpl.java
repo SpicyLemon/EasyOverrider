@@ -574,22 +574,17 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * <code>class name</code>, <code>hash code String</code>, <code>parameters String</code><br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
-     * @param parentClass  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param paramList  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
      * @return {@inheritDoc}
-     * @throws IllegalArgumentException if thisObj, parentClass, paramOrder or paramDescriptionMap are null
+     * @throws IllegalArgumentException if any parameter is null
      */
     @Override
-    public <O> String primaryToString(final O thisObj, final Class<O> parentClass, final List<String> paramOrder,
-                                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> String primaryToString(final O thisObj, ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
-        requireNonNull(parentClass, 2, "parentClass", "primaryToString");
-        requireNonNull(paramOrder, 3, "paramOrder", "primaryToString");
-        requireNonNull(paramDescriptionMap, 4, "paramDescriptionMap", "primaryToString");
-        String paramsString = getPrimaryParamsString(thisObj, paramOrder, paramDescriptionMap);
-        return createToStringResult(thisObj, parentClass, paramsString);
+        requireNonNull(paramList, 2, "paramList", "primaryToString");
+        String paramsString = getPrimaryParamsString(thisObj, paramList.getParamOrder(), paramList.getParamDescriptionMap());
+        return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
     private <O> String createToStringResult(final O thisObj, final Class<O> parentClass, final String paramsString) {

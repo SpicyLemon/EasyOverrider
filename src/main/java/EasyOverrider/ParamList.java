@@ -203,7 +203,7 @@ public class ParamList<O> {
     }
 
     public String primaryToString(final O thisObj) {
-        return easyOverriderService.primaryToString(thisObj, parentClass, paramOrder, paramDescriptionMap);
+        return easyOverriderService.primaryToString(thisObj, this);
     }
 
     /**
