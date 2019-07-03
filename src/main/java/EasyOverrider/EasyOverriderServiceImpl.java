@@ -293,27 +293,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Gets a string of all the parameters in the provided object.<br>
-     *
-     * This gets the list of parameters that are to be included in the toString result.
-     * If that list is empty, {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
-     * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
-     * The resulting strings are then joined together into one string using
-     * the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
-     *
-     * @param thisObj  the object to get the parameters from - assumed not null
-     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
-     * @param <O>  the type of the object in question
-     * @return A String. If no toString() parameters are in the map,
-     * {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
-     */
-    private <O> String getParamsString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
-        List<ParamDescription<? super O, ?>> paramDescriptions = getToStringParamDescriptions(paramList);
-        return paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForEmptyParamList(), seen);
-    }
-
-    /**
      * Converts all the parameters of the object into Strings, then joins them into one String.<br>
      *
      * If the provided <code>paramDescriptions</code> map is empty, the <code>defaultForEmpty</code> is returned.
@@ -490,7 +469,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     public <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "toString");
         requireNonNull(paramList, 3, "paramList", "toString");
-        String paramsString = getParamsString(thisObj, paramList, Optional.ofNullable(seen).orElseGet(HashMap::new));
+        List<ParamDescription<? super O, ?>> paramDescriptions = getToStringParamDescriptions(paramList);
+        String paramsString = paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForEmptyParamList(), seen);
         return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
