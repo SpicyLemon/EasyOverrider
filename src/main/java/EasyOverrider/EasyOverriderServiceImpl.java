@@ -78,50 +78,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Converts an object to a String.<br>
-     *
-     * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
-     * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
-     * the hashCode of the object is calculated.
-     * If the hashCode is already in the seen map, {@link RecursionPreventingToString#primaryToString()} is called.
-     * If that is not null, it is returned. Otherwise, {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
-     * If the hashCode is NOT already in the seen map, the hashCode is added to the seen map, the object's
-     * {@link RecursionPreventingToString#toString(Map)} method is called and it's result is returned.<br>
-     * If the object is NOT an instance of {@link RecursionPreventingToString},
-     * then the standard {@link Object#toString()} method is called on the object and returned.<br>
-     *
-     * @param objClass  the class of the object being converted - cannot be null
-     * @param obj  the object to convert
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
-     * @param <O>  the type of the object
-     * @return A String
-     * @throws IllegalArgumentException if either the objClass or seen parameters are null
-     * @see RecursionPreventingToString
-     */
-    private <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
-        requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
-        requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
-        if (obj == null) {
-            return easyOverriderConfig.getStringForNull();
-        }
-        if (obj instanceof RecursionPreventingToString) {
-            if (!seen.containsKey(objClass)) {
-                seen.put(objClass, new HashSet<>());
-            }
-            RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
-            int entryHashCode = obj.hashCode();
-            if (seen.get(objClass).contains(entryHashCode)) {
-                return Optional.ofNullable(recursiveObject.primaryToString())
-                               .orElseGet(() -> createToStringResult(obj, objClass, null,
-                                                                     easyOverriderConfig.getStringForRecursionPrevented(), null));
-            }
-            seen.get(objClass).add(entryHashCode);
-            return recursiveObject.toString(seen);
-        }
-        return obj.toString();
-    }
-
-    /**
      * {@inheritDoc}
      *
      * First gets the parameter from the object.
@@ -413,6 +369,50 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         P thisP = paramDescription.getGetter().apply(thisO);
         P thatP = paramDescription.getGetter().apply(thatO);
         return thisP == thatP || Objects.equals(thisP, thatP);
+    }
+
+    /**
+     * Converts an object to a String.<br>
+     *
+     * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
+     * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
+     * the hashCode of the object is calculated.
+     * If the hashCode is already in the seen map, {@link RecursionPreventingToString#primaryToString()} is called.
+     * If that is not null, it is returned. Otherwise, {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
+     * If the hashCode is NOT already in the seen map, the hashCode is added to the seen map, the object's
+     * {@link RecursionPreventingToString#toString(Map)} method is called and it's result is returned.<br>
+     * If the object is NOT an instance of {@link RecursionPreventingToString},
+     * then the standard {@link Object#toString()} method is called on the object and returned.<br>
+     *
+     * @param objClass  the class of the object being converted - cannot be null
+     * @param obj  the object to convert
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
+     * @param <O>  the type of the object
+     * @return A String
+     * @throws IllegalArgumentException if either the objClass or seen parameters are null
+     * @see RecursionPreventingToString
+     */
+    private <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
+        requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
+        requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
+        if (obj == null) {
+            return easyOverriderConfig.getStringForNull();
+        }
+        if (obj instanceof RecursionPreventingToString) {
+            if (!seen.containsKey(objClass)) {
+                seen.put(objClass, new HashSet<>());
+            }
+            RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
+            int entryHashCode = obj.hashCode();
+            if (seen.get(objClass).contains(entryHashCode)) {
+                return Optional.ofNullable(recursiveObject.primaryToString())
+                               .orElseGet(() -> createToStringResult(obj, objClass, null,
+                                                                     easyOverriderConfig.getStringForRecursionPrevented(), null));
+            }
+            seen.get(objClass).add(entryHashCode);
+            return recursiveObject.toString(seen);
+        }
+        return obj.toString();
     }
 
     /**
