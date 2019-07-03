@@ -2,6 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -158,8 +159,9 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             int entryHashCode = obj.hashCode();
             if (seen.get(objClass).contains(entryHashCode)) {
                 return Optional.ofNullable(recursiveObject.primaryToString())
-                               .orElseGet(() -> createToStringResult(obj, objClass,
-                                                                     easyOverriderConfig.getStringForRecursionPrevented()));
+                               .orElseGet(() -> createToStringResult(obj, objClass, new ArrayList<>(),
+                                                                     easyOverriderConfig.getStringForRecursionPrevented(),
+                                                                     new HashMap<>()));
             }
             seen.get(objClass).add(entryHashCode);
             return recursiveObject.toString(seen);
@@ -290,30 +292,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
                     .collect(Collectors.toMap(e -> objectToStringPreventingRecursion(keyClass, e.getKey(), seen),
                                               e -> objectToStringPreventingRecursion(valueClass, e.getValue(), seen)))
                     .toString();
-    }
-
-    /**
-     * Converts all the parameters of the object into Strings, then joins them into one String.<br>
-     *
-     * If the provided <code>paramDescriptions</code> map is empty, the <code>defaultForEmpty</code> is returned.
-     * Otherwise, it is iterated through and {@link ParamDescription#getNameValueString(Object, Map)} is called for each.
-     * Then they are all joined together using {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
-     *
-     * @param thisObj  the object containing the parameters
-     * @param paramDescriptions  the list of parameter descriptions
-     * @param defaultForEmpty  the default string for when the list is empty
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string
-     * @param <O> the type of the object in question
-     * @return A String. If no parameters are in the list, <code>defaultForEmpty</code> is returned.
-     */
-    private <O> String paramsToString(final O thisObj, final List<ParamDescription<? super O, ?>> paramDescriptions,
-                                      final String defaultForEmpty, final Map<Class, Set<Integer>> seen) {
-        if (paramDescriptions.isEmpty()) {
-            return defaultForEmpty;
-        }
-        return paramDescriptions.stream()
-                                .map(pd -> pd.getNameValueString(thisObj, seen))
-                                .collect(Collectors.joining(easyOverriderConfig.getParameterDelimiter()));
     }
 
     /**
@@ -470,8 +448,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(thisObj, 1, "thisObj", "toString");
         requireNonNull(paramList, 3, "paramList", "toString");
         List<ParamDescription<? super O, ?>> paramDescriptions = getToStringParamDescriptions(paramList);
-        String paramsString = paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForEmptyParamList(), seen);
-        return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
+        return createToStringResult(thisObj, paramList.getParentClass(), paramDescriptions,
+                                    easyOverriderConfig.getStringForEmptyParamList(), seen);
     }
 
     /**
@@ -496,15 +474,39 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
         List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramList);
-        String paramsString = paramsToString(thisObj, paramDescriptions,
-                                             easyOverriderConfig.getStringForRecursionPrevented(),
-                                             new HashMap<>());
-        return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
+        return createToStringResult(thisObj, paramList.getParentClass(), paramDescriptions,
+                                    easyOverriderConfig.getStringForRecursionPrevented(), new HashMap<>());
     }
 
-    private <O> String createToStringResult(final O thisObj, final Class<O> parentClass, final String paramsString) {
-        String className = easyOverriderConfig.getClassNameGetter().apply(parentClass);
-        String hashCode = easyOverriderConfig.getHashCodeToString().apply(thisObj.hashCode());
+    /**
+     * Put together the pieces to create the final toString result.<br>
+     *
+     * Generates the object's hashCode using {@link Object#hashCode()} then converts it to a String
+     * using the {@link EasyOverriderConfig#getHashCodeToString()} Function.
+     * Uses the {@link EasyOverriderConfig#getClassNameGetter()} Function to create the class name String.
+     * Then uses the provided <code>paramDescriptions</code> list to generate a String of the parameters joined together
+     * using {@link EasyOverriderConfig#getParameterDelimiter()}.
+     * If the provided <code>paramDescriptions</code> list is empty, the provided <code>defaultForEmpty</code> is used instead.
+     * Then uses the {@link EasyOverriderConfig#getToStringFormat()} format to combine the
+     * class name, hash code and parameters String into one String.<br>
+     *
+     * @param obj  the object being converted to a String - assumed not null
+     * @param objClass  the class of the object - assumed not null
+     * @param paramDescriptions  the list of parameter descriptions - assumed not null
+     * @param defaultForEmpty  the default string for when the list is empty - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <O>  the type of the object
+     * @return  A String.
+     */
+    private <O> String createToStringResult(final O obj, final Class<O> objClass,
+                                            final List<ParamDescription<? super O, ?>> paramDescriptions,
+                                            final String defaultForEmpty, final Map<Class, Set<Integer>> seen) {
+        String hashCode = easyOverriderConfig.getHashCodeToString().apply(obj.hashCode());
+        String className = easyOverriderConfig.getClassNameGetter().apply(objClass);
+        String paramsString = paramDescriptions.isEmpty() ? defaultForEmpty :
+                        paramDescriptions.stream()
+                                         .map(pd -> pd.getNameValueString(obj, seen))
+                                         .collect(Collectors.joining(easyOverriderConfig.getParameterDelimiter()));
         return String.format(easyOverriderConfig.getToStringFormat(), className, hashCode, paramsString);
     }
 
