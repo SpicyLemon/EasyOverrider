@@ -25,7 +25,7 @@ public interface ParamListService {
     ParamListService setConfig(ParamListServiceConfig paramListServiceConfig);
 
     /**
-     * Tests if two objects are the same given the provided param description map.<br>
+     * Tests if two objects are the same given the info in the ParamList.<br>
      *
      * @param thisObj  the first object in the comparison
      * @param thatObj  the second object in the comparison
@@ -35,7 +35,7 @@ public interface ParamListService {
     <O> boolean equals(final Object thisObj, final Object thatObj, final ParamList<O> paramList);
 
     /**
-     * Creates a hashCode for an object.<br>
+     * Creates a hashCode for an object given the info in the ParamList.<br>
      *
      * @param thisObj  the object to get the hashCode for
      * @param paramList  the ParamList to operate on
@@ -45,7 +45,7 @@ public interface ParamListService {
     <O> int hashCode(final O thisObj, final ParamList<O> paramList);
 
     /**
-     * Creates a String representation of the provided object.<br>
+     * Creates a String representation of the provided object given the info in the ParamList.<br>
      *
      * @param thisObj  the object to convert
      * @param paramList  the ParamList to operate on
@@ -56,7 +56,7 @@ public interface ParamListService {
     <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen);
 
     /**
-     * Creates a String representation of the provided object using only primary parameters.<br>
+     * Creates a String representation of the provided object using only the primary parameters from the paramList.<br>
      *
      * @param thisObj  the object to convert
      * @param paramList  the ParamList to operate on
