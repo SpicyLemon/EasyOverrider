@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Describes a standard parameter in an object.
+ * Describes a standard parameter in an object.<br>
  *
  * @param <O>  the type of the object
  * @param <P>  the type of the parameter
@@ -30,7 +30,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * Standard constructor for a generic parameter.
+     * Standard constructor for a generic parameter.<br>
      *
      * @param parentClass The class of the object containing the parameter.
      * @param paramClass The class of the parameter.
@@ -51,7 +51,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * Returns whether or not this ParamDescription is [part of] a primary key.
+     * Returns whether or not this ParamDescription is [part of] a primary key.<br>
      *
      * @return True if it repesents a key component. False otherwise.
      */
@@ -62,7 +62,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionSingle(Object, Map, Class)} method.
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionSingle(Object, Map, Class)} method.<br>
      *
      * @param value  {@inheritDoc}
      * @param seen  {@inheritDoc}
@@ -74,7 +74,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * equals method for a ParamDescriptionSingle object.
+     * equals method for a ParamDescriptionSingle object.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamDescriptionSingle is equal to the provided object. False otherwise.
@@ -85,7 +85,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * hashCode method for a ParamDescriptionSingle abstract object.
+     * hashCode method for a ParamDescriptionSingle abstract object.<br>
      *
      * @return an int.
      */
@@ -95,7 +95,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     }
 
     /**
-     * toString method for a ParamDescriptionSingle object.
+     * toString method for a ParamDescriptionSingle object.<br>
      *
      * @return A string representation of this object.
      */

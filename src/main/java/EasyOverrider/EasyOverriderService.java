@@ -14,154 +14,19 @@ import java.util.function.Function;
 public interface EasyOverriderService {
 
     /**
-     * Getter for the String that is used in a toString when a value is null.<br>
+     * Gets the config for the service.<br>
      *
-     * @return A String
+     * @return
      */
-    String getStringForNull();
+    EasyOverriderConfig getEasyOverriderConfig();
 
     /**
-     * Setter for the String that is used when a value is null.<br>
+     * Sets the config for the service.<br>
      *
-     * @param stringForNull  the string to use in a toString when a value is null
-     * @return the current EasyOverriderService
+     * @param easyOverriderConfig  the config to use
+     * @return This EasyOverriderService
      */
-    EasyOverriderService setStringForNull(final String stringForNull);
-
-    /**
-     * Getter for the String that is used in a toString when a previously seen object is seen again.<br>
-     *
-     * @return A String
-     */
-    String getStringForRecursionPrevented();
-
-    /**
-     * Setter for the String that is used when a previously seen object is seen again.<br>
-     *
-     * @param stringForRecursionPrevented  the string to use in a toString when a previously seen object is seen again
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setStringForRecursionPrevented(final String stringForRecursionPrevented);
-
-    /**
-     * Getter for the String that is used in a toString when an empty ParamList is encountered.<br>
-     *
-     * @return A String
-     */
-    String getStringForEmptyParamList();
-
-    /**
-     * Setter for the String that is used when an empty ParamList is encountered.<br>
-     *
-     * @param stringForEmptyParamList  the string to use in a toString when an empty ParamList is encountered
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setStringForEmptyParamList(final String stringForEmptyParamList);
-
-    /**
-     * Getter for the String that is used in a toString between parameters.<br>
-     *
-     * @return A String
-     */
-    String getParameterDelimiter();
-
-    /**
-     * Setter for the String that is used between parameters.<br>
-     *
-     * @param parameterDelimiter  the string to use in a toString between parameters
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setParameterDelimiter(final String parameterDelimiter);
-
-    /**
-     * Getter for the format String that is used in a toString to create a name/value string.<br>
-     *
-     * @return A String
-     */
-    String getNameValueFormat();
-
-    /**
-     * Setter for the format String that is used in a toString to create a name/value strings.<br>
-     *
-     * @param nameValueFormat  the format string to use in a toString to create a name/value string
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setNameValueFormat(final String nameValueFormat);
-
-    /**
-     * Getter for the format String that is used in a toString on each parameter value.<br>
-     *
-     * @return A String
-     */
-    String getParameterValueFormat();
-
-    /**
-     * Setter for the format String that is used in a toString on each parameter value.<br>
-     *
-     * @param parameterValueFormat  the format string to use in a toString on each parameter value
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setParameterValueFormat(final String parameterValueFormat);
-
-    /**
-     * Getter for the format String that is used in a toString to create the final toString value.<br>
-     *
-     * @return A String
-     */
-    String getToStringFormat();
-
-    /**
-     * Setter for the format String that is used in a toString to create the final toString value.<br>
-     *
-     * @param toStringFormat  the format string to use in a toString to create the final toString value
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setToStringFormat(final String toStringFormat);
-
-    /**
-     * Getter for the format String that is used to create the IllegalArgumentException message.<br>
-     *
-     * @return A String
-     */
-    String getIllegalArgumentMessageFormat();
-
-    /**
-     * Setter for the format String that is used to create the IllegalArgumentException message for a missing parameter.
-     *
-     * @param illegalArgumentMessageFormat  the format string to use to create the IllegalArgumentException message for a missing parameter
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setIllegalArgumentMessageFormat(final String illegalArgumentMessageFormat);
-
-    /**
-     * Getter for the function that is used to get the class name from a Class object.<br>
-     *
-     * @return A Function that takes in a Class and returns a String
-     */
-    Function<Class, String> getClassNameGetter();
-
-    /**
-     * Setter for the function that is used to get the class name from a Class object.<br>
-     *
-     * @param classNameGetter  the function to use to get the class name from a Class object
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setClassNameGetter(final Function<Class, String> classNameGetter);
-
-    /**
-     * Getter for the function that is used to convert the hashCode to a String for the toString method.<br>
-     *
-     * @return A Function that takes in an Integer and returns a String
-     */
-    Function<Integer, String> getHashCodeToString();
-
-    /**
-     * Setter for the function that is used to convert the hashCode to a String for the toString method.<br>
-     *
-     * @param hashCodeToString  the function to use to convert the hashCode to a String
-     * @return the current EasyOverriderService
-     */
-    EasyOverriderService setHashCodeToString(final Function<Integer, String> hashCodeToString);
+    EasyOverriderService setEasyOverriderConfig(EasyOverriderConfig easyOverriderConfig);
 
     /**
      * Run the provided getter on the provided object.<br>
@@ -174,17 +39,6 @@ public interface EasyOverriderService {
      * @return The results of the getter
      */
     <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
-
-    /**
-     * Run the provided getter on the provided object in such a way that exceptions are prevented.<br>
-     *
-     * @param obj  the object to run the getter on
-     * @param getter  the method reference to call
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return The results of the getter
-     */
-    <O, P> P safeGet(final O obj, final Function<? super O, P> getter);
 
     /**
      * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
@@ -423,14 +277,4 @@ public interface EasyOverriderService {
      */
     <O> String primaryToString(final O thisObj, final Class<O> parentClass,
                                final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
-     * Method used to make sure provided arguments aren't null.<br>
-     *
-     * @param obj  the object to check up on
-     * @param position  the position of the argument in the list of arguments
-     * @param paramName  the name of the parameter (for error messages)
-     * @param methodName  the name of the method the being called is
-     */
-    void requireNonNull(final Object obj, final int position, final String paramName, final String methodName);
 }

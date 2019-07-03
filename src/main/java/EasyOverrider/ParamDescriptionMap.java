@@ -1,5 +1,7 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.requireNonNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Describes a standard Map parameter in an object.
+ * Describes a standard Map parameter in an object.<br>
  *
  * @param <O>  the type of the object
  * @param <P>  the type of the parameter
@@ -34,7 +36,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * Standard constructor for a parameter that is a map of some type.
+     * Standard constructor for a parameter that is a map of some type.<br>
      *
      * @param parentClass  the class of the object containing the parameter
      * @param paramClass  the class of the parameter (must extend Map)
@@ -52,12 +54,12 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
         super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
         this.keyClass = keyClass;
         this.valueClass = valueClass;
-        easyOverriderService.requireNonNull(keyClass, 3, "keyClass", "ParamDescriptionMap constructor");
-        easyOverriderService.requireNonNull(valueClass, 4, "valueClass", "ParamDescriptionMap constructor");
+        requireNonNull(keyClass, 3, "keyClass", "ParamDescriptionMap constructor");
+        requireNonNull(valueClass, 4, "valueClass", "ParamDescriptionMap constructor");
     }
 
     /**
-     * Gets the class of the keys in this map parameter.
+     * Gets the class of the keys in this map parameter.<br>
      *
      * @return  the class of the keys in this map parameter
      */
@@ -66,7 +68,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * Gets the class of the values in this map parameter.
+     * Gets the class of the values in this map parameter.<br>
      *
      * @return  the class of the values in this map parameter
      */
@@ -77,7 +79,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionMap(Map, Map, Class, Class)} method.
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionMap(Map, Map, Class, Class)} method.<br>
      *
      * @param value  {@inheritDoc}
      * @param seen  {@inheritDoc}
@@ -89,7 +91,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * equals method for a ParamDescriptionMap object.
+     * equals method for a ParamDescriptionMap object.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamDescriptionMap is equal to the provided object. False otherwise.
@@ -100,7 +102,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * hashCode method for a ParamDescriptionMap abstract object.
+     * hashCode method for a ParamDescriptionMap abstract object.<br>
      *
      * @return an int.
      */
@@ -110,7 +112,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     }
 
     /**
-     * toString method for a ParamDescriptionMap object.
+     * toString method for a ParamDescriptionMap object.<br>
      *
      * @return A string representation of this object.
      */

@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 /**
  * An abstract class that implements most of the functionality of a ParamDescription.<br>
  *
- * The extending class is required to implement the following:
+ * The extending class is required to implement the following:<br>
  * <ul>
  * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object, Map)}
  * </ul>
@@ -60,14 +61,14 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * Constructor for the extending class to use to set all the pieces pre-implemented in this abstract class
+     * Constructor for the extending class to use to set all the pieces pre-implemented in this abstract class.<br>
      *
-     * @param parentClass  the class of the parent object
-     * @param paramClass  the class of the parameter
-     * @param name  the name of the parameter
-     * @param getter  the getter for the parameter
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter
-     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
+     * @param parentClass  the class of the parent object - cannot be null
+     * @param paramClass  the class of the parameter - cannot be null
+     * @param name  the name of the parameter - cannot be null
+     * @param getter  the getter for the parameter - cannot be null
+     * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter - cannot be null
+     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality - cannot be null
      * @param paramIndexNumbers  a list of parameter index numbers used for possible validation error messages
      * @throws IllegalArgumentException If any parameter is null.
      */
@@ -82,19 +83,19 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
         this.paramMethodRestriction = paramMethodRestriction;
         this.easyOverriderService = Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new);
 
-        this.easyOverriderService.requireNonNull(parentClass, getIndexOrDefault(paramIndexNumbers, 1), "parentClass", "ParamDescriptionBase constructor");
-        this.easyOverriderService.requireNonNull(paramClass, getIndexOrDefault(paramIndexNumbers, 2), "paramClass", "ParamDescriptionBase constructor");
-        this.easyOverriderService.requireNonNull(name, getIndexOrDefault(paramIndexNumbers, 3), "name", "ParamDescriptionBase constructor");
-        this.easyOverriderService.requireNonNull(getter, getIndexOrDefault(paramIndexNumbers, 4), "getter", "ParamDescriptionBase constructor");
-        this.easyOverriderService.requireNonNull(paramMethodRestriction, getIndexOrDefault(paramIndexNumbers, 5), "paramMethodRestriction", "ParamDescriptionBase constructor");
-        this.easyOverriderService.requireNonNull(easyOverriderService, getIndexOrDefault(paramIndexNumbers, 6), "easyOverriderService", "ParamDescriptionBase constructor");
+        requireNonNull(parentClass, getIndexOrDefault(paramIndexNumbers, 1), "parentClass", "ParamDescriptionBase constructor");
+        requireNonNull(paramClass, getIndexOrDefault(paramIndexNumbers, 2), "paramClass", "ParamDescriptionBase constructor");
+        requireNonNull(name, getIndexOrDefault(paramIndexNumbers, 3), "name", "ParamDescriptionBase constructor");
+        requireNonNull(getter, getIndexOrDefault(paramIndexNumbers, 4), "getter", "ParamDescriptionBase constructor");
+        requireNonNull(paramMethodRestriction, getIndexOrDefault(paramIndexNumbers, 5), "paramMethodRestriction", "ParamDescriptionBase constructor");
+        requireNonNull(easyOverriderService, getIndexOrDefault(paramIndexNumbers, 6), "easyOverriderService", "ParamDescriptionBase constructor");
     }
 
     /**
      * Gets the desired index to use for the provided entry.<br>
      *
      * If the list of indexes isn't defined, or the requested entry is either null or a non-existent element of the list,
-     * then the provided entry is returned.
+     * then the provided entry is returned.<br>
      *
      * @param indexes  the desired list of index numbers
      * @param entry  the entry in the list to look up
@@ -134,25 +135,20 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
 
     /**
      * {@inheritDoc}
+     *
      * @param easyOverriderService  {@inheritDoc} - cannot be null
      * @throws IllegalArgumentException if the provided EasyOverriderService is null.
      */
     @Override
     public void setService(final EasyOverriderService easyOverriderService) {
-        if (this.easyOverriderService != null) {
-            this.easyOverriderService.requireNonNull(easyOverriderService, 1, "easyOverriderService", "setService");
-        } else if (easyOverriderService == null) {
-            //If the one we've got is null, and the one provided is also null, we want to throw the default exception.
-            //So we create a temporary new one to throw that it.
-            new EasyOverriderServiceImpl().requireNonNull(easyOverriderService, 1, "easyOverriderService", "setService");
-        }
+        requireNonNull(easyOverriderService, 1, "easyOverriderService", "setService");
         this.easyOverriderService = easyOverriderService;
     }
 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isEqualsIgnore()} method.
+     * Uses the {@link ParamMethodRestriction#isEqualsIgnore()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -164,7 +160,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isEqualsInclude()} method.
+     * Uses the {@link ParamMethodRestriction#isEqualsInclude()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -176,7 +172,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isHashCodeIgnore()} method.
+     * Uses the {@link ParamMethodRestriction#isHashCodeIgnore()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -188,7 +184,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isHashCodeInclude()} method.
+     * Uses the {@link ParamMethodRestriction#isHashCodeInclude()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -200,7 +196,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isToStringIgnore()} method.
+     * Uses the {@link ParamMethodRestriction#isToStringIgnore()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -212,7 +208,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link ParamMethodRestriction#isToStringInclude()} method.
+     * Uses the {@link ParamMethodRestriction#isToStringInclude()} method.<br>
      *
      * @return {@inheritDoc}
      */
@@ -224,7 +220,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#get(Object, Function, String)} method.
+     * Uses the {@link EasyOverriderService#get(Object, Function, String)} method.<br>
      *
      * @param obj  {@inheritDoc}
      * @return {@inheritDoc}
@@ -237,20 +233,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#safeGet(Object, Function)} method.
-     *
-     * @param obj  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public P safeGet(final O obj) {
-        return easyOverriderService.safeGet(obj, getter);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.
+     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.<br>
      *
      * @param thisO  {@inheritDoc}
      * @param thatO  {@inheritDoc}
@@ -264,7 +247,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.
+     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.<br>
      *
      * @param obj  {@inheritDoc}
      * @param seen  {@inheritDoc}
@@ -278,7 +261,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * Converts the value of this parameter to a string while preventing recursion.<br>
      *
-     * Implementor will probably want to call {@link EasyOverriderService#objectToStringPreventingRecursion(Class, Object, Map)}.
+     * Implementor will probably want to call {@link EasyOverriderService#objectToStringPreventingRecursion(Class, Object, Map)}.<br>
      *
      * @param value  the value to convert to a String
      * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
@@ -289,7 +272,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#getNameValueString(Object, String, Function, Map, BiFunction)} method.
+     * Uses the {@link EasyOverriderService#getNameValueString(Object, String, Function, Map, BiFunction)} method.<br>
      *
      * @param obj  {@inheritDoc}
      * @param seen  {@inheritDoc}
@@ -302,7 +285,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * equals method for a ParamDescriptionBase abstract object.
+     * equals method for a ParamDescriptionBase abstract object.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamDescriptionBase is equal to the provided object. False otherwise.
@@ -313,7 +296,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * hashCode method for a ParamDescriptionBase abstract object.
+     * hashCode method for a ParamDescriptionBase abstract object.<br>
      *
      * @return An int.
      */
@@ -323,7 +306,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * toString method for a ParamDescriptionBase abstract object.
+     * toString method for a ParamDescriptionBase abstract object.<br>
      *
      * @return A string representation of this object.
      */

@@ -1,5 +1,7 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.requireNonNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Describes a standard {@link Collection} parameter in an object.
+ * Describes a standard {@link Collection} parameter in an object.<br>
  *
  * @param <O>  the type of the object
  * @param <P>  the type of the parameter
@@ -32,7 +34,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * Standard constructor for a parameter that is a collection of some type.
+     * Standard constructor for a parameter that is a collection of some type.<br>
      *
      * @param parentClass  the class of the object containing the parameter
      * @param paramClass  the class of the parameter (must extend Collection)
@@ -48,11 +50,11 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
                                       final EasyOverriderService easyOverriderService) {
         super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
         this.entryClass = entryClass;
-        easyOverriderService.requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
+        requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
     }
 
     /**
-     * Gets the class of the entries in this collection parameter.
+     * Gets the class of the entries in this collection parameter.<br>
      *
      * @return  the class of the entries in this collection parameter
      */
@@ -63,7 +65,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionCollection(Collection, Map, Class)} method.
+     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionCollection(Collection, Map, Class)} method.<br>
      *
      * @param value  {@inheritDoc}
      * @param seen  {@inheritDoc}
@@ -75,7 +77,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * equals method for a ParamDescriptionCollection object.
+     * equals method for a ParamDescriptionCollection object.<br>
      *
      * @param obj  the object to test against
      * @return True if this ParamDescriptionCollection is equal to the provided object. False otherwise.
@@ -86,7 +88,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * hashCode method for a ParamDescriptionCollection object.
+     * hashCode method for a ParamDescriptionCollection object.<br>
      *
      * @return an int.
      */
@@ -96,7 +98,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     }
 
     /**
-     * paramValueToString method for a ParamDescriptionCollection object.
+     * paramValueToString method for a ParamDescriptionCollection object.<br>
      *
      * @return A string representation of this object.
      */

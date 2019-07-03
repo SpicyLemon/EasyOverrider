@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
@@ -82,17 +83,15 @@ public class ParamListBuilder<O> {
      *
      * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.<br>
      *
-     * @param superParamList  any existing ParamList available to the parentClass
+     * @param easyOverriderService  the service that the ParamList will use for most functionality
      * @param parentClass  the class of the object being described
-     * @param paramMethodRestrictionRestriction  the {@link ParamMethodRestrictionRestriction} to use -
-     *                                          if null, {@link ParamMethodRestrictionRestriction#SAFE_ONLY} is used
+     * @param superParamList  any existing ParamList available to the parentClass
      */
     private ParamListBuilder(final EasyOverriderService easyOverriderService,
-                             final ParamList<? super O> superParamList, final Class<O> parentClass,
-                             final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+                             final Class<O> parentClass, final ParamList<? super O> superParamList) {
         this.easyOverriderService = easyOverriderService;
         this.parentClass = parentClass;
-        this.paramMethodRestrictionRestriction = Optional.ofNullable(paramMethodRestrictionRestriction).orElse(SAFE_ONLY);
+        this.paramMethodRestrictionRestriction = SAFE_ONLY;
         this.paramOrder = Optional.ofNullable(superParamList)
                                   .map(ParamList::getParamOrder)
                                   .map(LinkedList::new)
@@ -114,8 +113,8 @@ public class ParamListBuilder<O> {
      * @see ParamList#forClass(Class)
      */
     ParamListBuilder(final Class<O> parentClass) {
-        this(null, null, parentClass, null);
-        getEasyOverriderServiceOrDefault().requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        this(null, parentClass, null);
+        requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
     }
 
     /**
@@ -130,11 +129,10 @@ public class ParamListBuilder<O> {
      */
     ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList,
                      final EasyOverriderService easyOverriderService) {
-        this(easyOverriderService, superParamList, parentClass, null);
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
-        eos.requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
-        eos.requireNonNull(easyOverriderService, 3, "easyOverriderService", "ParamListBuilder Constructor");
+        this(easyOverriderService, parentClass, superParamList);
+        requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
+        requireNonNull(easyOverriderService, 3, "easyOverriderService", "ParamListBuilder Constructor");
     }
 
     /**
@@ -207,9 +205,10 @@ public class ParamListBuilder<O> {
      *
      * @param easyOverriderService  the EasyOverriderService to use for the parameters and param list.
      * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if the provided parameter is null.
      */
     public ParamListBuilder<O> usingService(final EasyOverriderService easyOverriderService) {
-        getEasyOverriderServiceOrDefault().requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
+        requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
         this.easyOverriderService = easyOverriderService;
         if (!paramDescriptionMap.isEmpty()) {
             paramDescriptionMap.values().forEach(e -> e.setService(easyOverriderService));
@@ -226,8 +225,10 @@ public class ParamListBuilder<O> {
      * @see #allowingOnlySafeParamMethodRestrictions()
      * @see #allowingUnsafeParamMethodRestrictions()
      * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if the provided parameter is null.
      */
     public ParamListBuilder<O> havingRestriction(final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
+        requireNonNull(paramMethodRestrictionRestriction, 1, "paramMethodRestrictionRestriction", "havingRestriction");
         this.paramMethodRestrictionRestriction = paramMethodRestrictionRestriction;
         return this;
     }
@@ -283,10 +284,9 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
                                              final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withParam");
-        eos.requireNonNull(getter, 2, "getter", "withParam");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withParam");
+        requireNonNull(name, 1, "name", "withParam");
+        requireNonNull(getter, 2, "getter", "withParam");
+        requireNonNull(paramClass, 3, "paramClass", "withParam");
         addSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, false);
         return this;
     }
@@ -314,11 +314,10 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
                                              final ParamMethodRestriction paramMethodRestriction,
                                              final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withParam");
-        eos.requireNonNull(getter, 2, "getter", "withParam");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withParam");
+        requireNonNull(name, 1, "name", "withParam");
+        requireNonNull(getter, 2, "getter", "withParam");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
+        requireNonNull(paramClass, 4, "paramClass", "withParam");
         addSingleParam(paramClass, name, getter, paramMethodRestriction, false);
         return this;
     }
@@ -347,10 +346,9 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
                                                     final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withPrimaryParam");
-        eos.requireNonNull(getter, 2, "getter", "withPrimaryParam");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withPrimaryParam");
+        requireNonNull(name, 1, "name", "withPrimaryParam");
+        requireNonNull(getter, 2, "getter", "withPrimaryParam");
+        requireNonNull(paramClass, 3, "paramClass", "withPrimaryParam");
         addSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
         return this;
     }
@@ -384,11 +382,10 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
                                                     final ParamMethodRestriction paramMethodRestriction,
                                                     final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withPrimaryParam");
-        eos.requireNonNull(getter, 2, "getter", "withPrimaryParam");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withPrimaryParam");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withPrimaryParam");
+        requireNonNull(name, 1, "name", "withPrimaryParam");
+        requireNonNull(getter, 2, "getter", "withPrimaryParam");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withPrimaryParam");
+        requireNonNull(paramClass, 4, "paramClass", "withPrimaryParam");
         addSingleParam(paramClass, name, getter, paramMethodRestriction, true);
         return this;
     }
@@ -434,11 +431,10 @@ public class ParamListBuilder<O> {
     @SuppressWarnings("unchecked")
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withCollection");
-        eos.requireNonNull(getter, 2, "getter", "withCollection");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withCollection");
-        eos.requireNonNull(entryClass, 4, "entryClass", "withCollection");
+        requireNonNull(name, 1, "name", "withCollection");
+        requireNonNull(getter, 2, "getter", "withCollection");
+        requireNonNull(paramClass, 3, "paramClass", "withCollection");
+        requireNonNull(entryClass, 4, "entryClass", "withCollection");
         addCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -469,12 +465,11 @@ public class ParamListBuilder<O> {
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
                                                                         final ParamMethodRestriction paramMethodRestriction,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withCollection");
-        eos.requireNonNull(getter, 2, "getter", "withCollection");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withCollection");
-        eos.requireNonNull(entryClass, 5, "entryClass", "withCollection");
+        requireNonNull(name, 1, "name", "withCollection");
+        requireNonNull(getter, 2, "getter", "withCollection");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
+        requireNonNull(paramClass, 4, "paramClass", "withCollection");
+        requireNonNull(entryClass, 5, "entryClass", "withCollection");
         addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -526,12 +521,11 @@ public class ParamListBuilder<O> {
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                              final Class<P> paramClass, final Class<K> keyClass,
                                                              final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withMap");
-        eos.requireNonNull(getter, 2, "getter", "withMap");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withMap");
-        eos.requireNonNull(keyClass, 4, "keyClass", "withMap");
-        eos.requireNonNull(entryClass, 5, "entryClass", "withMap");
+        requireNonNull(name, 1, "name", "withMap");
+        requireNonNull(getter, 2, "getter", "withMap");
+        requireNonNull(paramClass, 3, "paramClass", "withMap");
+        requireNonNull(keyClass, 4, "keyClass", "withMap");
+        requireNonNull(entryClass, 5, "entryClass", "withMap");
         addMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -565,13 +559,12 @@ public class ParamListBuilder<O> {
                                                              final ParamMethodRestriction paramMethodRestriction,
                                                              final Class<P> paramClass, final Class<K> keyClass,
                                                              final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withMap");
-        eos.requireNonNull(getter, 2, "getter", "withMap");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withMap");
-        eos.requireNonNull(keyClass, 5, "keyClass", "withMap");
-        eos.requireNonNull(entryClass, 6, "entryClass", "withMap");
+        requireNonNull(name, 1, "name", "withMap");
+        requireNonNull(getter, 2, "getter", "withMap");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
+        requireNonNull(paramClass, 4, "paramClass", "withMap");
+        requireNonNull(keyClass, 5, "keyClass", "withMap");
+        requireNonNull(entryClass, 6, "entryClass", "withMap");
         addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -642,10 +635,9 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
                                                     final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedParam");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
+        requireNonNull(name, 1, "name", "withUpdatedParam");
+        requireNonNull(getter, 2, "getter", "withUpdatedParam");
+        requireNonNull(paramClass, 3, "paramClass", "withUpdatedParam");
         updateSingleParam(paramClass, name, getter, INCLUDED_IN_ALL, false);
         return this;
     }
@@ -676,11 +668,10 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
                                                     final ParamMethodRestriction paramMethodRestriction,
                                                     final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedParam");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
+        requireNonNull(name, 1, "name", "withUpdatedParam");
+        requireNonNull(getter, 2, "getter", "withUpdatedParam");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
+        requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
         updateSingleParam(paramClass, name, getter, paramMethodRestriction, false);
         return this;
     }
@@ -712,10 +703,9 @@ public class ParamListBuilder<O> {
      */
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
                                                            final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedPrimaryParam");
+        requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
+        requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
+        requireNonNull(paramClass, 3, "paramClass", "withUpdatedPrimaryParam");
         updateSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
         return this;
     }
@@ -754,11 +744,10 @@ public class ParamListBuilder<O> {
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
                                                            final ParamMethodRestriction paramMethodRestriction,
                                                            final Class<P> paramClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedPrimaryParam");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedPrimaryParam");
+        requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
+        requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedPrimaryParam");
+        requireNonNull(paramClass, 4, "paramClass", "withUpdatedPrimaryParam");
         updateSingleParam(paramClass, name, getter, paramMethodRestriction, true);
         return this;
     }
@@ -807,11 +796,10 @@ public class ParamListBuilder<O> {
     public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(
                     final String name, final Function<? super O, P> getter,
                     final Class<P> paramClass, final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedCollection");
-        eos.requireNonNull(entryClass, 4, "entryClass", "withUpdatedCollection");
+        requireNonNull(name, 1, "name", "withUpdatedCollection");
+        requireNonNull(getter, 2, "getter", "withUpdatedCollection");
+        requireNonNull(paramClass, 3, "paramClass", "withUpdatedCollection");
+        requireNonNull(entryClass, 4, "entryClass", "withUpdatedCollection");
         updateCollectionParam(paramClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -845,12 +833,11 @@ public class ParamListBuilder<O> {
                     final String name, final Function<? super O, P> getter,
                     final ParamMethodRestriction paramMethodRestriction,
                     final Class<P> paramClass, final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedCollection");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
-        eos.requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
+        requireNonNull(name, 1, "name", "withUpdatedCollection");
+        requireNonNull(getter, 2, "getter", "withUpdatedCollection");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
+        requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
+        requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
         updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -906,12 +893,11 @@ public class ParamListBuilder<O> {
                     final String name, final Function<? super O, P> getter,
                     final Class<P> paramClass, final Class<K> keyClass,
                     final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedMap");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        eos.requireNonNull(paramClass, 3, "paramClass", "withUpdatedMap");
-        eos.requireNonNull(keyClass, 4, "keyClass", "withUpdatedMap");
-        eos.requireNonNull(entryClass, 5, "entryClass", "withUpdatedMap");
+        requireNonNull(name, 1, "name", "withUpdatedMap");
+        requireNonNull(getter, 2, "getter", "withUpdatedMap");
+        requireNonNull(paramClass, 3, "paramClass", "withUpdatedMap");
+        requireNonNull(keyClass, 4, "keyClass", "withUpdatedMap");
+        requireNonNull(entryClass, 5, "entryClass", "withUpdatedMap");
         updateMapParam(paramClass, keyClass, entryClass, name, getter, INCLUDED_IN_ALL);
         return this;
     }
@@ -948,13 +934,12 @@ public class ParamListBuilder<O> {
                     final ParamMethodRestriction paramMethodRestriction,
                     final Class<P> paramClass, final Class<K> keyClass,
                     final Class<E> entryClass) {
-        EasyOverriderService eos = getEasyOverriderServiceOrDefault();
-        eos.requireNonNull(name, 1, "name", "withUpdatedMap");
-        eos.requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        eos.requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
-        eos.requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
-        eos.requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
-        eos.requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
+        requireNonNull(name, 1, "name", "withUpdatedMap");
+        requireNonNull(getter, 2, "getter", "withUpdatedMap");
+        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
+        requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
+        requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
+        requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
         updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
         return this;
     }
@@ -1036,7 +1021,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      */
     public ParamListBuilder<O> withoutParam(final String name) {
-        getEasyOverriderServiceOrDefault().requireNonNull(name, 1, "name", "withoutParam");
+        requireNonNull(name, 1, "name", "withoutParam");
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be removed while trying to " +
                                                "build the ParamList for a " + parentClass.getCanonicalName());

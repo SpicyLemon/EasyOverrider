@@ -110,18 +110,8 @@ public interface ParamDescription<O, P> {
      *
      * @param obj  the object you want to get the parameter from
      * @return The result of the getter when given the provided object.
-     * @see #safeGet(Object)
      */
     P get(final O obj);
-
-    /**
-     * Runs the getter on the provided object. If the provided obj is null, null is returned.<br>
-     *
-     * @param obj  the object you want to get the parameter from
-     * @return The result of the getter when given the provided object.
-     * @see #get(Object)
-     */
-    P safeGet(final O obj);
 
     /**
      * Tests whether or not this param is equal in the two objects.<br>
