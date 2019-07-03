@@ -458,7 +458,7 @@ public class TestParamDescriptionSingle {
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService, false);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String expectedStart = "EasyOverrider.TestObj@";
+        String expectedStart = "EasyOverriderMethods.TestObj@";
         String expectedEnd = " [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
@@ -507,7 +507,7 @@ public class TestParamDescriptionSingle {
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService, false);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String expectedStart = "EasyOverrider.TestObj@";
+        String expectedStart = "EasyOverriderMethods.TestObj@";
         String expectedEnd = " [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
@@ -559,7 +559,7 @@ public class TestParamDescriptionSingle {
                                         TestObj::getTheTestObj, INCLUDED_IN_ALL, easyOverriderService, false);
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
-        String expectedStart = "theTestObj='EasyOverrider.TestObj@";
+        String expectedStart = "theTestObj='EasyOverriderMethods.TestObj@";
         String expectedEnd = " [" +
                           "theBoolean='false', " +
                           "theInt='0', " +

@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An abstract class that extends EasyOverrider and implements RecursionPreventingToString.<br>
+ * An abstract class that extends EasyOverriderMethods and implements RecursionPreventingToString.<br>
  *
- * The {@link EasyOverrider} abstract class provides the equals and hashCode override methods.
+ * The {@link EasyOverriderMethods} abstract class provides the equals and hashCode override methods.
  * This abstract class implements the <code>toString(Map)</code> method required by {@link RecursionPreventingToString}
  * utilizing the extending class' {@link #getParamList()} method.<br>
  *
@@ -16,10 +16,10 @@ import java.util.Set;
  * <pre>
  * {@code
  *
- * import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+ * import static EasyOverriderMethods.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
  *
- * import EasyOverrider.EasyOverrider;
- * import EasyOverrider.ParamList;
+ * import EasyOverriderMethods.EasyOverriderMethods;
+ * import EasyOverriderMethods.ParamList;
  * import java.util.List;
  *
  * public class Bar extends EasyOverriderPreventingRecursiveToString<Bar> {
@@ -70,13 +70,13 @@ import java.util.Set;
  * </pre>
  *
  * @param <B>  the type of object being extended.
- * @see EasyOverrider
+ * @see EasyOverriderMethods
  * @see RecursionPreventingToString
  */
-public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverrider<B> implements RecursionPreventingToString {
+public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverriderMethods<B> implements RecursionPreventingToString {
 
     /**
-     * An EasyOverrider version of toString(Map) that prevents recursion.<br>
+     * An EasyOverriderMethods version of toString(Map) that prevents recursion.<br>
      *
      * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
      * @return The string representation of this object as defined by a {@link ParamList}.

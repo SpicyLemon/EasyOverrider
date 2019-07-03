@@ -395,7 +395,7 @@ public class TestParamDescriptionMap {
     public void paramValueToString_objectEmpty_returnsExpectedValueAndPreventsRecursion() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
                         getParamMapStringTestObj("theMapStringTestObj", INCLUDED_IN_ALL);
-        String expected = "{testObj=EasyOverrider.TestObj@45cc6af4 [" +
+        String expected = "{testObj=EasyOverriderMethods.TestObj@45cc6af4 [" +
                           "theBoolean='false', " +
                           "theInt='0', " +
                           "theString=null, " +

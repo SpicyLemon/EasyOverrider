@@ -8,13 +8,13 @@ package EasyOverrider;
  * Example class:
  * <pre>{@code
  *
- * import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+ * import static EasyOverriderMethods.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
  *
  * import Bar;
- * import EasyOverrider.EasyOverrider;
- * import EasyOverrider.ParamList;
+ * import EasyOverriderMethods.EasyOverriderMethods;
+ * import EasyOverriderMethods.ParamList;
  *
- * public class Foo extends EasyOverrider<Foo> {
+ * public class Foo extends EasyOverriderMethods<Foo> {
  *     private int id;
  *     private String name;
  *     private Bar bar;
@@ -56,7 +56,7 @@ package EasyOverrider;
  * @param <B>  the type of object being extended.
  * @see EasyOverriderPreventingRecursiveToString
  */
-public abstract class EasyOverrider<B> {
+public abstract class EasyOverriderMethods<B> {
 
     /**
      * A method that returns this class's ParamList.<br>
@@ -99,7 +99,7 @@ public abstract class EasyOverrider<B> {
     }
 
     /**
-     * An EasyOverrider version of equals(Object).
+     * An EasyOverriderMethods version of equals(Object).
      *
      * @param obj  the object to compare this object to
      * @return True if the provided object equals this object as defined by the {@link ParamList}. False otherwise.
@@ -110,7 +110,7 @@ public abstract class EasyOverrider<B> {
     }
 
     /**
-     * An EasyOverrider version of hashCode().
+     * An EasyOverriderMethods version of hashCode().
      *
      * @return The hash code int for this object as defined by the {@link ParamList}.
      */
@@ -120,7 +120,7 @@ public abstract class EasyOverrider<B> {
     }
 
     /**
-     * An EasyOverrider version of toString().
+     * An EasyOverriderMethods version of toString().
      *
      * @return The string representation of this object as defined by the {@link ParamList}.
      */
