@@ -63,7 +63,7 @@ public class ParamList<O> {
 
     private static ParamList<ParamList> paramList;
 
-    static ParamList<ParamList> getParamList() {
+    private static ParamList<ParamList> getParamList() {
         if (paramList == null) {
             paramList = ParamList.forClass(ParamList.class)
                                  .withParam("parentClass", ParamList::getParentClass, Class.class)

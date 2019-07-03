@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
  */
 public class ParamListServiceImpl implements ParamListService {
 
-    private ParamListServiceConfig config = null;
+    private ParamListServiceConfig config;
 
     private static ParamList<ParamListServiceImpl> paramList;
 
-    static ParamList<ParamListServiceImpl> getParamList() {
+    private static ParamList<ParamListServiceImpl> getParamList() {
         if (paramList == null) {
             paramList = ParamList.forClass(ParamListServiceImpl.class)
                                  .withParam("config", ParamListServiceImpl::getConfig, ParamListServiceConfig.class)
