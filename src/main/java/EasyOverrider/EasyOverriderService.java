@@ -172,61 +172,6 @@ public interface EasyOverriderService {
                                       final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
 
     /**
-     * Gets a list of all the parameter descriptions.<br>
-     *
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param <O>  the type of the object in question
-     * @return A list of ParamDescription objects
-     */
-    <O> List<ParamDescription<? super O, ?>> getAllParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
-     * Gets a list of all the parameter descriptions that should be used in an equals method.<br>
-     *
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param <O>  the type of the object in question
-     * @return A list of ParamDescription objects
-     */
-    <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
-     * Gets a list of all the parameter descriptions that should be in a hashCode method.<br>
-     *
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param <O>  the type of the object in question
-     * @return A list of ParamDescription objects
-     */
-    <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
-     * Gets a list of all the parameter descriptions that should be in a toString method.<br>
-     *
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param <O>  the type of the object in question
-     * @return A list of ParamDescription objects
-     */
-    <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
-     * Gets a list of just the primary parameter descriptions that should be in a toString method.<br>
-     *
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param <O>  the type of the object in question
-     * @return A list of ParamDescription objects
-     */
-    <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
-
-    /**
      * Tests if two objects are the same given the provided param description map.<br>
      *
      * @param thisObj  the first object in the comparison

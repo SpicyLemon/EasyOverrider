@@ -448,37 +448,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a list of all the parameter descriptions that should be used in an equals method.<br>
      *
-     * Resulting list is unmodifiable.<br>
-     *
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
      * @return An unmodifiable list of ParamDescription objects
      * @throws IllegalArgumentException if either parameter is null
      */
-    @Override
-    public <O> List<ParamDescription<? super O, ?>> getAllParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(paramOrder, 1, "paramOrder", "getAllParamDescriptions");
-        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getAllParamDescriptions");
-        return getFilteredParamList((p) -> true, paramOrder, paramDescriptionMap);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Resulting list is unmodifiable.<br>
-     *
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @return An unmodifiable list of ParamDescription objects
-     * @throws IllegalArgumentException if either parameter is null
-     */
-    @Override
-    public <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
+    private <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
                     final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getEqualsParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getEqualsParamDescriptions");
@@ -486,18 +464,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a list of all the parameter descriptions that should be in a hashCode method.<br>
      *
-     * Resulting list is unmodifiable.<br>
-     *
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
      * @return An unmodifiable list of ParamDescription objects
      * @throws IllegalArgumentException if either parameter is null
      */
-    @Override
-    public <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
+    private <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
                     final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getHashCodeParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getHashCodeParamDescriptions");
@@ -505,18 +480,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a list of all the parameter descriptions that should be in a toString method.<br>
      *
-     * Resulting list is unmodifiable.<br>
-     *
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
      * @return An unmodifiable list of ParamDescription objects
      * @throws IllegalArgumentException if either parameter is null
      */
-    @Override
-    public <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
+    private <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
                     final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
@@ -524,18 +496,17 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a list of just the primary parameter descriptions that should be in a toString method.<br>
      *
      * Resulting list is unmodifiable.<br>
      *
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O> {@inheritDoc}
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
      * @return An unmodifiable list of ParamDescription objects
      * @throws IllegalArgumentException if either parameter is null
      */
-    @Override
-    public <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
+    private <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
                     final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
         requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
@@ -552,10 +523,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     private <O> List<ParamDescription<? super O, ?>> getFilteredParamList(
                     final Predicate<ParamDescription<? super O, ?>> filter, final List<String> paramOrder,
                     final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        return Collections.unmodifiableList(paramOrder.stream()
-                                                      .map(paramDescriptionMap::get)
-                                                      .filter(filter)
-                                                      .collect(Collectors.toList()));
+        return paramOrder.stream()
+                         .map(paramDescriptionMap::get)
+                         .filter(filter)
+                         .collect(Collectors.toList());
     }
 
     /**
@@ -566,10 +537,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Then if neither object is an instance of the parentClass, return <code>thisObj.equals(thatObj)</code>.<br>
      * If only one of the objects is an instance of the parentClass, return false.<br>
      * Otherwise, cast them both to the parentClass.
-     * Then use {@link #getEqualsParamDescriptions(List, Map)} to get the list of parameter applicable.
-     * Loop through them and call {@link ParamDescription#paramsAreEqual} on each parameter.
+     * Then get a list of all ParameterDescription objects that are to be included in an equals comparison.
+     * Loop through them and call {@link #paramsAreEqual(Object, Object, Function, String)} on each parameter.
      * If they are all equal, return true. Otherwise, return false.
-     * There's no guarantee that {@link ParamDescription#paramsAreEqual} is called for all parameters.
+     * There's no guarantee that {@link #paramsAreEqual(Object, Object, Function, String)} is called for all parameters.
      * If one false is found, the rest might be skipped.<br>
      *
      * @param thisObj  {@inheritDoc}
