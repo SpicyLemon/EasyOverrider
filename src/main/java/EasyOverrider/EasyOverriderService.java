@@ -41,20 +41,6 @@ public interface EasyOverriderService {
     <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
 
     /**
-     * Converts a parameter value to a String.<br>
-     *
-     * @param obj  the object to get the parameter value from
-     * @param getter  the getter to be used to get the parameter value
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string
-     * @param valueToStringPreventingRecursion  a reference to the method to call to prevent recursive toString calls
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return A String
-     */
-    <O, P> String paramValueToString(final O obj, final Function<? super O, P> getter, final Map<Class, Set<Integer>> seen,
-                                     final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion);
-
-    /**
      * Converts an object to a String.<br>
      *
      * @param objClass  the class of the object being converted

@@ -127,36 +127,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * Runs the getter on the object. If that value is null, {@link EasyOverriderConfig#getStringForNull()} is used.
-     * Otherwise the provided <code>valueToStringPreventingRecursion</code> method
-     * is called with the value and the provided seen map.<br>
-     *
-     * @param obj  {@inheritDoc} - cannot be null
-     * @param getter  {@inheritDoc} - cannot be null
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param valueToStringPreventingRecursion  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IllegalArgumentException if any parameter is null
-     */
-    @Override
-    public <O, P> String paramValueToString(final O obj, final Function<? super O, P> getter, final Map<Class, Set<Integer>> seen,
-                                            final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
-        requireNonNull(obj, 1, "obj", "paramValueToString");
-        requireNonNull(getter, 2, "getter", "paramValueToString");
-        requireNonNull(seen, 3, "seen", "paramValueToString");
-        requireNonNull(getter, 4, "valueToStringPreventingRecursion", "paramValueToString");
-        P value = getter.apply(obj);
-        if (value == null) {
-            return easyOverriderConfig.getStringForNull();
-        }
-        return valueToStringPreventingRecursion.apply(value, seen);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
      * the hashCode of the object is calculated.
@@ -202,7 +172,9 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * First, the value is converted to a String using {@link #paramValueToString(Object, Function, Map, BiFunction)}.
+     * First gets the parameter from the object.
+     * If it's null, {@link EasyOverriderConfig#getStringForNull()} is used for the String of the value.
+     * Otherwise, the provided BiFunction is used to convert it to a String in a recursion-safe way.
      * Then, if that result is not the {@link EasyOverriderConfig#getStringForNull()}
      * or {@link EasyOverriderConfig#getStringForRecursionPrevented()} values,
      * the {@link EasyOverriderConfig#getParameterValueFormat()} is applied to it.<br>
@@ -228,7 +200,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(getter, 3, "getter", "getNameValueString: " + name);
         requireNonNull(seen, 4, "seen", "getNameValueString: " + name);
         requireNonNull(valueToStringPreventingRecursion, 5, "valueToStringPreventingRecursion", "getNameValueString: " + name);
-        String value = paramValueToString(obj, getter, seen, valueToStringPreventingRecursion);
+        P param = getter.apply(obj);
+        String value = Optional.ofNullable(param)
+                               .map(p -> valueToStringPreventingRecursion.apply(p, seen))
+                               .orElseGet(() -> easyOverriderConfig.getStringForNull());
         if (!value.equals(easyOverriderConfig.getStringForNull())
             && !value.equals(easyOverriderConfig.getStringForRecursionPrevented())) {
             value = String.format(easyOverriderConfig.getParameterValueFormat(), value);
