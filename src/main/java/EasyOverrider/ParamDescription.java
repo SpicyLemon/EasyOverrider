@@ -1,7 +1,5 @@
 package EasyOverrider;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -104,13 +102,4 @@ public interface ParamDescription<O, P> {
      * @return True if it's to be included. False if it's to be ignored.
      */
     boolean isToStringInclude();
-
-    /**
-     * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.<br>
-     *
-     * @param obj  the object to get the name/value string of
-     * @param seen  the map of class to sets of hashCodes of objects that have already been toString-ified.
-     * @return A String
-     */
-    String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen);
 }

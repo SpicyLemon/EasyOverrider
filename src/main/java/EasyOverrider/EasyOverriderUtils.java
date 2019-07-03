@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -44,5 +45,22 @@ public class EasyOverriderUtils {
         if (obj != null && value != null && setter != null) {
             setter.accept(obj, value);
         }
+    }
+
+    /**
+     * Gets the desired index to use for the provided entry.<br>
+     *
+     * If the list of indexes isn't defined, or the requested entry is either null or a non-existent element of the list,
+     * then the provided entry is returned.<br>
+     *
+     * @param indexes  the desired list of index numbers
+     * @param entry  the entry in the list to look up
+     * @return the entry in the provided list if available, otherwise the provided entry
+     */
+    public static int getIndexOrDefault(final List<Integer> indexes, final int entry) {
+        return Optional.ofNullable(indexes)
+                       .filter(ix -> ix.size() >= entry)
+                       .map(ix -> ix.get(entry - 1))
+                       .orElse(entry);
     }
 }

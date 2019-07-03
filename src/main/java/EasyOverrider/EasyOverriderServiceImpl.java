@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -73,131 +71,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(easyOverriderConfig, 1, "easyOverriderConfig", "setConfig");
         this.easyOverriderConfig = easyOverriderConfig;
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * First gets the parameter from the object.
-     * If it's null, {@link EasyOverriderConfig#getStringForNull()} is used for the String of the value.
-     * Otherwise, the provided BiFunction is used to convert it to a String in a recursion-safe way.
-     * Then, if that result is not the {@link EasyOverriderConfig#getStringForNull()}
-     * or {@link EasyOverriderConfig#getStringForRecursionPrevented()} values,
-     * the {@link EasyOverriderConfig#getParameterValueFormat()} is applied to it.<br>
-     *
-     * Finally, the {@link EasyOverriderConfig#getNameValueFormat()} is applied,
-     * being provided the <code>name</code> and value created above.<br>
-     *
-     * @param obj  {@inheritDoc} - cannot be null
-     * @param name  {@inheritDoc}
-     * @param getter  {@inheritDoc} - cannot be null
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param valueToStringPreventingRecursion  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IllegalArgumentException if the obj, getter, seen or valueToStringPreventingRecursion parameters are null
-     */
-    @Override
-    public <O, P> String getNameValueString(final O obj, final String name, final Function<? super O, P> getter,
-                                            final Map<Class, Set<Integer>> seen,
-                                            final BiFunction<P, Map<Class, Set<Integer>>, String> valueToStringPreventingRecursion) {
-        requireNonNull(obj, 1, "obj", "getNameValueString: " + name);
-        requireNonNull(getter, 3, "getter", "getNameValueString: " + name);
-        requireNonNull(seen, 4, "seen", "getNameValueString: " + name);
-        requireNonNull(valueToStringPreventingRecursion, 5, "valueToStringPreventingRecursion", "getNameValueString: " + name);
-        P param = getter.apply(obj);
-        String value = Optional.ofNullable(param)
-                               .map(p -> valueToStringPreventingRecursion.apply(p, seen))
-                               .orElseGet(() -> easyOverriderConfig.getStringForNull());
-        if (!value.equals(easyOverriderConfig.getStringForNull())
-            && !value.equals(easyOverriderConfig.getStringForRecursionPrevented())) {
-            value = String.format(easyOverriderConfig.getParameterValueFormat(), value);
-        }
-        return String.format(easyOverriderConfig.getNameValueFormat(), name, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param paramClass  {@inheritDoc} - cannot be null
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IllegalArgumentException if the seen or paramClass parameters are null
-     */
-    @Override
-    public <P> String valueToStringPreventingRecursionSingle(final P value, final Map<Class, Set<Integer>> seen,
-                                                             final Class<P> paramClass) {
-        return objectToStringPreventingRecursion(paramClass, value, seen);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * If the provided value is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
-     *
-     * Otherwise, it is looped through and all entries are converted to
-     * Strings in a recursion-safe way.
-     * The results are collected into a List of Strings and then finally
-     * turned into one big String using {@link List#toString()}<br>
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param entryClass  {@inheritDoc} - cannot be null
-     * @param <E>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IllegalArgumentException if the seen or entryClass parameters are null
-     */
-    @Override
-    public <E, P extends Collection<? extends E>> String valueToStringPreventingRecursionCollection(
-                    final P value, final Map<Class, Set<Integer>> seen, final Class<E> entryClass) {
-        requireNonNull(seen, 2, "seen", "valueToStringPreventingRecursionCollection");
-        requireNonNull(entryClass, 3, "entryClass", "valueToStringPreventingRecursionCollection");
-        if (value == null) {
-            return easyOverriderConfig.getStringForNull();
-        }
-        return value.stream()
-                    .map(e -> objectToStringPreventingRecursion(entryClass, e, seen))
-                    .collect(Collectors.toList())
-                    .toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * If the provided value is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
-     *
-     * Otherwise, all entries are looped through and all keys and values are converted to
-     * Strings using in a recursion-safe way.
-     * The results are collected into a Map of Strings to Strings and then finally
-     * turned into one big String using {@link Map#toString()}<br>
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param keyClass  {@inheritDoc} - cannot be null
-     * @param valueClass  {@inheritDoc} - cannot be null
-     * @param <K>  {@inheritDoc}
-     * @param <V>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public <K, V, P extends Map<? extends K, ? extends V>> String valueToStringPreventingRecursionMap(
-                    final P value, final Map<Class, Set<Integer>> seen, final Class<K> keyClass, final Class<V> valueClass) {
-        requireNonNull(seen, 2, "seen", "valueToStringPreventingRecursionMap");
-        requireNonNull(keyClass, 2, "keyClass", "valueToStringPreventingRecursionMap");
-        requireNonNull(valueClass, 2, "valueClass", "valueToStringPreventingRecursionMap");
-        if (value == null) {
-            return easyOverriderConfig.getStringForNull();
-        }
-        return value.entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(e -> objectToStringPreventingRecursion(keyClass, e.getKey(), seen),
-                                              e -> objectToStringPreventingRecursion(valueClass, e.getValue(), seen)))
-                    .toString();
     }
 
     /**
@@ -370,50 +243,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Converts an object to a String.<br>
-     *
-     * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
-     * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
-     * the hashCode of the object is calculated.
-     * If the hashCode is already in the seen map, {@link RecursionPreventingToString#primaryToString()} is called.
-     * If that is not null, it is returned. Otherwise, {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
-     * If the hashCode is NOT already in the seen map, the hashCode is added to the seen map, the object's
-     * {@link RecursionPreventingToString#toString(Map)} method is called and it's result is returned.<br>
-     * If the object is NOT an instance of {@link RecursionPreventingToString},
-     * then the standard {@link Object#toString()} method is called on the object and returned.<br>
-     *
-     * @param objClass  the class of the object being converted - cannot be null
-     * @param obj  the object to convert
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
-     * @param <O>  the type of the object
-     * @return A String
-     * @throws IllegalArgumentException if either the objClass or seen parameters are null
-     * @see RecursionPreventingToString
-     */
-    private <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
-        requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
-        requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
-        if (obj == null) {
-            return easyOverriderConfig.getStringForNull();
-        }
-        if (obj instanceof RecursionPreventingToString) {
-            if (!seen.containsKey(objClass)) {
-                seen.put(objClass, new HashSet<>());
-            }
-            RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
-            int entryHashCode = obj.hashCode();
-            if (seen.get(objClass).contains(entryHashCode)) {
-                return Optional.ofNullable(recursiveObject.primaryToString())
-                               .orElseGet(() -> createToStringResult(obj, objClass, null,
-                                                                     easyOverriderConfig.getStringForRecursionPrevented(), null));
-            }
-            seen.get(objClass).add(entryHashCode);
-            return recursiveObject.toString(seen);
-        }
-        return obj.toString();
-    }
-
-    /**
      * Put together the pieces to create the final toString result.<br>
      *
      * Generates the object's hashCode using {@link Object#hashCode()} then converts it to a String
@@ -440,9 +269,153 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         String className = easyOverriderConfig.getClassNameGetter().apply(objClass);
         String paramsString = paramDescriptions == null || paramDescriptions.isEmpty() ? defaultForEmpty :
                         paramDescriptions.stream()
-                                         .map(pd -> pd.getNameValueString(obj, seen))
+                                         .map(pd -> getNameValueString(obj, pd, seen))
                                          .collect(Collectors.joining(easyOverriderConfig.getParameterDelimiter()));
         return String.format(easyOverriderConfig.getToStringFormat(), className, hashCode, paramsString);
+    }
+
+    /**
+     * Creates a name/value String for a parameter in an object.<br>
+     *
+     * First gets the parameter from the object and passes that to
+     * {@link #anyParamToString(Object, ParamDescription, Map)} to get the string of that parameter.
+     * Then, if that result is not the {@link EasyOverriderConfig#getStringForNull()}
+     * or {@link EasyOverriderConfig#getStringForRecursionPrevented()} values,
+     * the {@link EasyOverriderConfig#getParameterValueFormat()} is applied to it.<br>
+     *
+     * Finally, the {@link EasyOverriderConfig#getNameValueFormat()} is applied,
+     * being provided the <code>name</code> and value created above.<br>
+     *
+     * @param obj  the object to get the parameter from - assumed not null
+     * @param paramDescription  the ParamDescription with the info on the param to get - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <O>  the type of the object
+     * @param <P>  the type of the parameter (getter return value)
+     * @return A String
+     */
+    private <O, P> String getNameValueString(final O obj, final ParamDescription<O, P> paramDescription,
+                                             final Map<Class, Set<Integer>> seen) {
+        String value = anyParamToString(paramDescription.getGetter().apply(obj), paramDescription, seen);
+        if (!value.equals(easyOverriderConfig.getStringForNull())
+            && !value.equals(easyOverriderConfig.getStringForRecursionPrevented())) {
+            value = String.format(easyOverriderConfig.getParameterValueFormat(), value);
+        }
+        return String.format(easyOverriderConfig.getNameValueFormat(), paramDescription.getName(), value);
+    }
+
+    /**
+     * Converts any parameter to a String in a recursion-safe way.<br>
+     *
+     * If the provided parameter is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
+     * If the provided <code>paramDescription</code> is a <code>ParamDescriptionMap</code>,
+     * {@link #mapParamToString(Map, ParamDescriptionMap, Map)} is returned.<br>
+     * If the provided <code>paramDescription</code> is a <code>ParamDescriptionCollection</code>,
+     * {@link #collectionParamToString(Collection, ParamDescriptionCollection, Map)} is returned.<br>
+     * Otherwise, {@link #paramToString(Object, Class, Map)} is returned.<br>
+     *
+     * @param param  the parameter to convert to a String
+     * @param paramDescription  the description of the parameter - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <P>  the type of the parameter (getter return value)
+     * @return A String
+     */
+    private <P> String anyParamToString(final P param, final ParamDescription<?, P> paramDescription,
+                                        final Map<Class, Set<Integer>> seen) {
+        if (param == null) {
+            return easyOverriderConfig.getStringForNull();
+        }
+        if (paramDescription instanceof ParamDescriptionMap) {
+            return mapParamToString((Map)param, (ParamDescriptionMap<?, ?, ?, ?>)paramDescription, seen);
+        }
+        if (paramDescription instanceof ParamDescriptionCollection) {
+            return collectionParamToString((Collection)param, (ParamDescriptionCollection<?, ?, ?>)paramDescription, seen);
+        }
+        return paramToString(param, paramDescription.getParamClass(), seen);
+    }
+
+    /**
+     * Converts a map parameter to a String in a recursion-safe way.<br>
+     *
+     * @param map  the map to convert to a String - assumed not null
+     * @param paramDescription  the description of the map parameter - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <K>  the type of the keys in the map
+     * @param <V>  the type of the values in the map
+     * @param <P>  the type of the parameter
+     * @return A String
+     */
+    private <K, V, P extends Map<? extends K, ? extends V>> String mapParamToString(
+                    final P map, final ParamDescriptionMap<?, K, V, P> paramDescription, final Map<Class, Set<Integer>> seen) {
+        return map.entrySet()
+                  .stream()
+                  .collect(Collectors.toMap(e -> paramToString(e.getKey(), paramDescription.getKeyClass(), seen),
+                                            e -> paramToString(e.getValue(), paramDescription.getValueClass(), seen)))
+                  .toString();
+    }
+
+    /**
+     * Converts a collection parameter to a String in a recursion-safe way.<br>
+     *
+     * @param collection  the collection to convert to a String - assumed not null
+     * @param paramDescription  the description of the collection parameter - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <E>  the type of entries in the collection
+     * @param <P>  the type of the parameter
+     * @return A String
+     */
+    private <E, P extends Collection<? extends E>> String collectionParamToString(
+                    final P collection, final ParamDescriptionCollection<?, E, P> paramDescription,
+                    final Map<Class, Set<Integer>> seen) {
+        return collection.stream()
+                         .map(e -> paramToString(e, paramDescription.getEntryClass(), seen))
+                         .collect(Collectors.toList())
+                         .toString();
+    }
+
+    /**
+     * Converts a parameter to a String in a recursion-safe way.<br>
+     *
+     * If the provided parameter is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
+     *
+     * If the provided parameter does not implement {@link RecursionPreventingToString},
+     * then the standard {@link Object#toString()} method is returned.<br>
+     *
+     * If the provided parameter DOES implement {@link RecursionPreventingToString},
+     * the hashCode of the object is calculated.<br>
+     *
+     * If the hashCode is not already in the seen map, it is added, and the parameter's
+     * {@link RecursionPreventingToString#toString(Map)} method is called and returned.<br>
+     *
+     * Otherwise, {@link RecursionPreventingToString#primaryToString()} is called.
+     * If that is not null, it is returned.
+     * Otherwise, {@link #createToStringResult(Object, Class, List, String, Map)} is called with an empty list
+     * supplying {@link EasyOverriderConfig#getStringForRecursionPrevented()} for the value.<br>
+     *
+     * @param param  the parameter to convert
+     * @param paramClass  the class of the parameter being converted - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
+     * @param <P>  the type of the parameter
+     * @return A String
+     */
+    private <P> String paramToString(final P param, final Class<P> paramClass, final Map<Class, Set<Integer>> seen) {
+        if (param == null) {
+            return easyOverriderConfig.getStringForNull();
+        }
+        if (!(param instanceof RecursionPreventingToString)) {
+            return param.toString();
+        }
+        if (!seen.containsKey(paramClass)) {
+            seen.put(paramClass, new HashSet<>());
+        }
+        RecursionPreventingToString recursiveParam = (RecursionPreventingToString)param;
+        int entryHashCode = param.hashCode();
+        if (!seen.get(paramClass).contains(entryHashCode)) {
+            seen.get(paramClass).add(entryHashCode);
+            return recursiveParam.toString(seen);
+        }
+        return Optional.ofNullable(recursiveParam.primaryToString())
+                       .orElseGet(() -> createToStringResult(param, paramClass, null,
+                                                             easyOverriderConfig.getStringForRecursionPrevented(), null));
     }
 
     /**

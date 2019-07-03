@@ -1,23 +1,14 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.getIndexOrDefault;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
  * An abstract class that implements most of the functionality of a ParamDescription.<br>
- *
- * The extending class is required to implement the following:<br>
- * <ul>
- * <li>{@link ParamDescriptionBase#valueToStringPreventingRecursion(Object, Map)}
- * </ul>
- * </pre>
  *
  * @param <O>  the type of object in question
  * @param <P>  the type of the parameter in question
@@ -76,36 +67,18 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
                          final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
                          final EasyOverriderService easyOverriderService,
                          final List<Integer> paramIndexNumbers) {
-        this.parentClass = parentClass;
-        this.paramClass = paramClass;
-        this.name = name;
-        this.getter = getter;
-        this.paramMethodRestriction = paramMethodRestriction;
-        this.easyOverriderService = Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new);
-
         requireNonNull(parentClass, getIndexOrDefault(paramIndexNumbers, 1), "parentClass", "ParamDescriptionBase constructor");
         requireNonNull(paramClass, getIndexOrDefault(paramIndexNumbers, 2), "paramClass", "ParamDescriptionBase constructor");
         requireNonNull(name, getIndexOrDefault(paramIndexNumbers, 3), "name", "ParamDescriptionBase constructor");
         requireNonNull(getter, getIndexOrDefault(paramIndexNumbers, 4), "getter", "ParamDescriptionBase constructor");
         requireNonNull(paramMethodRestriction, getIndexOrDefault(paramIndexNumbers, 5), "paramMethodRestriction", "ParamDescriptionBase constructor");
         requireNonNull(easyOverriderService, getIndexOrDefault(paramIndexNumbers, 6), "easyOverriderService", "ParamDescriptionBase constructor");
-    }
-
-    /**
-     * Gets the desired index to use for the provided entry.<br>
-     *
-     * If the list of indexes isn't defined, or the requested entry is either null or a non-existent element of the list,
-     * then the provided entry is returned.<br>
-     *
-     * @param indexes  the desired list of index numbers
-     * @param entry  the entry in the list to look up
-     * @return the entry in the provided list if available, otherwise the provided entry
-     */
-    private int getIndexOrDefault(final List<Integer> indexes, final int entry) {
-        return Optional.ofNullable(indexes)
-                       .filter(ix -> ix.size() >= entry)
-                       .map(ix -> ix.get(entry - 1))
-                       .orElse(entry);
+        this.parentClass = parentClass;
+        this.paramClass = paramClass;
+        this.name = name;
+        this.getter = getter;
+        this.paramMethodRestriction = paramMethodRestriction;
+        this.easyOverriderService = easyOverriderService;
     }
 
     @Override
@@ -215,30 +188,6 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     @Override
     public boolean isToStringInclude() {
         return paramMethodRestriction.isToStringInclude();
-    }
-
-    /**
-     * Converts the value of this parameter to a string while preventing recursion.<br>
-     *
-     * @param value  the value to convert to a String
-     * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
-     * @return A string.
-     */
-    abstract String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen);
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#getNameValueString(Object, String, Function, Map, BiFunction)} method.<br>
-     *
-     * @param obj  {@inheritDoc}
-     * @param seen  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String getNameValueString(final O obj, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.getNameValueString(obj, name, getter, seen,
-                                                       (p, s) -> valueToStringPreventingRecursion(p, s));
     }
 
     /**

@@ -5,7 +5,6 @@ import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -74,20 +73,6 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      */
     public Class<V> getValueClass() {
         return valueClass;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionMap(Map, Map, Class, Class)} method.<br>
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.valueToStringPreventingRecursionMap(value, seen, keyClass, valueClass);
     }
 
     /**

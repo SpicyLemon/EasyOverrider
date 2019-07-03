@@ -5,8 +5,6 @@ import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -60,20 +58,6 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      */
     public Class<E> getEntryClass() {
         return entryClass;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionCollection(Collection, Map, Class)} method.<br>
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.valueToStringPreventingRecursionCollection(value, seen, entryClass);
     }
 
     /**

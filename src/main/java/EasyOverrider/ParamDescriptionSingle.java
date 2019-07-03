@@ -2,8 +2,6 @@ package EasyOverrider;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -57,20 +55,6 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      */
     public boolean isPrimary() {
         return isPrimary;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#valueToStringPreventingRecursionSingle(Object, Map, Class)} method.<br>
-     *
-     * @param value  {@inheritDoc}
-     * @param seen  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    String valueToStringPreventingRecursion(final P value, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.valueToStringPreventingRecursionSingle(value, seen, paramClass);
     }
 
     /**
