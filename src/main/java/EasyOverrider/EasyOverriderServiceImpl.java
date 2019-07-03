@@ -78,53 +78,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Run the provided getter on the provided object.<br>
-     *
-     * @param obj  the object to run the getter on - cannot be null
-     * @param getter  the method reference to call - cannot be null
-     * @param name  the name of the parameter (for error messages)
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return  The results of the getter
-     * @throws IllegalArgumentException if either the provided obj or getter is null
-     */
-    private <O, P> P get(final O obj, final Function<? super O, P> getter, final String name) {
-        requireNonNull(obj, 1, "obj", "get: " + name);
-        requireNonNull(getter, 2, "getter", "get: " + name);
-        return getter.apply(obj);
-    }
-
-    /**
-     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
-     *
-     * If <code>thisO == thatO</code>, true is returned.<br>
-     * Then, if either of them are null, false is returned.<br>
-     * Then, the parameters are retrieved. If they are equal using == or equal using Objects.equals then true is returned.<br>
-     * Otherwise, false is returned.<br>
-     *
-     * @param thisO  the first object to get the parameter from
-     * @param thatO  the second object to get the parameter from
-     * @param getter  the getter for the parameter to compare - cannot be null
-     * @param name  the name of the parameter (for error messages)
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return True if the parameter in each of the objects are equal. False if different.
-     * @throws IllegalArgumentException if the provided getter is null
-     */
-    private <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name) {
-        requireNonNull(getter, 3, "getter", "paramsAreEqual: " + name);
-        if (thisO == thatO) {
-            return true;
-        }
-        if (thisO == null || thatO == null) {
-            return false;
-        }
-        P thisP = get(thisO, getter, name);
-        P thatP = get(thatO, getter, name);
-        return thisP == thatP || Objects.equals(thisP, thatP);
-    }
-
-    /**
      * Converts an object to a String.<br>
      *
      * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
@@ -335,7 +288,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         @SuppressWarnings("unchecked")
         O thatO = (O)thatObj;
         return getFilteredParamList(ParamDescription::isEqualsInclude, paramList)
-                        .stream().allMatch(pd -> paramsAreEqual(thisO, thatO, pd.getGetter(), pd.getName()));
+                        .stream().allMatch(pd -> paramsAreEqual(thisO, thatO, pd));
     }
 
     /**
@@ -357,7 +310,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(paramList, 2, "paramList", "hashCode");
         return Objects.hash(getFilteredParamList(ParamDescription::isHashCodeInclude, paramList)
                                             .stream()
-                                            .map(pd -> get(thisObj, pd.getGetter(), pd.getName()))
+                                            .map(pd -> pd.getGetter().apply(thisObj))
                                             .toArray());
     }
 
@@ -431,6 +384,34 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
                         .map(paramDescriptionMap::get)
                         .filter(filter)
                         .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
+     *
+     * If <code>thisO == thatO</code>, true is returned.<br>
+     * Then, if either of them are null, false is returned.<br>
+     * Then, the parameters are retrieved. If they are equal using == or equal using Objects.equals then true is returned.<br>
+     * Otherwise, false is returned.<br>
+     *
+     * @param thisO  the first object to get the parameter from
+     * @param thatO  the second object to get the parameter from
+     * @param paramDescription  the getter for the parameter to compare - assumed not null
+     * @param <O>  the type of the object
+     * @param <P>  the type of the parameter (getter return value)
+     * @return True if the parameter in each of the objects are equal. False if different.
+     * @throws IllegalArgumentException if the provided getter is null
+     */
+    private <O, P> boolean paramsAreEqual(final O thisO, final O thatO, ParamDescription<O, P> paramDescription) {
+        if (thisO == thatO) {
+            return true;
+        }
+        if (thisO == null || thatO == null) {
+            return false;
+        }
+        P thisP = paramDescription.getGetter().apply(thisO);
+        P thatP = paramDescription.getGetter().apply(thatO);
+        return thisP == thatP || Objects.equals(thisP, thatP);
     }
 
     /**
