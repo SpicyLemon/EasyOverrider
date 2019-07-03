@@ -384,7 +384,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         if (!(obj instanceof EasyOverrider)) {
             return obj.toString();
         }
-        EasyOverrider recursiveObject = (EasyOverrider)obj;
+        @SuppressWarnings("unchecked")
+        EasyOverrider<P> recursiveObject = (EasyOverrider<P>)obj;
         int objHashCode = obj.hashCode();
         if (!seen.containsKey(objClass)) {
             seen.put(objClass, new HashSet<>());
