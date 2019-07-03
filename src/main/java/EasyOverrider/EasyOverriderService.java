@@ -41,19 +41,6 @@ public interface EasyOverriderService {
     <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
 
     /**
-     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
-     *
-     * @param thisO  the first object to get the parameter from
-     * @param thatO  the second object to get the parameter from
-     * @param getter  the getter for the parameter to compare
-     * @param name  the name of the parameter (for error messages)
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return True if the parameter in each of the objects are equal. False if different.
-     */
-    <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name);
-
-    /**
      * Converts a parameter value to a String.<br>
      *
      * @param obj  the object to get the parameter value from

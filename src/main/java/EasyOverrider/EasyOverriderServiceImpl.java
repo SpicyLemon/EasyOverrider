@@ -95,24 +95,23 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
      *
      * If <code>thisO == thatO</code>, true is returned.<br>
      * Then, if either of them are null, false is returned.<br>
      * Then, the parameters are retrieved. If they are equal using == or equal using Objects.equals then true is returned.<br>
      * Otherwise, false is returned.<br>
      *
-     * @param thisO  {@inheritDoc}
-     * @param thatO  {@inheritDoc}
-     * @param getter  {@inheritDoc} - cannot be null
-     * @param name  {@inheritDoc}
-     * @param <O>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return {@inheritDoc}
+     * @param thisO  the first object to get the parameter from
+     * @param thatO  the second object to get the parameter from
+     * @param getter  the getter for the parameter to compare - cannot be null
+     * @param name  the name of the parameter (for error messages)
+     * @param <O>  the type of the object
+     * @param <P>  the type of the parameter (getter return value)
+     * @return True if the parameter in each of the objects are equal. False if different.
      * @throws IllegalArgumentException if the provided getter is null
      */
-    @Override
-    public <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name) {
+    private <O, P> boolean paramsAreEqual(final O thisO, final O thatO, final Function<? super O, P> getter, final String name) {
         requireNonNull(getter, 3, "getter", "paramsAreEqual: " + name);
         if (thisO == thatO) {
             return true;
@@ -366,8 +365,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * This gets the list of parameters that are to be included in the toString result
-     * using {@link #getToStringParamDescriptions(List, Map)}.
+     * This gets the list of parameters that are to be included in the toString result.
      * If that list is empty, {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
      * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
      * The resulting strings are then joined together into one string using
@@ -538,10 +536,9 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * If only one of the objects is an instance of the parentClass, return false.<br>
      * Otherwise, cast them both to the parentClass.
      * Then get a list of all ParameterDescription objects that are to be included in an equals comparison.
-     * Loop through them and call {@link #paramsAreEqual(Object, Object, Function, String)} on each parameter.
+     * For each entry, call the getter on both objects and compare the results using {@link Objects#equals(Object, Object)}.
      * If they are all equal, return true. Otherwise, return false.
-     * There's no guarantee that {@link #paramsAreEqual(Object, Object, Function, String)} is called for all parameters.
-     * If one false is found, the rest might be skipped.<br>
+     * As soon as one unequal parameter is found, the rest are skipped.
      *
      * @param thisObj  {@inheritDoc}
      * @param thatObj  {@inheritDoc}
@@ -583,8 +580,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * Uses the {@link #getHashCodeParamDescriptions(List, Map)} method to get the applicable entries.
-     * Then loops through them calling {@link #get(Object, Function, String)} on each entry.
+     * Gets all ParamDescription entries that should be included in the hashCode.
+     * Then loops through them getting each parameter from the object.
      * The results are converted to an array of objects and then provided to {@link Objects#hash(Object...)}.<br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
