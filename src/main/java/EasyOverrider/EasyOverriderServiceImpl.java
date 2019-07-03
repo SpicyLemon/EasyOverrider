@@ -314,26 +314,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Gets a string of all the primary parameters in the provided object.<br>
-     *
-     * This gets the list primary parameters that are to be included in the toString result,
-     * If that list is empty, {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
-     * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
-     * The resulting strings are then joined together into one string
-     * using the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
-     *
-     * @param thisObj  the object to get the parameters from - assumed not null
-     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
-     * @param <O>  the type of the object in question
-     * @return A String. If no primary toString() parameters are in the map,
-     * {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
-     */
-    private <O> String getPrimaryParamsString(final O thisObj, ParamList<O> paramList) {
-        List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramList);
-        return paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForRecursionPrevented(), new HashMap<>());
-    }
-
-    /**
      * Converts all the parameters of the object into Strings, then joins them into one String.<br>
      *
      * If the provided <code>paramDescriptions</code> map is empty, the <code>defaultForEmpty</code> is returned.
@@ -535,7 +515,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     public <O> String primaryToString(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
-        String paramsString = getPrimaryParamsString(thisObj, paramList);
+        List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramList);
+        String paramsString = paramsToString(thisObj, paramDescriptions,
+                                             easyOverriderConfig.getStringForRecursionPrevented(),
+                                             new HashMap<>());
         return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
