@@ -125,7 +125,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Converts an object to a String.<br>
      *
      * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      * Otherwise, if the object is an instance of {@link RecursionPreventingToString}, then
@@ -137,16 +137,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * If the object is NOT an instance of {@link RecursionPreventingToString},
      * then the standard {@link Object#toString()} method is called on the object and returned.<br>
      *
-     * @param objClass  {@inheritDoc} - cannot be null
-     * @param obj  {@inheritDoc}
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @return {@inheritDoc}
+     * @param objClass  the class of the object being converted - cannot be null
+     * @param obj  the object to convert
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
+     * @param <O>  the type of the object
+     * @return A String
      * @throws IllegalArgumentException if either the objClass or seen parameters are null
      * @see RecursionPreventingToString
      */
-    @Override
-    public <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
+    private <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen) {
         requireNonNull(objClass, 1, "objClass", "objectToStringPreventingRecursion");
         requireNonNull(seen, 3, "seen", "objectToStringPreventingRecursion");
         if (obj == null) {
@@ -214,8 +213,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * {@inheritDoc}
      *
-     * Simply passes the provided info to {@link #objectToStringPreventingRecursion(Class, Object, Map)}.<br>
-     *
      * @param value  {@inheritDoc}
      * @param seen  {@inheritDoc} - cannot be null
      * @param paramClass  {@inheritDoc} - cannot be null
@@ -235,7 +232,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * If the provided value is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      *
      * Otherwise, it is looped through and all entries are converted to
-     * Strings using {@link #objectToStringPreventingRecursion(Class, Object, Map)}.
+     * Strings in a recursion-safe way.
      * The results are collected into a List of Strings and then finally
      * turned into one big String using {@link List#toString()}<br>
      *
@@ -267,7 +264,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * If the provided value is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      *
      * Otherwise, all entries are looped through and all keys and values are converted to
-     * Strings using {@link #objectToStringPreventingRecursion(Class, Object, Map)}.
+     * Strings using in a recursion-safe way.
      * The results are collected into a Map of Strings to Strings and then finally
      * turned into one big String using {@link Map#toString()}<br>
      *

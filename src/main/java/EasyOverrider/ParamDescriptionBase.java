@@ -220,8 +220,6 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * Converts the value of this parameter to a string while preventing recursion.<br>
      *
-     * Implementor will probably want to call {@link EasyOverriderService#objectToStringPreventingRecursion(Class, Object, Map)}.<br>
-     *
      * @param value  the value to convert to a String
      * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
      * @return A string.

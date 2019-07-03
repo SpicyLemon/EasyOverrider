@@ -41,17 +41,6 @@ public interface EasyOverriderService {
     <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
 
     /**
-     * Converts an object to a String.<br>
-     *
-     * @param objClass  the class of the object being converted
-     * @param obj  the object to convert
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string
-     * @param <O>  the type of the object
-     * @return A String
-     */
-    <O> String objectToStringPreventingRecursion(final Class<O> objClass, final O obj, final Map<Class, Set<Integer>> seen);
-
-    /**
      * Creates a name/value String for a parameter in an object.<br>
      *
      * @param obj  the object to get the parameter from
