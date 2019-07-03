@@ -17,9 +17,9 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
     private static ParamList<ParamDescriptionSingle> paramList;
     private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 3, 4, 5);
 
-    private static ParamList<ParamDescriptionSingle> getSingleParamList() {
+    private static ParamList<ParamDescriptionSingle> getParamListSingle() {
         if (paramList == null) {
-            paramList = ParamDescriptionBase.getBaseParamList()
+            paramList = ParamDescriptionBase.getParamListBase()
                                             .extendedBy(ParamDescriptionSingle.class)
                                             .withParam("isPrimary", ParamDescriptionSingle::isPrimary, Boolean.class)
                                             .andThatsIt();
@@ -64,7 +64,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      */
     @Override
     public boolean equals(Object obj) {
-        return getSingleParamList().equals(this, obj);
+        return getParamListSingle().equals(this, obj);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      */
     @Override
     public int hashCode() {
-        return getSingleParamList().hashCode(this);
+        return getParamListSingle().hashCode(this);
     }
 
     /**
@@ -84,6 +84,6 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      */
     @Override
     public String toString() {
-        return getSingleParamList().toString(this);
+        return getParamListSingle().toString(this);
     }
 }

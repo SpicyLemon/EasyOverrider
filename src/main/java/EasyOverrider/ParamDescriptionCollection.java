@@ -21,9 +21,9 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
     private static ParamList<ParamDescriptionCollection> paramList;
     private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 4, 5, 6);
 
-    private static ParamList<ParamDescriptionCollection> getCollectionParamList() {
+    private static ParamList<ParamDescriptionCollection> getParamListCollection() {
         if (paramList == null) {
-            paramList = ParamDescriptionBase.getBaseParamList()
+            paramList = ParamDescriptionBase.getParamListBase()
                                             .extendedBy(ParamDescriptionCollection.class)
                                             .withParam("entryClass", ParamDescriptionCollection::getEntryClass, Class.class)
                                             .andThatsIt();
@@ -66,7 +66,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      */
     @Override
     public boolean equals(Object obj) {
-        return getCollectionParamList().equals(this, obj);
+        return getParamListCollection().equals(this, obj);
     }
 
     /**
@@ -76,7 +76,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      */
     @Override
     public int hashCode() {
-        return getCollectionParamList().hashCode(this);
+        return getParamListCollection().hashCode(this);
     }
 
     /**
@@ -86,6 +86,6 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      */
     @Override
     public String toString() {
-        return getCollectionParamList().toString(this);
+        return getParamListCollection().toString(this);
     }
 }

@@ -26,12 +26,12 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     /**
      * Get the ParamList for a ParamDescriptionBase.<br>
      *
-     * Things that extend this abstract class should use <code>ParamDescriptionBase.getBaseParamList().extendedBy(...)</code>
+     * Things that extend this abstract class should use <code>ParamDescriptionBase.getParamListBase().extendedBy(...)</code>
      * to create their own <code>ParamList</code>.
      *
      * @return A ParamList&lt;ParamDescriptionBase&gt; object.
      */
-    static ParamList<ParamDescriptionBase> getBaseParamList() {
+    static ParamList<ParamDescriptionBase> getParamListBase() {
         if (paramList == null) {
             //This will create the ParamList if it's not already set.
             //The reason it does this rather than just having it statically set when the variable is created,

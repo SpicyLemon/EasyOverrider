@@ -354,17 +354,17 @@ public class ParamListServiceImpl implements ParamListService {
      *
      * If the provided object is null, {@link ParamListServiceConfig#getStringForNull()} is returned.<br>
      *
-     * If the provided object does not implement {@link EasyOverrider},
+     * If the provided object does not implement {@link RecursionPreventingToString},
      * then the standard {@link Object#toString()} method is returned.<br>
      *
-     * If the provided object DOES implement {@link EasyOverrider},
+     * If the provided object DOES implement {@link RecursionPreventingToString},
      * the hashCode of the object is calculated.<br>
      *
      * If the hashCode is not already in the seen map, it is added, and the parameter's
-     * {@link EasyOverrider#toString(Map)} method is called and returned.<br>
+     * {@link RecursionPreventingToString#toString(Map)} method is called and returned.<br>
      *
      * Otherwise, recursion has been detected.
-     * The object's {@link EasyOverrider#primaryToString()} method is called.
+     * The object's {@link RecursionPreventingToString#primaryToString()} method is called.
      * If that is not null, it is returned.
      * Otherwise, {@link #createToStringResult(Object, Class, List, String, Map)} is called with an empty list
      * and supplying {@link ParamListServiceConfig#getStringForRecursionPrevented()} for the value.<br>
@@ -379,11 +379,10 @@ public class ParamListServiceImpl implements ParamListService {
         if (obj == null) {
             return config.getStringForNull();
         }
-        if (!(obj instanceof EasyOverrider)) {
+        if (!(obj instanceof RecursionPreventingToString)) {
             return obj.toString();
         }
-        @SuppressWarnings("unchecked")
-        EasyOverrider<P> recursiveObject = (EasyOverrider<P>)obj;
+        @SuppressWarnings("unchecked") RecursionPreventingToString<P> recursiveObject = (RecursionPreventingToString<P>)obj;
         int objHashCode = obj.hashCode();
         if (!seen.containsKey(objClass)) {
             seen.put(objClass, new HashSet<>());

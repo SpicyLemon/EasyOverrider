@@ -23,9 +23,9 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
     private static ParamList<ParamDescriptionMap> paramList;
     private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 5, 6, 7);
 
-    private static ParamList<ParamDescriptionMap> getMapParamList() {
+    public ParamList<ParamDescriptionMap> getParamListMap() {
         if (paramList == null) {
-            paramList = ParamDescriptionBase.getBaseParamList()
+            paramList = ParamDescriptionBase.getParamListBase()
                                             .extendedBy(ParamDescriptionMap.class)
                                             .withParam("keyClass", ParamDescriptionMap::getKeyClass, Class.class)
                                             .withParam("valueClass", ParamDescriptionMap::getValueClass, Class.class)
@@ -81,7 +81,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      */
     @Override
     public boolean equals(Object obj) {
-        return getMapParamList().equals(this, obj);
+        return getParamListMap().equals(this, obj);
     }
 
     /**
@@ -91,7 +91,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      */
     @Override
     public int hashCode() {
-        return getMapParamList().hashCode(this);
+        return getParamListMap().hashCode(this);
     }
 
     /**
@@ -101,6 +101,6 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      */
     @Override
     public String toString() {
-        return getMapParamList().toString(this);
+        return getParamListMap().toString(this);
     }
 }
