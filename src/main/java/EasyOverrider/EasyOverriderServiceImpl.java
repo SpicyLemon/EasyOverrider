@@ -335,7 +335,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a string of all the parameters in the provided object.<br>
      *
      * This gets the list of parameters that are to be included in the toString result.
      * If that list is empty, {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
@@ -343,17 +343,16 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * The resulting strings are then joined together into one string using
      * the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
      *
-     * @param thisObj  {@inheritDoc} - cannot be null
-     * @param seen  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @return {@inheritDoc} If no toString() parameters are in the map,
+     * @param thisObj  the object to get the parameters from - cannot be null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
+     * @return A String. If no toString() parameters are in the map,
      * {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
      * @throws IllegalArgumentException if any parameters is null
      */
-    @Override
-    public <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
+    private <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
                                       final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "getParamsString");
         requireNonNull(seen, 2, "seen", "getParamsString");
@@ -365,25 +364,23 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a string of all the primary parameters in the provided object.<br>
      *
-     * This gets the list primary parameters that are to be included in the toString result
-     * using {@link #getPrimaryToStringParamDescriptions(List, Map)}.
+     * This gets the list primary parameters that are to be included in the toString result,
      * If that list is empty, {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
      * Otherwise, each entry is looped through, calling {@link ParamDescription#getNameValueString(Object, Map)} on each.
      * The resulting strings are then joined together into one string
      * using the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
      *
-     * @param thisObj  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
-     * @param <O>  {@inheritDoc}
-     * @return {@inheritDoc} If no primary toString() parameters are in the map,
+     * @param thisObj  the object to get the parameters from - cannot be null
+     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
+     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param <O>  the type of the object in question
+     * @return A String. If no primary toString() parameters are in the map,
      * {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
      * @throws IllegalArgumentException if any parameters is null
      */
-    @Override
-    public <O> String getPrimaryParamsString(final O thisObj, final List<String> paramOrder,
+    private <O> String getPrimaryParamsString(final O thisObj, final List<String> paramOrder,
                                              final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
         requireNonNull(thisObj, 1, "thisObj", "getPrimaryParamsString");
         requireNonNull(paramOrder, 2, "paramOrder", "getPrimaryParamsString");
@@ -581,7 +578,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * First, the class name String is retrieved using the {@link EasyOverriderConfig#getClassNameGetter()}.<br>
      * Then, the hashCode is calculated using <code>thisObj.hashCode()</code>,
      * and converted to a string using {@link EasyOverriderConfig#getHashCodeToString()}.<br>
-     * Then, the parameters String is created using {@link #getParamsString(Object, Map, List, Map)}.<br>
+     * Then, the parameters String is created in a recursion-safe way.<br>
      * Lastly, {@link EasyOverriderConfig#getToStringFormat()} is used to create the final String.
      * Arguments are provided to the {@link EasyOverriderConfig#getToStringFormat()} in this order:
      * <code>class name</code>, <code>hash code String</code>, <code>parameters String</code><br>
@@ -613,7 +610,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * First, the class name String is retrieved using the {@link EasyOverriderConfig#getClassNameGetter()}.<br>
      * Then, the hashCode is calculated using <code>thisObj.hashCode()</code>,
      * and converted to a string using {@link EasyOverriderConfig#getHashCodeToString()}.<br>
-     * Then, the parameters String is created using {@link #getPrimaryParamsString(Object, List, Map)}.<br>
+     * Then, the parameters String is created using only the primary parameters.<br>
      * Lastly, {@link EasyOverriderConfig#getToStringFormat()} is used to create the final String.
      * Arguments are provided to the {@link EasyOverriderConfig#getToStringFormat()} in this order:
      * <code>class name</code>, <code>hash code String</code>, <code>parameters String</code><br>
