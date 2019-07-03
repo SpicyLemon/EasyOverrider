@@ -77,18 +77,17 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * {@inheritDoc}
+     * Run the provided getter on the provided object.<br>
      *
-     * @param obj  {@inheritDoc} - cannot be null
-     * @param getter  {@inheritDoc} - cannot be null
-     * @param name  {@inheritDoc}
-     * @param <O>  {@inheritDoc}
-     * @param <P>  {@inheritDoc}
-     * @return  {@inheritDoc}
+     * @param obj  the object to run the getter on - cannot be null
+     * @param getter  the method reference to call - cannot be null
+     * @param name  the name of the parameter (for error messages)
+     * @param <O>  the type of the object
+     * @param <P>  the type of the parameter (getter return value)
+     * @return  The results of the getter
      * @throws IllegalArgumentException if either the provided obj or getter is null
      */
-    @Override
-    public <O, P> P get(final O obj, final Function<? super O, P> getter, final String name) {
+    private <O, P> P get(final O obj, final Function<? super O, P> getter, final String name) {
         requireNonNull(obj, 1, "obj", "get: " + name);
         requireNonNull(getter, 2, "getter", "get: " + name);
         return getter.apply(obj);

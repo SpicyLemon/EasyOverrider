@@ -29,18 +29,6 @@ public interface EasyOverriderService {
     EasyOverriderService setConfig(EasyOverriderConfig easyOverriderConfig);
 
     /**
-     * Run the provided getter on the provided object.<br>
-     *
-     * @param obj  the object to run the getter on
-     * @param getter  the method reference to call
-     * @param name  the name of the parameter (for error messages)
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return The results of the getter
-     */
-    <O, P> P get(final O obj, final Function<? super O, P> getter, final String name);
-
-    /**
      * Creates a name/value String for a parameter in an object.<br>
      *
      * @param obj  the object to get the parameter from
