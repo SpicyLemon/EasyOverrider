@@ -29,7 +29,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         if (paramList == null) {
             paramList = ParamList.forClass(EasyOverriderServiceImpl.class)
                                  .withParam("easyOverriderConfig",
-                                            EasyOverriderServiceImpl::getEasyOverriderConfig,
+                                            EasyOverriderServiceImpl::getConfig,
                                             EasyOverriderConfig.class)
                                  .andThatsIt();
         }
@@ -59,7 +59,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      *
      * @return {@inheritDoc}
      */
-    public EasyOverriderConfig getEasyOverriderConfig() {
+    public EasyOverriderConfig getConfig() {
         return easyOverriderConfig;
     }
 
@@ -70,8 +70,8 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @return {@inheritDoc}
      * @throws IllegalArgumentException if the provided parameter is null.
      */
-    public EasyOverriderService setEasyOverriderConfig(EasyOverriderConfig easyOverriderConfig) {
-        requireNonNull(easyOverriderConfig, 1, "easyOverriderConfig", "setEasyOverriderConfig");
+    public EasyOverriderService setConfig(EasyOverriderConfig easyOverriderConfig) {
+        requireNonNull(easyOverriderConfig, 1, "easyOverriderConfig", "setConfig");
         this.easyOverriderConfig = easyOverriderConfig;
         return this;
     }

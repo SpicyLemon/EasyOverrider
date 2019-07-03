@@ -18,7 +18,7 @@ public interface EasyOverriderService {
      *
      * @return
      */
-    EasyOverriderConfig getEasyOverriderConfig();
+    EasyOverriderConfig getConfig();
 
     /**
      * Sets the config for the service.<br>
@@ -26,7 +26,7 @@ public interface EasyOverriderService {
      * @param easyOverriderConfig  the config to use
      * @return This EasyOverriderService
      */
-    EasyOverriderService setEasyOverriderConfig(EasyOverriderConfig easyOverriderConfig);
+    EasyOverriderService setConfig(EasyOverriderConfig easyOverriderConfig);
 
     /**
      * Run the provided getter on the provided object.<br>

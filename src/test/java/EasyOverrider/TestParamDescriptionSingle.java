@@ -193,9 +193,9 @@ public class TestParamDescriptionSingle {
                                         TestObj.class, String.class, "theString",
                                         TestObj::getTheString, INCLUDED_IN_ALL, originalService, false);
         EasyOverriderService newService = new EasyOverriderServiceImpl();
-        newService.getEasyOverriderConfig().setParameterValueFormat(">>>>%1$s<<<<");
-        newService.getEasyOverriderConfig().setHashCodeToString((i) -> "HASHCODE");
-        newService.getEasyOverriderConfig().setParameterDelimiter(" | ");
+        newService.getConfig().setParameterValueFormat(">>>>%1$s<<<<");
+        newService.getConfig().setHashCodeToString((i) -> "HASHCODE");
+        newService.getConfig().setParameterDelimiter(" | ");
         paramDescriptionSingle.setService(newService);
         String originalServiceString = originalService.toString();
         String newServiceString = newService.toString();
@@ -687,7 +687,7 @@ public class TestParamDescriptionSingle {
     @Test
     public void equals_sameConstructorParametersExceptService_true() {
         EasyOverriderService service = new EasyOverriderServiceImpl();
-        service.getEasyOverriderConfig().setStringForEmptyParamList("nothing");
+        service.getConfig().setStringForEmptyParamList("nothing");
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
@@ -792,7 +792,7 @@ public class TestParamDescriptionSingle {
     @Test
     public void hashCode_sameConstructorParametersExceptService_different() {
         EasyOverriderService service = new EasyOverriderServiceImpl();
-        service.getEasyOverriderConfig().setParameterDelimiter(":");
+        service.getConfig().setParameterDelimiter(":");
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
                                         TestObj.class, TestObj.class, "theTestObj",
