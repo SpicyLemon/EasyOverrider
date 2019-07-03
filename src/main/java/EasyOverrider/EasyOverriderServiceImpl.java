@@ -356,17 +356,17 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      *
      * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      *
-     * If the provided object does not implement {@link RecursionPreventingToString},
+     * If the provided object does not implement {@link EasyOverrider},
      * then the standard {@link Object#toString()} method is returned.<br>
      *
-     * If the provided object DOES implement {@link RecursionPreventingToString},
+     * If the provided object DOES implement {@link EasyOverrider},
      * the hashCode of the object is calculated.<br>
      *
      * If the hashCode is not already in the seen map, it is added, and the parameter's
-     * {@link RecursionPreventingToString#toString(Map)} method is called and returned.<br>
+     * {@link EasyOverrider#toString(Map)} method is called and returned.<br>
      *
      * Otherwise, recursion has been detected.
-     * The object's {@link RecursionPreventingToString#primaryToString()} method is called.
+     * The object's {@link EasyOverrider#primaryToString()} method is called.
      * If that is not null, it is returned.
      * Otherwise, {@link #createToStringResult(Object, Class, List, String, Map)} is called with an empty list
      * and supplying {@link EasyOverriderConfig#getStringForRecursionPrevented()} for the value.<br>
@@ -381,10 +381,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         if (obj == null) {
             return easyOverriderConfig.getStringForNull();
         }
-        if (!(obj instanceof RecursionPreventingToString)) {
+        if (!(obj instanceof EasyOverrider)) {
             return obj.toString();
         }
-        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
+        EasyOverrider recursiveObject = (EasyOverrider)obj;
         int objHashCode = obj.hashCode();
         if (!seen.containsKey(objClass)) {
             seen.put(objClass, new HashSet<>());

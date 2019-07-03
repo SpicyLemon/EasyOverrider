@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An abstract class that extends EasyOverriderMethods and implements RecursionPreventingToString.<br>
+ * An abstract class that extends EasyOverriderMethods and implements EasyOverrider.<br>
  *
  * The {@link EasyOverriderMethods} abstract class provides the equals and hashCode override methods.
- * This abstract class implements the <code>toString(Map)</code> method required by {@link RecursionPreventingToString}
+ * This abstract class implements the <code>toString(Map)</code> method required by {@link EasyOverrider}
  * utilizing the extending class' {@link #getParamList()} method.<br>
  *
  * The extender is required to implement the {@link #getParamList()} method.<br>
@@ -71,9 +71,9 @@ import java.util.Set;
  *
  * @param <B>  the type of object being extended.
  * @see EasyOverriderMethods
- * @see RecursionPreventingToString
+ * @see EasyOverrider
  */
-public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverriderMethods<B> implements RecursionPreventingToString {
+public abstract class EasyOverriderPreventingRecursiveToString<B> extends EasyOverriderMethods<B> implements EasyOverrider {
 
     /**
      * An EasyOverriderMethods version of toString(Map) that prevents recursion.<br>

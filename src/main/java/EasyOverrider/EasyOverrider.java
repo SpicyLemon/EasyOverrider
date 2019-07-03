@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @see EasyOverriderPreventingRecursiveToString
  */
-public interface RecursionPreventingToString {
+public interface EasyOverrider {
 
     /**
      * A toString method that, as it generates the strings of parameters,
