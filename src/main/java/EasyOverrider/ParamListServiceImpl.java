@@ -382,7 +382,7 @@ public class ParamListServiceImpl implements ParamListService {
         if (!(obj instanceof RecursionPreventingToString)) {
             return obj.toString();
         }
-        @SuppressWarnings("unchecked") RecursionPreventingToString<P> recursiveObject = (RecursionPreventingToString<P>)obj;
+        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
         int objHashCode = obj.hashCode();
         if (!seen.containsKey(objClass)) {
             seen.put(objClass, new HashSet<>());
