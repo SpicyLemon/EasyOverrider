@@ -512,19 +512,16 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * The results are converted to an array of objects and then provided to {@link Objects#hash(Object...)}.<br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param paramList  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IllegalArgumentException if any parameter is null
      */
     @Override
-    public <O> int hashCode(final O thisObj, final List<String> paramOrder,
-                            final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> int hashCode(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "hashCode");
-        requireNonNull(paramOrder, 2, "paramOrder", "hashCode");
-        requireNonNull(paramDescriptionMap, 3, "paramDescriptionMap", "hashCode");
-        return Objects.hash(getHashCodeParamDescriptions(paramOrder, paramDescriptionMap)
+        requireNonNull(paramList, 2, "paramList", "hashCode");
+        return Objects.hash(getHashCodeParamDescriptions(paramList.getParamOrder(), paramList.getParamDescriptionMap())
                                             .stream()
                                             .map(pd -> get(thisObj, pd.getGetter(), pd.getName()))
                                             .toArray());

@@ -100,13 +100,11 @@ public interface EasyOverriderService {
      * Creates a hashCode for an object.<br>
      *
      * @param thisObj  the object to get the hashCode for
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
+     * @param paramList  the ParamList to operate on
      * @param <O>  the class of the object
      * @return a hashcode
      */
-    <O> int hashCode(final O thisObj, final List<String> paramOrder,
-                     final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> int hashCode(final O thisObj, final ParamList<O> paramList);
 
     /**
      * Creates a String representation of the provided object.<br>

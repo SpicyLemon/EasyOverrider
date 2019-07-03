@@ -168,13 +168,13 @@ public class ParamList<O> {
     /**
      * Generates the hashCode for the provided object using the appropriate parameters.<br>
      *
-     * Uses the {@link EasyOverriderService#hashCode(Object, List, Map)} method.
+     * Uses the {@link EasyOverriderService#hashCode(Object, ParamList)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return An integer.
      */
     public int hashCode(final O thisObj) {
-        return easyOverriderService.hashCode(thisObj, paramOrder, paramDescriptionMap);
+        return easyOverriderService.hashCode(thisObj, this);
     }
 
     /**
