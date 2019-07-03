@@ -301,23 +301,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * The resulting strings are then joined together into one string using
      * the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
      *
-     * @param thisObj  the object to get the parameters from - cannot be null
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - cannot be null
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param thisObj  the object to get the parameters from - assumed not null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
+     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
      * @param <O>  the type of the object in question
      * @return A String. If no toString() parameters are in the map,
      * {@link EasyOverriderConfig#getStringForEmptyParamList()} is returned.
-     * @throws IllegalArgumentException if any parameters is null
      */
-    private <O> String getParamsString(final O thisObj, final Map<Class, Set<Integer>> seen, final List<String> paramOrder,
-                                      final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(thisObj, 1, "thisObj", "getParamsString");
-        requireNonNull(seen, 2, "seen", "getParamsString");
-        requireNonNull(paramOrder, 3, "paramOrder", "getParamsString");
-        requireNonNull(paramDescriptionMap, 4, "paramDescriptionMap", "getParamsString");
-        List<ParamDescription<? super O, ?>> paramDescriptions = getToStringParamDescriptions(paramOrder,
-                                                                                              paramDescriptionMap);
+    private <O> String getParamsString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
+        List<ParamDescription<? super O, ?>> paramDescriptions = getToStringParamDescriptions(paramList);
         return paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForEmptyParamList(), seen);
     }
 
@@ -330,21 +322,14 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * The resulting strings are then joined together into one string
      * using the {@link EasyOverriderConfig#getParameterDelimiter()}.<br>
      *
-     * @param thisObj  the object to get the parameters from - cannot be null
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param thisObj  the object to get the parameters from - assumed not null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
      * @param <O>  the type of the object in question
      * @return A String. If no primary toString() parameters are in the map,
      * {@link EasyOverriderConfig#getStringForRecursionPrevented()} is returned.
-     * @throws IllegalArgumentException if any parameters is null
      */
-    private <O> String getPrimaryParamsString(final O thisObj, final List<String> paramOrder,
-                                             final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(thisObj, 1, "thisObj", "getPrimaryParamsString");
-        requireNonNull(paramOrder, 2, "paramOrder", "getPrimaryParamsString");
-        requireNonNull(paramDescriptionMap, 3, "paramDescriptionMap", "getPrimaryParamsString");
-        List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramOrder,
-                                                                                                     paramDescriptionMap);
+    private <O> String getPrimaryParamsString(final O thisObj, ParamList<O> paramList) {
+        List<ParamDescription<? super O, ?>> paramDescriptions = getPrimaryToStringParamDescriptions(paramList);
         return paramsToString(thisObj, paramDescriptions, easyOverriderConfig.getStringForRecursionPrevented(), new HashMap<>());
     }
 
@@ -375,49 +360,34 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     /**
      * Gets a list of all the parameter descriptions that should be used in an equals method.<br>
      *
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
      * @param <O>  the type of the object in question
-     * @return An unmodifiable list of ParamDescription objects
-     * @throws IllegalArgumentException if either parameter is null
+     * @return A list of ParamDescription objects
      */
-    private <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(paramOrder, 1, "paramOrder", "getEqualsParamDescriptions");
-        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getEqualsParamDescriptions");
-        return getFilteredParamList(ParamDescription::isEqualsInclude, paramOrder, paramDescriptionMap);
+    private <O> List<ParamDescription<? super O, ?>> getEqualsParamDescriptions(ParamList<O> paramList) {
+        return getFilteredParamList(ParamDescription::isEqualsInclude, paramList);
     }
 
     /**
      * Gets a list of all the parameter descriptions that should be in a hashCode method.<br>
      *
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
      * @param <O>  the type of the object in question
-     * @return An unmodifiable list of ParamDescription objects
-     * @throws IllegalArgumentException if either parameter is null
+     * @return A list of ParamDescription objects
      */
-    private <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(paramOrder, 1, "paramOrder", "getHashCodeParamDescriptions");
-        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getHashCodeParamDescriptions");
-        return getFilteredParamList(ParamDescription::isHashCodeInclude, paramOrder, paramDescriptionMap);
+    private <O> List<ParamDescription<? super O, ?>> getHashCodeParamDescriptions(ParamList<O> paramList) {
+        return getFilteredParamList(ParamDescription::isHashCodeInclude, paramList);
     }
 
     /**
      * Gets a list of all the parameter descriptions that should be in a toString method.<br>
      *
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
      * @param <O>  the type of the object in question
-     * @return An unmodifiable list of ParamDescription objects
-     * @throws IllegalArgumentException if either parameter is null
+     * @return A list of ParamDescription objects
      */
-    private <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
-        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
-        return getFilteredParamList(ParamDescription::isToStringInclude, paramOrder, paramDescriptionMap);
+    private <O> List<ParamDescription<? super O, ?>> getToStringParamDescriptions(ParamList<O> paramList) {
+        return getFilteredParamList(ParamDescription::isToStringInclude, paramList);
     }
 
     /**
@@ -425,33 +395,29 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      *
      * Resulting list is unmodifiable.<br>
      *
-     * @param paramOrder  the list of parameter names in the order they should be used - cannot be null
-     * @param paramDescriptionMap  the map of names to ParamDescriptions - cannot be null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
      * @param <O>  the type of the object in question
-     * @return An unmodifiable list of ParamDescription objects
-     * @throws IllegalArgumentException if either parameter is null
+     * @return A list of ParamDescription objects
      */
-    private <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(
-                    final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(paramOrder, 1, "paramOrder", "getToStringParamDescriptions");
-        requireNonNull(paramDescriptionMap, 1, "paramDescriptionMap", "getToStringParamDescriptions");
-        return getFilteredParamList(pd -> pd instanceof ParamDescriptionSingle && ((ParamDescriptionSingle)pd).isPrimary(),
-                                    paramOrder, paramDescriptionMap);
+    private <O> List<ParamDescription<? super O, ?>> getPrimaryToStringParamDescriptions(ParamList<O> paramList) {
+        return getFilteredParamList(pd -> pd instanceof ParamDescriptionSingle && ((ParamDescriptionSingle)pd).isPrimary(), paramList);
     }
 
     /**
      * Filters the params list using the provided predicate and returns an unmodifiable list of ParamDescriptions.<br>
      *
-     * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - cannot be null
-     * @return An unmodifiable list of ParamDescriptions.
+     * @param filter  the predicate to use in the filter, e.g. ParamDescription::isToStringInclude - assumed not null
+     * @param paramList  the paramList to get the ParamDescriptions from - assumed not null
+     * @return A list of ParamDescription objects
      */
     private <O> List<ParamDescription<? super O, ?>> getFilteredParamList(
-                    final Predicate<ParamDescription<? super O, ?>> filter, final List<String> paramOrder,
-                    final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        return paramOrder.stream()
-                         .map(paramDescriptionMap::get)
-                         .filter(filter)
-                         .collect(Collectors.toList());
+                    final Predicate<ParamDescription<? super O, ?>> filter, final ParamList<O> paramList) {
+        Map<String, ParamDescription<? super O, ?>> paramDescriptionMap = paramList.getParamDescriptionMap();
+        return paramList.getParamOrder()
+                        .stream()
+                        .map(paramDescriptionMap::get)
+                        .filter(filter)
+                        .collect(Collectors.toList());
     }
 
     /**
@@ -495,7 +461,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         O thisO = (O)thisObj;
         @SuppressWarnings("unchecked")
         O thatO = (O)thatObj;
-        return getEqualsParamDescriptions(paramList.getParamOrder(), paramList.getParamDescriptionMap())
+        return getEqualsParamDescriptions(paramList)
                         .stream().allMatch(pd -> paramsAreEqual(thisO, thatO, pd.getGetter(), pd.getName()));
     }
 
@@ -516,7 +482,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     public <O> int hashCode(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "hashCode");
         requireNonNull(paramList, 2, "paramList", "hashCode");
-        return Objects.hash(getHashCodeParamDescriptions(paramList.getParamOrder(), paramList.getParamDescriptionMap())
+        return Objects.hash(getHashCodeParamDescriptions(paramList)
                                             .stream()
                                             .map(pd -> get(thisObj, pd.getGetter(), pd.getName()))
                                             .toArray());
@@ -544,8 +510,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     public <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "toString");
         requireNonNull(paramList, 3, "paramList", "toString");
-        String paramsString = getParamsString(thisObj, Optional.ofNullable(seen).orElseGet(HashMap::new),
-                                              paramList.getParamOrder(), paramList.getParamDescriptionMap());
+        String paramsString = getParamsString(thisObj, paramList, Optional.ofNullable(seen).orElseGet(HashMap::new));
         return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
@@ -570,7 +535,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     public <O> String primaryToString(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
-        String paramsString = getPrimaryParamsString(thisObj, paramList.getParamOrder(), paramList.getParamDescriptionMap());
+        String paramsString = getPrimaryParamsString(thisObj, paramList);
         return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
