@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * private static final ParamList<Foo> paramList =
  *                 ParamList.forClass(Foo.class)
- *                          .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                          .withPrimaryParam("id", Foo::getId, Integer.class)
  *                          .withParam("bar", Foo::getBar, String.class)
  *                          .withParam("baz", Foo::getBaz, Baz.class)
  *                          .withCollection("moreFoo", Foo::getMoreFoo, INCLUDED_IN_TOSTRING_ONLY, List.class, Foo.class)
@@ -52,6 +52,10 @@ import java.util.stream.Collectors;
  * }
  * }
  * </pre>
+ *
+ * Additionally, if there are parameters that might cause recursive toString calls,
+ * have each class involved implement {@link RecursionPreventingToString}.
+ *
  * @param <O>  the class you're describing
  */
 public class ParamList<O> {
