@@ -78,7 +78,7 @@ public interface EasyOverriderService {
      * @param <K>  the type of the keys
      * @param <V>  the type of the values
      * @param <P>  the type of the parameter
-     * @return
+     * @return A String
      */
     <K, V, P extends Map<? extends K, ? extends V>> String valueToStringPreventingRecursionMap(
                     final P value, final Map<Class, Set<Integer>> seen, final Class<K> keyClass, final Class<V> valueClass);
@@ -88,13 +88,10 @@ public interface EasyOverriderService {
      *
      * @param thisObj  the first object in the comparison
      * @param thatObj  the second object in the comparison
-     * @param parentClass  the class of the parent object
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @return A list of ParamDescription objects
+     * @param paramList  the ParamList to operate on
+     * @return true if the objects are equal, false if not
      */
-    <O> boolean equals(final Object thisObj, final Object thatObj, final Class<O> parentClass, final List<String> paramOrder,
-                       final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> boolean equals(final Object thisObj, final Object thatObj, final ParamList<O> paramList);
 
     /**
      * Creates a hashCode for an object.<br>

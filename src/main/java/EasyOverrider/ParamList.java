@@ -155,14 +155,14 @@ public class ParamList<O> {
     /**
      * Checks to see if the provided objects are equal as described by this paramList.<br>
      *
-     * Uses the {@link EasyOverriderService#equals(Object, Object, Class, List, Map)} method.
+     * Uses the {@link EasyOverriderService#equals(Object, Object, ParamList)} method.
      *
      * @param thisObj  the main object you're checking against
      * @param thatObj  the other object you're wanting to test
      * @return True if both objects are equal. False otherwise.
      */
     public boolean equals(final Object thisObj, final Object thatObj) {
-        return easyOverriderService.equals(thisObj, thatObj, parentClass, paramOrder, paramDescriptionMap);
+        return easyOverriderService.equals(thisObj, thatObj, this);
     }
 
     /**

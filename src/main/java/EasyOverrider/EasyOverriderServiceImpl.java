@@ -469,27 +469,22 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      *
      * @param thisObj  {@inheritDoc}
      * @param thatObj  {@inheritDoc}
-     * @param parentClass  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
+     * @param paramList  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IllegalArgumentException if the parentClass, paramOrder, or paramDescriptionMap parameters are null
      */
     @Override
-    public <O> boolean equals(final Object thisObj, final Object thatObj, final Class<O> parentClass, final List<String> paramOrder,
-                              final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
-        requireNonNull(parentClass, 3, "parentClass", "equals");
-        requireNonNull(paramOrder, 4, "paramOrder", "equals");
-        requireNonNull(paramDescriptionMap, 5, "paramDescriptionMap", "equals");
+    public <O> boolean equals(final Object thisObj, final Object thatObj, final ParamList<O> paramList) {
+        requireNonNull(paramList, 3, "paramList", "equals");
         if (thisObj == thatObj) {
             return true;
         }
         if (thisObj == null || thatObj == null) {
             return false;
         }
-        boolean thisIsInstance = parentClass.isInstance(thisObj);
-        boolean thatIsInstance = parentClass.isInstance(thatObj);
+        boolean thisIsInstance = paramList.getParentClass().isInstance(thisObj);
+        boolean thatIsInstance = paramList.getParentClass().isInstance(thatObj);
         if (!thisIsInstance && !thatIsInstance) {
             return thisObj.equals(thatObj);
         }
@@ -500,7 +495,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         O thisO = (O)thisObj;
         @SuppressWarnings("unchecked")
         O thatO = (O)thatObj;
-        return getEqualsParamDescriptions(paramOrder, paramDescriptionMap)
+        return getEqualsParamDescriptions(paramList.getParamOrder(), paramList.getParamDescriptionMap())
                         .stream().allMatch(pd -> paramsAreEqual(thisO, thatO, pd.getGetter(), pd.getName()));
     }
 
