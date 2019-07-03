@@ -7,7 +7,6 @@ import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
