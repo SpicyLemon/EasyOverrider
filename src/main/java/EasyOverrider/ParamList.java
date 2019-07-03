@@ -180,28 +180,36 @@ public class ParamList<O> {
     /**
      * Gets a String representation of the provided object using the appropriate parameters.<br>
      *
-     * Uses the {@link EasyOverriderService#toString(Object, Map, Class, List, Map)} method.
+     * Uses the {@link EasyOverriderService#toString(Object, ParamList, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return A string.
      */
     public String toString(final O thisObj) {
-        return easyOverriderService.toString(thisObj, null, parentClass, paramOrder, paramDescriptionMap);
+        return easyOverriderService.toString(thisObj, this, null);
     }
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.<br>
      *
-     * Uses the {@link EasyOverriderService#toString(Object, Map, Class, List, Map)} method.
+     * Uses the {@link EasyOverriderService#toString(Object, ParamList, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
      * @return A string representation of the given object.
      */
     public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.toString(thisObj, seen, parentClass, paramOrder, paramDescriptionMap);
+        return easyOverriderService.toString(thisObj, this, seen);
     }
 
+    /**
+     * Gets a String representation of the provided object using only the primary parameters.<br>
+     *
+     * Uses the {@link EasyOverriderService#primaryToString(Object, ParamList)} method.
+     *
+     * @param thisObj  the object to get the parameter values from
+     * @return A short String representation of the given object.
+     */
     public String primaryToString(final O thisObj) {
         return easyOverriderService.primaryToString(thisObj, this);
     }

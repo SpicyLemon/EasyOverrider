@@ -112,15 +112,12 @@ public interface EasyOverriderService {
      * Creates a String representation of the provided object.<br>
      *
      * @param thisObj  the object to convert
+     * @param paramList  the ParamList to operate on
      * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string
-     * @param parentClass  the class of the parent object
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
      * @param <O>  the class of the object
      * @return A String.
      */
-    <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, final Class<O> parentClass,
-                        final List<String> paramOrder, Map<String, ParamDescription<? super O, ?>> paramDescriptionMap);
+    <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen);
 
     /**
      * Creates a String representation of the provided object using only primary parameters.<br>
@@ -130,5 +127,5 @@ public interface EasyOverriderService {
      * @param <O>  the class of the object
      * @return A String.
      */
-    <O> String primaryToString(final O thisObj, ParamList<O> paramList);
+    <O> String primaryToString(final O thisObj, final ParamList<O> paramList);
 }

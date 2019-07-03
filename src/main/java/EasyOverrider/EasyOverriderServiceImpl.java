@@ -542,24 +542,19 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * <code>class name</code>, <code>hash code String</code>, <code>parameters String</code><br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
+     * @param paramList  {@inheritDoc} - cannot be null
      * @param seen  {@inheritDoc} - if null, a new empty HashMap is used
-     * @param parentClass  {@inheritDoc} - cannot be null
-     * @param paramOrder  {@inheritDoc} - cannot be null
-     * @param paramDescriptionMap  {@inheritDoc} - cannot be null
      * @param <O>  {@inheritDoc}
      * @return {@inheritDoc}
-     * @throws IllegalArgumentException if thisObj, parentClass, paramOrder or paramDescriptionMap are null
+     * @throws IllegalArgumentException if thisObj, or paramList are null
      */
     @Override
-    public <O> String toString(final O thisObj, final Map<Class, Set<Integer>> seen, final Class<O> parentClass,
-                               final List<String> paramOrder, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap) {
+    public <O> String toString(final O thisObj, final ParamList<O> paramList, final Map<Class, Set<Integer>> seen) {
         requireNonNull(thisObj, 1, "thisObj", "toString");
-        requireNonNull(parentClass, 3, "parentClass", "toString");
-        requireNonNull(paramOrder, 4, "paramOrder", "toString");
-        requireNonNull(paramDescriptionMap, 5, "paramDescriptionMap", "toString");
+        requireNonNull(paramList, 3, "paramList", "toString");
         String paramsString = getParamsString(thisObj, Optional.ofNullable(seen).orElseGet(HashMap::new),
-                                              paramOrder, paramDescriptionMap);
-        return createToStringResult(thisObj, parentClass, paramsString);
+                                              paramList.getParamOrder(), paramList.getParamDescriptionMap());
+        return createToStringResult(thisObj, paramList.getParentClass(), paramsString);
     }
 
     /**
@@ -580,7 +575,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @throws IllegalArgumentException if any parameter is null
      */
     @Override
-    public <O> String primaryToString(final O thisObj, ParamList<O> paramList) {
+    public <O> String primaryToString(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
         String paramsString = getPrimaryParamsString(thisObj, paramList.getParamOrder(), paramList.getParamDescriptionMap());
