@@ -307,10 +307,16 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * Converts any parameter to a String in a recursion-safe way.<br>
      *
      * If the provided parameter is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
+     *
      * If the provided <code>paramDescription</code> is a <code>ParamDescriptionMap</code>,
-     * {@link #mapParamToString(Map, ParamDescriptionMap, Map)} is returned.<br>
+     * each entry is processed and its key and value are both converted to Strings preventing recursion.<br>
+     * Those strings are the collected into a <code>Map&lt;String, String&gt;</code>
+     * and converted to a final String using {@link Map#toString()}.<br>
+     *
      * If the provided <code>paramDescription</code> is a <code>ParamDescriptionCollection</code>,
-     * {@link #collectionParamToString(Collection, ParamDescriptionCollection, Map)} is returned.<br>
+     * each entry is processed and its value is converted to a String preventing recursion.
+     * Those strings are the collected into a <code>List&lt;String&gt;</code> and converted to a String using {@link List#toString()}.<br>
+     *
      * Otherwise, {@link #paramToString(Object, Class, Map)} is returned.<br>
      *
      * @param param  the parameter to convert to a String
@@ -319,57 +325,30 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * @param <P>  the type of the parameter (getter return value)
      * @return A String
      */
+    @SuppressWarnings("unchecked")
     private <P> String anyParamToString(final P param, final ParamDescription<?, P> paramDescription,
                                         final Map<Class, Set<Integer>> seen) {
         if (param == null) {
             return easyOverriderConfig.getStringForNull();
         }
         if (paramDescription instanceof ParamDescriptionMap) {
-            return mapParamToString((Map)param, (ParamDescriptionMap<?, ?, ?, ?>)paramDescription, seen);
+            ParamDescriptionMap pdMap = (ParamDescriptionMap)paramDescription;
+            Map<Object, Object> map = (Map)param;
+            return map.entrySet()
+                      .stream()
+                      .collect(Collectors.toMap(e -> paramToString(e.getKey(), pdMap.getKeyClass(), seen),
+                                                e -> paramToString(e.getValue(), pdMap.getValueClass(), seen)))
+                      .toString();
         }
         if (paramDescription instanceof ParamDescriptionCollection) {
-            return collectionParamToString((Collection)param, (ParamDescriptionCollection<?, ?, ?>)paramDescription, seen);
+            ParamDescriptionCollection pdCol = (ParamDescriptionCollection)paramDescription;
+            Collection<Object> collection = (Collection)param;
+            return collection.stream()
+                             .map(e -> paramToString(e, pdCol.getEntryClass(), seen))
+                             .collect(Collectors.toList())
+                             .toString();
         }
         return paramToString(param, paramDescription.getParamClass(), seen);
-    }
-
-    /**
-     * Converts a map parameter to a String in a recursion-safe way.<br>
-     *
-     * @param map  the map to convert to a String - assumed not null
-     * @param paramDescription  the description of the map parameter - assumed not null
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
-     * @param <K>  the type of the keys in the map
-     * @param <V>  the type of the values in the map
-     * @param <P>  the type of the parameter
-     * @return A String
-     */
-    private <K, V, P extends Map<? extends K, ? extends V>> String mapParamToString(
-                    final P map, final ParamDescriptionMap<?, K, V, P> paramDescription, final Map<Class, Set<Integer>> seen) {
-        return map.entrySet()
-                  .stream()
-                  .collect(Collectors.toMap(e -> paramToString(e.getKey(), paramDescription.getKeyClass(), seen),
-                                            e -> paramToString(e.getValue(), paramDescription.getValueClass(), seen)))
-                  .toString();
-    }
-
-    /**
-     * Converts a collection parameter to a String in a recursion-safe way.<br>
-     *
-     * @param collection  the collection to convert to a String - assumed not null
-     * @param paramDescription  the description of the collection parameter - assumed not null
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
-     * @param <E>  the type of entries in the collection
-     * @param <P>  the type of the parameter
-     * @return A String
-     */
-    private <E, P extends Collection<? extends E>> String collectionParamToString(
-                    final P collection, final ParamDescriptionCollection<?, E, P> paramDescription,
-                    final Map<Class, Set<Integer>> seen) {
-        return collection.stream()
-                         .map(e -> paramToString(e, paramDescription.getEntryClass(), seen))
-                         .collect(Collectors.toList())
-                         .toString();
     }
 
     /**
