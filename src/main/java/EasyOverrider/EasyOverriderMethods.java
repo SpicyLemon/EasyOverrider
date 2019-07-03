@@ -8,11 +8,11 @@ package EasyOverrider;
  * Example class:
  * <pre>{@code
  *
- * import static EasyOverriderMethods.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+ * import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
  *
  * import Bar;
- * import EasyOverriderMethods.EasyOverriderMethods;
- * import EasyOverriderMethods.ParamList;
+ * import EasyOverrider.EasyOverriderMethods;
+ * import EasyOverrider.ParamList;
  *
  * public class Foo extends EasyOverriderMethods<Foo> {
  *     private int id;
