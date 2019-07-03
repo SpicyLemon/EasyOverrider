@@ -8,8 +8,6 @@ package EasyOverrider;
  * Example class:
  * <pre>{@code
  *
- * import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
- *
  * import Bar;
  * import EasyOverrider.EasyOverriderMethods;
  * import EasyOverrider.ParamList;
@@ -25,7 +23,7 @@ package EasyOverrider;
  *     paramList<Foo> getParamList() {
  *         if (paramList == null) {
  *             paramList = ParamList.forClass(Foo.class)
- *                                  .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                                  .withPrimaryParam("id", Foo::getId, Integer.class)
  *                                  .withParam("name", Foo::getName, String.class)
  *                                  .withParam("bar", Foo::getBar, Bar.class)
  *                                  .andThatsIt();
@@ -54,49 +52,8 @@ package EasyOverrider;
  * }</pre>
  *
  * @param <B>  the type of object being extended.
- * @see EasyOverriderPreventingRecursiveToString
  */
-public abstract class EasyOverriderMethods<B> {
-
-    /**
-     * A method that returns this class's ParamList.<br>
-     *
-     * It's best practice to do something like this:
-     * <pre>
-     * {@code
-     *
-     * private static ParamList<Foo> paramList = null;
-     * static paramList<Foo> getFooParamList() {
-     *     if (paramList == null) {
-     *         paramList = ParamList.forClass(Foo.class)
-     *                              .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY)
-     *                              .withParam("name", Foo::getName)
-     *                              .withParam("bar", Foo::getBar)
-     *                              .andThatsIt();
-     *     }
-     *     return paramList;
-     * }
-     *
-     *@literal @Override
-     * ParamList<Foo> getParamList() {
-     *     return getFooParamList();
-     * }
-     * }
-     * </pre>
-     *
-     * @return A {@link ParamList} for the extending class.
-     */
-    abstract ParamList<B> getParamList();
-
-    /**
-     * Casts this into a B as expected by the ParamList methods.
-     *
-     * @return A B.
-     */
-    @SuppressWarnings("unchecked")
-    B getThis() {
-        return (B)this;
-    }
+public abstract class EasyOverriderMethods<B> implements EasyOverrider<B> {
 
     /**
      * An EasyOverriderMethods version of equals(Object).
