@@ -36,14 +36,28 @@ import java.util.function.Function;
  */
 public class ParamListBuilder<O> {
 
-    final Class<O> parentClass;
-    ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
-    final List<String> paramOrder;
-    final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
-    EasyOverriderService easyOverriderService;
-    EasyOverriderService defaultEasyOverriderService;
+    // The public methods in here that add collection and map parameters have to suppress warnings about unchecked conversions.
+    // This prevents the warnings from showing up everywhere a call is made to those methods.
+    // The signature for those methods contain the raw Collection or Map types instead of also including the types they contain.
+    // For example, public <E, P extends Collection> ParamListBuilder<O> withCollection. Notice the raw Collection there instead
+    // of Collection<? extends E>.  If the <? extends E> is included in the signature, then the Class<P> parameter provided to
+    // that method confuses things. You cannot create a Class<Collection<? extends E>> object, it can only be Class<Collection>.
+    // So with the <? extends E> the compiler complains, and things just don't work.
+    //
+    // Basically, in order for all of this to be usable, those methods needed to just have the raw types for P.
+    //
+    // However, the ParamDescription objects still need that information.  So when calling the private add or update methods in here,
+    // the <? extends E> part is included in the signature.  This results in an unchecked warning, but they're actually mostly okay.
+    //
+    // Java forgets all that crap when running anyway.
 
-    static ParamList<ParamListBuilder> paramList;
+    private final Class<O> parentClass;
+    private ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
+    private final List<String> paramOrder;
+    private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
+    private EasyOverriderService easyOverriderService;
+
+    private static ParamList<ParamListBuilder> paramList;
 
     /**
      * Get the ParamList for a ParamListBuilder object.<br>
@@ -54,25 +68,20 @@ public class ParamListBuilder<O> {
      *
      * @return The ParamList for a ParamListBuilder.
      */
-    static ParamList<ParamListBuilder> getParamList() {
+    private static ParamList<ParamListBuilder> getParamList() {
         if (paramList == null) {
             //This will create the ParamList if it's not already set.
             //The reason it does this rather than just having it statically set when the variable is created,
             // is that it uses itself. The class code needs to be loaded before it can be used.
             paramList = ParamList.forClass(ParamListBuilder.class)
-                                 .withParam("parentClass", ParamListBuilder::getParentClass, Class.class)
+                                 .withParam("parentClass", (plb) -> plb.parentClass, Class.class)
                                  .withParam("paramMethodRestrictionRestriction",
-                                            ParamListBuilder::getParamMethodRestrictionRestriction,
+                                            (plb) -> plb.paramMethodRestrictionRestriction,
                                             ParamMethodRestrictionRestriction.class)
-                                 .withCollection("paramOrder", ParamListBuilder::getParamOrder, List.class, String.class)
-                                 .withMap("paramDescriptionMap", ParamListBuilder::getParamDescriptionMap,
+                                 .withCollection("paramOrder", (plb) -> plb.paramOrder, List.class, String.class)
+                                 .withMap("paramDescriptionMap", (plb) -> plb.paramDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
-                                 .withParam("easyOverriderService",
-                                            (plb) -> plb.easyOverriderService,
-                                            EasyOverriderService.class)
-                                 .withParam("defaultEasyOverriderService",
-                                            (plb) -> plb.defaultEasyOverriderService,
-                                            EasyOverriderService.class)
+                                 .withParam("easyOverriderService", (plb) -> plb.easyOverriderService, EasyOverriderService.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -91,7 +100,6 @@ public class ParamListBuilder<O> {
                              final Class<O> parentClass, final ParamList<? super O> superParamList) {
         this.easyOverriderService = easyOverriderService;
         this.parentClass = parentClass;
-        this.paramMethodRestrictionRestriction = SAFE_ONLY;
         this.paramOrder = Optional.ofNullable(superParamList)
                                   .map(ParamList::getParamOrder)
                                   .map(LinkedList::new)
@@ -100,21 +108,7 @@ public class ParamListBuilder<O> {
                                            .map(ParamList::getParamDescriptionMap)
                                            .map(HashMap<String, ParamDescription<? super O, ?>>::new)
                                            .orElseGet(HashMap::new);
-        defaultEasyOverriderService = new EasyOverriderServiceImpl();
-    }
-
-    /**
-     * Default constructor to start.<br>
-     *
-     * Usually this is done using {@link ParamList#forClass(Class)}
-     * so that you don't have to import ParamListBuilder.<br>
-     *
-     * @param parentClass  the class of the object being described - cannot be null
-     * @see ParamList#forClass(Class)
-     */
-    ParamListBuilder(final Class<O> parentClass) {
-        this(null, parentClass, null);
-        requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        this.paramMethodRestrictionRestriction = SAFE_ONLY;
     }
 
     /**
@@ -139,63 +133,17 @@ public class ParamListBuilder<O> {
      * Kicks off a ParamListBuilder for the provided class.<br>
      *
      * This is usually done using {@link ParamList#forClass(Class)}, so that you don't have to import ParamListBuilder.
-     * That method just calls this one, and this one just calls the {@link #ParamListBuilder(Class)} constructor.
      * This one is mainly here for ease of use in case there's some confusion between a {@link ParamListBuilder} and a {@link ParamList}.
      * This way you can call <code>forClass</code> on either with the same results.<br>
      *
      * @param parentClass  the class you're building the parameter list for
      * @param <C>  the class you're building the parameter list for
      * @return A {@link ParamListBuilder} for the specified class.
+     * @throws IllegalArgumentException if the provided class is null.
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
-        return new ParamListBuilder<C>(parentClass);
-    }
-
-    /**
-     * Getter for the parentClass parameter.<br>
-     *
-     * @return A Class.
-     */
-    public Class<O> getParentClass() {
-        return parentClass;
-    }
-
-    /**
-     * Getter for the paramMethodRestrictionRestriction parameter.<br>
-     *
-     * @return A {@link ParamMethodRestrictionRestriction} value.
-     */
-    public ParamMethodRestrictionRestriction getParamMethodRestrictionRestriction() {
-        return paramMethodRestrictionRestriction;
-    }
-
-    /**
-     * Getter for the paramOrder parameter.<br>
-     *
-     * @return A list of name strings that dictate the parameter order.
-     */
-    public List<String> getParamOrder() {
-        return Collections.unmodifiableList(paramOrder);
-    }
-
-    /**
-     * Getter for the map of parameter names to their descriptions.<br>
-     *
-     * @return A map of name strings to ParamDescription objects.
-     */
-    public Map<String, ParamDescription<? super O, ?>> getParamDescriptionMap() {
-        return Collections.unmodifiableMap(paramDescriptionMap);
-    }
-
-    /**
-     * A getter for the EasyOverriderService that ensures it isn't null.<br>
-     *
-     * Gets <code>this.easyOverriderService</code> if not null, otherwise gets <code>this.defaultEasyOverriderService</code>.<br>
-     *
-     * @return the EasyOverriderService to use.
-     */
-    private EasyOverriderService getEasyOverriderServiceOrDefault() {
-        return Optional.ofNullable(easyOverriderService).orElse(defaultEasyOverriderService);
+        requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        return new ParamListBuilder<>(null, parentClass, null);
     }
 
     /**
@@ -210,9 +158,6 @@ public class ParamListBuilder<O> {
     public ParamListBuilder<O> usingService(final EasyOverriderService easyOverriderService) {
         requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
         this.easyOverriderService = easyOverriderService;
-        if (!paramDescriptionMap.isEmpty()) {
-            paramDescriptionMap.values().forEach(e -> e.setService(easyOverriderService));
-        }
         return this;
     }
 
@@ -404,8 +349,7 @@ public class ParamListBuilder<O> {
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
                                     final ParamMethodRestriction paramMethodRestriction, final boolean isPrimaryKey) {
-        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
-                                                  getEasyOverriderServiceOrDefault(), isPrimaryKey));
+        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
     }
 
     /**
@@ -428,7 +372,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withoutParam(String)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, Function<? super O, P> getter,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withCollection");
@@ -461,7 +405,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutParam(String)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
                                                                         final ParamMethodRestriction paramMethodRestriction,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
@@ -491,8 +435,7 @@ public class ParamListBuilder<O> {
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                            final String name, final Function<? super O, P> getter,
                                                                            final ParamMethodRestriction paramMethodRestriction) {
-        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction,
-                                                         getEasyOverriderServiceOrDefault()));
+        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
@@ -517,7 +460,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                              final Class<P> paramClass, final Class<K> keyClass,
                                                              final Class<E> entryClass) {
@@ -554,7 +497,7 @@ public class ParamListBuilder<O> {
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
                                                              final ParamMethodRestriction paramMethodRestriction,
                                                              final Class<P> paramClass, final Class<K> keyClass,
@@ -589,8 +532,8 @@ public class ParamListBuilder<O> {
                                                                              final Class<E> entryClass, final String name,
                                                                              final Function<? super O, P> getter,
                                                                              final ParamMethodRestriction paramMethodRestriction) {
-        addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter,
-                                                     paramMethodRestriction, getEasyOverriderServiceOrDefault()));
+        addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
+                                                     name, getter, paramMethodRestriction));
     }
 
     /**
@@ -766,8 +709,7 @@ public class ParamListBuilder<O> {
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
                                        final ParamMethodRestriction paramMethodRestriction, boolean isPrimaryKey) {
-        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction,
-                                                     getEasyOverriderServiceOrDefault(), isPrimaryKey));
+        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
     }
 
     /**
@@ -793,7 +735,8 @@ public class ParamListBuilder<O> {
      * @see #withCollection(String, Function, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
+    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(
                     final String name, final Function<? super O, P> getter,
                     final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withUpdatedCollection");
@@ -829,7 +772,8 @@ public class ParamListBuilder<O> {
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withoutParam(String)
      */
-    public <E, P extends Collection<? extends E>> ParamListBuilder<O> withUpdatedCollection(
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
+    public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(
                     final String name, final Function<? super O, P> getter,
                     final ParamMethodRestriction paramMethodRestriction,
                     final Class<P> paramClass, final Class<E> entryClass) {
@@ -856,12 +800,11 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      */
-    @SuppressWarnings("unchecked")
     private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                               final String name, final Function<? super O, P> getter,
                                                                               final ParamMethodRestriction paramMethodRestriction) {
-        updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction,
-                                                            getEasyOverriderServiceOrDefault()));
+        updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass,
+                                                            name, getter, paramMethodRestriction));
     }
 
     /**
@@ -889,7 +832,8 @@ public class ParamListBuilder<O> {
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
+    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(
                     final String name, final Function<? super O, P> getter,
                     final Class<P> paramClass, final Class<K> keyClass,
                     final Class<E> entryClass) {
@@ -929,7 +873,8 @@ public class ParamListBuilder<O> {
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withoutParam(String)
      */
-    private <K, E, P extends Map<? extends K, ? extends E>> ParamListBuilder<O> withUpdatedMap(
+    @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
+    private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(
                     final String name, final Function<? super O, P> getter,
                     final ParamMethodRestriction paramMethodRestriction,
                     final Class<P> paramClass, final Class<K> keyClass,
@@ -960,13 +905,12 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      */
-    @SuppressWarnings("unchecked")
     private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(
                     final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
                     final String name, final Function<? super O, P> getter,
                     final ParamMethodRestriction paramMethodRestriction) {
-        updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass, name, getter,
-                                                        paramMethodRestriction, getEasyOverriderServiceOrDefault()));
+        updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
+                                                        name, getter, paramMethodRestriction));
     }
 
     /**
@@ -1037,7 +981,8 @@ public class ParamListBuilder<O> {
      * @return a ParamList object.
      */
     public ParamList<O> andThatsIt() {
-        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder, getEasyOverriderServiceOrDefault());
+        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder,
+                                Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new));
     }
 
     /**
