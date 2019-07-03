@@ -216,7 +216,8 @@ public class ParamListServiceImpl implements ParamListService {
     public <O> String primaryToString(final O thisObj, final ParamList<O> paramList) {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
-        Predicate<ParamDescription<? super O, ?>> filter = pd -> pd instanceof ParamDescriptionSingle
+        Predicate<ParamDescription<? super O, ?>> filter = pd -> pd.isToStringInclude()
+                                                                 && pd instanceof ParamDescriptionSingle
                                                                  && ((ParamDescriptionSingle)pd).isPrimary();
         List<ParamDescription<? super O, ?>> paramDescriptions = getFilteredParamList(filter, paramList);
         return createToStringResult(thisObj, paramList.getParentClass(), paramDescriptions,
