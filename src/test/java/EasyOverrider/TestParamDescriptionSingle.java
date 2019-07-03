@@ -473,15 +473,5 @@ public class TestParamDescriptionSingle {
         String actual = paramDescriptionSingle1.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
     }
-
-    @Test
-    public void toString_stringParam_containsEasyOverriderService() {
-        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
-                        new ParamDescriptionSingle<TestObj, String>(
-                                        TestObj.class, String.class, "theString",
-                                        TestObj::getTheString, INCLUDED_IN_ALL, false);
-        String actual = paramDescriptionSingle1.toString();
-        assertTrue(actual, actual.contains("easyOverriderService"));
-    }
 }
 
