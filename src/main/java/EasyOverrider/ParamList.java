@@ -1,5 +1,7 @@
 package EasyOverrider;
 
+import static EasyOverrider.EasyOverriderUtils.requireNonNull;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Describes a list of parameters that describe the parameters in a class.<br>
@@ -93,8 +96,6 @@ public class ParamList<O> {
      * add in parameters using methods like {@link ParamListBuilder#withParam(String, Function, Class)},
      * and finished off with the {@link ParamListBuilder#andThatsIt()} method to create a new ParamList.<br>
      *
-     * Uses the {@link EasyOverriderService#validateParamListConstructorOrThrow(Class, Map, List, EasyOverriderService)} method.
-     *
      * @param parentClass  the class of the object these parameters represent
      * @param paramDescriptionMap  a map of name to ParamDescription objects describing the parameters in the parent object
      * @param paramOrder  the order that the parameters should be in
@@ -103,11 +104,25 @@ public class ParamList<O> {
      */
     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
               final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
-         this.easyOverriderService = Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new);
-         this.easyOverriderService.validateParamListConstructorOrThrow(parentClass, paramDescriptionMap, paramOrder, easyOverriderService);
-         this.parentClass = parentClass;
-         this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
-         this.paramOrder = new LinkedList<>(paramOrder);
+        requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
+        requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
+        requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
+        requireNonNull(easyOverriderService, 4, "easyOverriderService", "ParamList constructor");
+        if (paramOrder.size() != paramDescriptionMap.size()) {
+            throw new IllegalArgumentException("The size of the paramDescriptionMap [" + paramDescriptionMap.size() + "] " +
+                                               "does not equal the size of the paramOrder list [" + paramOrder.size() + "]");
+        }
+        if (!paramOrder.stream().allMatch(paramDescriptionMap::containsKey)) {
+            throw new IllegalArgumentException("Parameter names were found in the order list " +
+                                               "that do not exist in the paramDescriptionMap: " +
+                                               paramOrder.stream()
+                                                         .filter(name -> !paramDescriptionMap.containsKey(name))
+                                                         .collect(Collectors.joining(", ")));
+        }
+        this.parentClass = parentClass;
+        this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
+        this.paramOrder = new LinkedList<>(paramOrder);
+        this.easyOverriderService = easyOverriderService;
     }
 
     /**

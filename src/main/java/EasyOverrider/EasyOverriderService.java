@@ -96,19 +96,6 @@ public interface EasyOverriderService {
                     final P value, final Map<Class, Set<Integer>> seen, final Class<K> keyClass, final Class<V> valueClass);
 
     /**
-     * Checks the provided parameters and makes sure there's nothing wrong with them.<br>
-     *
-     * @param parentClass  the class of the parent object
-     * @param paramDescriptionMap  the map of names to ParamDescriptions
-     * @param paramOrder  the list of parameter names in the order they should be used
-     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
-     * @param <O>  the type of the object in question
-     */
-    <O> void validateParamListConstructorOrThrow(final Class<O> parentClass,
-                                                 final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
-                                                 final List<String> paramOrder, final EasyOverriderService easyOverriderService);
-
-    /**
      * Tests if two objects are the same given the provided param description map.<br>
      *
      * @param thisObj  the first object in the comparison
