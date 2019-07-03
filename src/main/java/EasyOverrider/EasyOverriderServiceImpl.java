@@ -119,6 +119,34 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
+     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
+     *
+     * If <code>thisO == thatO</code>, true is returned.<br>
+     * Then, if either of them are null, false is returned.<br>
+     * Then, the parameters are retrieved. If they are equal using == or equal using Objects.equals then true is returned.<br>
+     * Otherwise, false is returned.<br>
+     *
+     * @param thisO  the first object to get the parameter from
+     * @param thatO  the second object to get the parameter from
+     * @param paramDescription  the getter for the parameter to compare - assumed not null
+     * @param <O>  the type of the object
+     * @param <P>  the type of the parameter (getter return value)
+     * @return True if the parameter in each of the objects are equal. False if different.
+     * @throws IllegalArgumentException if the provided getter is null
+     */
+    private <O, P> boolean paramsAreEqual(final O thisO, final O thatO, ParamDescription<O, P> paramDescription) {
+        if (thisO == thatO) {
+            return true;
+        }
+        if (thisO == null || thatO == null) {
+            return false;
+        }
+        P thisP = paramDescription.getGetter().apply(thisO);
+        P thatP = paramDescription.getGetter().apply(thatO);
+        return thisP == thatP || Objects.equals(thisP, thatP);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Gets all ParamDescription entries that should be included in the hashCode.
@@ -215,34 +243,6 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
     }
 
     /**
-     * Checks to see if the corresponding parameters defined by the getter are the same in both objects.<br>
-     *
-     * If <code>thisO == thatO</code>, true is returned.<br>
-     * Then, if either of them are null, false is returned.<br>
-     * Then, the parameters are retrieved. If they are equal using == or equal using Objects.equals then true is returned.<br>
-     * Otherwise, false is returned.<br>
-     *
-     * @param thisO  the first object to get the parameter from
-     * @param thatO  the second object to get the parameter from
-     * @param paramDescription  the getter for the parameter to compare - assumed not null
-     * @param <O>  the type of the object
-     * @param <P>  the type of the parameter (getter return value)
-     * @return True if the parameter in each of the objects are equal. False if different.
-     * @throws IllegalArgumentException if the provided getter is null
-     */
-    private <O, P> boolean paramsAreEqual(final O thisO, final O thatO, ParamDescription<O, P> paramDescription) {
-        if (thisO == thatO) {
-            return true;
-        }
-        if (thisO == null || thatO == null) {
-            return false;
-        }
-        P thisP = paramDescription.getGetter().apply(thisO);
-        P thatP = paramDescription.getGetter().apply(thatO);
-        return thisP == thatP || Objects.equals(thisP, thatP);
-    }
-
-    /**
      * Put together the pieces to create the final toString result.<br>
      *
      * Generates the object's hashCode using {@link Object#hashCode()} then converts it to a String
@@ -317,7 +317,7 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
      * each entry is processed and its value is converted to a String preventing recursion.
      * Those strings are the collected into a <code>List&lt;String&gt;</code> and converted to a String using {@link List#toString()}.<br>
      *
-     * Otherwise, {@link #paramToString(Object, Class, Map)} is returned.<br>
+     * Otherwise, {@link #objectToString(Object, Class, Map)} is returned.<br>
      *
      * @param param  the parameter to convert to a String
      * @param paramDescription  the description of the parameter - assumed not null
@@ -336,64 +336,65 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
             Map<Object, Object> map = (Map)param;
             return map.entrySet()
                       .stream()
-                      .collect(Collectors.toMap(e -> paramToString(e.getKey(), pdMap.getKeyClass(), seen),
-                                                e -> paramToString(e.getValue(), pdMap.getValueClass(), seen)))
+                      .collect(Collectors.toMap(e -> objectToString(e.getKey(), pdMap.getKeyClass(), seen),
+                                                e -> objectToString(e.getValue(), pdMap.getValueClass(), seen)))
                       .toString();
         }
         if (paramDescription instanceof ParamDescriptionCollection) {
             ParamDescriptionCollection pdCol = (ParamDescriptionCollection)paramDescription;
             Collection<Object> collection = (Collection)param;
             return collection.stream()
-                             .map(e -> paramToString(e, pdCol.getEntryClass(), seen))
+                             .map(e -> objectToString(e, pdCol.getEntryClass(), seen))
                              .collect(Collectors.toList())
                              .toString();
         }
-        return paramToString(param, paramDescription.getParamClass(), seen);
+        return objectToString(param, paramDescription.getParamClass(), seen);
     }
 
     /**
-     * Converts a parameter to a String in a recursion-safe way.<br>
+     * Converts an object to a String in a recursion-safe way.<br>
      *
-     * If the provided parameter is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
+     * If the provided object is null, {@link EasyOverriderConfig#getStringForNull()} is returned.<br>
      *
-     * If the provided parameter does not implement {@link RecursionPreventingToString},
+     * If the provided object does not implement {@link RecursionPreventingToString},
      * then the standard {@link Object#toString()} method is returned.<br>
      *
-     * If the provided parameter DOES implement {@link RecursionPreventingToString},
+     * If the provided object DOES implement {@link RecursionPreventingToString},
      * the hashCode of the object is calculated.<br>
      *
      * If the hashCode is not already in the seen map, it is added, and the parameter's
      * {@link RecursionPreventingToString#toString(Map)} method is called and returned.<br>
      *
-     * Otherwise, {@link RecursionPreventingToString#primaryToString()} is called.
+     * Otherwise, recursion has been detected.
+     * The object's {@link RecursionPreventingToString#primaryToString()} method is called.
      * If that is not null, it is returned.
      * Otherwise, {@link #createToStringResult(Object, Class, List, String, Map)} is called with an empty list
-     * supplying {@link EasyOverriderConfig#getStringForRecursionPrevented()} for the value.<br>
+     * and supplying {@link EasyOverriderConfig#getStringForRecursionPrevented()} for the value.<br>
      *
-     * @param param  the parameter to convert
-     * @param paramClass  the class of the parameter being converted - assumed not null
+     * @param obj  the parameter to convert
+     * @param objClass  the class of the parameter being converted - assumed not null
      * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
      * @param <P>  the type of the parameter
      * @return A String
      */
-    private <P> String paramToString(final P param, final Class<P> paramClass, final Map<Class, Set<Integer>> seen) {
-        if (param == null) {
+    private <P> String objectToString(final P obj, final Class<P> objClass, final Map<Class, Set<Integer>> seen) {
+        if (obj == null) {
             return easyOverriderConfig.getStringForNull();
         }
-        if (!(param instanceof RecursionPreventingToString)) {
-            return param.toString();
+        if (!(obj instanceof RecursionPreventingToString)) {
+            return obj.toString();
         }
-        if (!seen.containsKey(paramClass)) {
-            seen.put(paramClass, new HashSet<>());
+        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
+        int objHashCode = obj.hashCode();
+        if (!seen.containsKey(objClass)) {
+            seen.put(objClass, new HashSet<>());
         }
-        RecursionPreventingToString recursiveParam = (RecursionPreventingToString)param;
-        int entryHashCode = param.hashCode();
-        if (!seen.get(paramClass).contains(entryHashCode)) {
-            seen.get(paramClass).add(entryHashCode);
-            return recursiveParam.toString(seen);
+        if (!seen.get(objClass).contains(objHashCode)) {
+            seen.get(objClass).add(objHashCode);
+            return recursiveObject.toString(seen);
         }
-        return Optional.ofNullable(recursiveParam.primaryToString())
-                       .orElseGet(() -> createToStringResult(param, paramClass, null,
+        return Optional.ofNullable(recursiveObject.primaryToString())
+                       .orElseGet(() -> createToStringResult(obj, objClass, null,
                                                              easyOverriderConfig.getStringForRecursionPrevented(), null));
     }
 
