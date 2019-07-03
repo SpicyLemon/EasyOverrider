@@ -16,12 +16,12 @@ import java.util.function.Function;
  */
 public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>> extends ParamDescriptionBase<O, P> {
 
-    final Class<E> entryClass;
+    private final Class<E> entryClass;
 
     private static ParamList<ParamDescriptionCollection> paramList;
-    private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 4, 5, 6, 7);
+    private static final List<Integer> baseConstructorParamOrder = Arrays.asList(1, 2, 4, 5, 6);
 
-    static ParamList<ParamDescriptionCollection> getCollectionParamList() {
+    private static ParamList<ParamDescriptionCollection> getCollectionParamList() {
         if (paramList == null) {
             paramList = ParamDescriptionBase.getBaseParamList()
                                             .extendedBy(ParamDescriptionCollection.class)
@@ -40,15 +40,13 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
      * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
-     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
-                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
-                                      final EasyOverriderService easyOverriderService) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, easyOverriderService, baseConstructorParamOrder);
-        this.entryClass = entryClass;
+                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+        super(parentClass, paramClass, name, getter, paramMethodRestriction, baseConstructorParamOrder);
         requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
+        this.entryClass = entryClass;
     }
 
     /**

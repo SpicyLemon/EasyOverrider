@@ -55,51 +55,35 @@ public interface ParamDescription<O, P> {
     ParamMethodRestriction getParamMethodRestriction();
 
     /**
-     * Sets the service to use for injectable functionality.<br>
-     *
-     * @param easyOverriderService  the service you want to use
-     */
-    void setService(final EasyOverriderService easyOverriderService);
-
-    /**
-     * Get whether or not this should be ignored for the equals() method.<br>
-     *
-     * @return True if it's to be ignored. False if it's to be included.
-     */
-    boolean isEqualsIgnore();
-
-    /**
      * Get whether or not this should be included for the equals() method.<br>
+     *
+     * Uses the {@link ParamMethodRestriction#isEqualsInclude()} method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
-    boolean isEqualsInclude();
-
-    /**
-     * Get whether or not this should be ignored for the the hashCode() method.<br>
-     *
-     * @return True if it's to be ignored. False if it's to be included.
-     */
-    boolean isHashCodeIgnore();
+    default boolean isEqualsInclude() {
+        return getParamMethodRestriction().isEqualsInclude();
+    }
 
     /**
      * Get whether or not this should be included for the the hashCode() method.<br>
      *
+     * Uses the {@link ParamMethodRestriction#isHashCodeInclude()} method.<br>
+     *
      * @return True if it's to be included. False if it's to be ignored.
      */
-    boolean isHashCodeInclude();
-
-    /**
-     * Get whether or not this should be ignored for the toString() method.<br>
-     *
-     * @return True if it's to be ignored. False if it's to be included.
-     */
-    boolean isToStringIgnore();
+    default boolean isHashCodeInclude() {
+        return getParamMethodRestriction().isHashCodeInclude();
+    }
 
     /**
      * Get whether or not this should be included for the toString() method.<br>
      *
+     * Uses the {@link ParamMethodRestriction#isToStringInclude()} method.<br>
+     *
      * @return True if it's to be included. False if it's to be ignored.
      */
-    boolean isToStringInclude();
+    default boolean isToStringInclude() {
+        return getParamMethodRestriction().isToStringInclude();
+    }
 }
