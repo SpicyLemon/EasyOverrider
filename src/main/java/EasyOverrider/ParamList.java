@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,7 +59,7 @@ public class ParamList<O> {
     final private Class<O> parentClass;
     final private Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
     final private List<String> paramOrder;
-    private EasyOverriderService easyOverriderService;
+    private ParamListService service;
 
     private static ParamList<ParamList> paramList;
 
@@ -71,7 +70,7 @@ public class ParamList<O> {
                                  .withMap("paramDescriptionMap", ParamList::getParamDescriptionMap, Map.class,
                                           String.class, ParamDescription.class)
                                  .withCollection("paramOrder", ParamList::getParamOrder, List.class, String.class)
-                                 .withParam("easyOverriderService", (pl) -> pl.easyOverriderService, EasyOverriderService.class)
+                                 .withParam("service", (pl) -> pl.service, ParamListService.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -99,15 +98,15 @@ public class ParamList<O> {
      * @param parentClass  the class of the object these parameters represent
      * @param paramDescriptionMap  a map of name to ParamDescription objects describing the parameters in the parent object
      * @param paramOrder  the order that the parameters should be in
-     * @param easyOverriderService  the easyOverriderService to use for the key pieces of functionality - cannot be null
-     * @throws IllegalArgumentException if the easyOverriderService is null.
+     * @param paramListService  the paramListService to use for the key pieces of functionality - cannot be null
+     * @throws IllegalArgumentException if the paramListService is null.
      */
     ParamList(final Class<O> parentClass, final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap,
-              final List<String> paramOrder, final EasyOverriderService easyOverriderService) {
+              final List<String> paramOrder, final ParamListService paramListService) {
         requireNonNull(parentClass, 1, "parentClass", "ParamList constructor");
         requireNonNull(paramDescriptionMap, 2, "paramDescriptionMap", "ParamList constructor");
         requireNonNull(paramOrder, 3, "paramOrder", "ParamList constructor");
-        requireNonNull(easyOverriderService, 4, "easyOverriderService", "ParamList constructor");
+        requireNonNull(paramListService, 4, "paramListService", "ParamList constructor");
         if (paramOrder.size() != paramDescriptionMap.size()) {
             throw new IllegalArgumentException("The size of the paramDescriptionMap [" + paramDescriptionMap.size() + "] " +
                                                "does not equal the size of the paramOrder list [" + paramOrder.size() + "]");
@@ -122,7 +121,7 @@ public class ParamList<O> {
         this.parentClass = parentClass;
         this.paramDescriptionMap = new HashMap<>(paramDescriptionMap);
         this.paramOrder = new LinkedList<>(paramOrder);
-        this.easyOverriderService = easyOverriderService;
+        this.service = paramListService;
     }
 
     /**
@@ -155,63 +154,63 @@ public class ParamList<O> {
     /**
      * Checks to see if the provided objects are equal as described by this paramList.<br>
      *
-     * Uses the {@link EasyOverriderService#equals(Object, Object, ParamList)} method.
+     * Uses the {@link ParamListService#equals(Object, Object, ParamList)} method.
      *
      * @param thisObj  the main object you're checking against
      * @param thatObj  the other object you're wanting to test
      * @return True if both objects are equal. False otherwise.
      */
     public boolean equals(final Object thisObj, final Object thatObj) {
-        return easyOverriderService.equals(thisObj, thatObj, this);
+        return service.equals(thisObj, thatObj, this);
     }
 
     /**
      * Generates the hashCode for the provided object using the appropriate parameters.<br>
      *
-     * Uses the {@link EasyOverriderService#hashCode(Object, ParamList)} method.
+     * Uses the {@link ParamListService#hashCode(Object, ParamList)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return An integer.
      */
     public int hashCode(final O thisObj) {
-        return easyOverriderService.hashCode(thisObj, this);
+        return service.hashCode(thisObj, this);
     }
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters.<br>
      *
-     * Uses the {@link EasyOverriderService#toString(Object, ParamList, Map)} method.
+     * Uses the {@link ParamListService#toString(Object, ParamList, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return A string.
      */
     public String toString(final O thisObj) {
-        return easyOverriderService.toString(thisObj, this, null);
+        return service.toString(thisObj, this, null);
     }
 
     /**
      * Gets a String representation of the provided object using the appropriate parameters and preventing recursion if needed.<br>
      *
-     * Uses the {@link EasyOverriderService#toString(Object, ParamList, Map)} method.
+     * Uses the {@link ParamListService#toString(Object, ParamList, Map)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @param seen  the map of classes to sets of integers containing hashCodes of things that have been seen so far.
      * @return A string representation of the given object.
      */
     public String toString(final O thisObj, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.toString(thisObj, this, seen);
+        return service.toString(thisObj, this, seen);
     }
 
     /**
      * Gets a String representation of the provided object using only the primary parameters.<br>
      *
-     * Uses the {@link EasyOverriderService#primaryToString(Object, ParamList)} method.
+     * Uses the {@link ParamListService#primaryToString(Object, ParamList)} method.
      *
      * @param thisObj  the object to get the parameter values from
      * @return A short String representation of the given object.
      */
     public String primaryToString(final O thisObj) {
-        return easyOverriderService.primaryToString(thisObj, this);
+        return service.primaryToString(thisObj, this);
     }
 
     /**
@@ -224,7 +223,7 @@ public class ParamList<O> {
      * @return A new {@link ParamListBuilder}.
      */
     public <C extends O> ParamListBuilder<C> extendedBy(final Class<C> newParentClass) {
-        return new ParamListBuilder<C>(newParentClass, this, easyOverriderService);
+        return new ParamListBuilder<C>(newParentClass, this, service);
     }
 
     /**

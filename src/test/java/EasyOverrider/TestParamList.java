@@ -3,7 +3,7 @@ package EasyOverrider;
 public class TestParamList {
 
     //Things to test:
-    // ParamList(Class, Map, List, EasyOverriderService)
+    // ParamList(Class, Map, List, ParamListService)
     // getParentClass(), getParamDescriptionMap(), getParamOrder(),
     // getAllParamDescriptions(), getEqualsParamDescriptions(),
     // getHashCodeParamDescriptions(), getToStringParamDescriptions(),

@@ -22,12 +22,12 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionCollection {
 
-    static EasyOverriderService easyOverriderService = null;
+    static ParamListService easyOverriderService = null;
 
     @Before
     public void initTestStuff() {
         if (easyOverriderService == null) {
-            easyOverriderService = new EasyOverriderServiceImpl();
+            easyOverriderService = new ParamListServiceImpl();
         }
     }
 

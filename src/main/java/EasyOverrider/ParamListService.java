@@ -7,22 +7,22 @@ import java.util.Set;
  * This interface describes a class that will house the interesting functionality used to
  * generate toString, hashCode, and equals results using ParamList objects.<br>
  */
-public interface EasyOverriderService {
+public interface ParamListService {
 
     /**
      * Gets the config for the service.<br>
      *
      * @return
      */
-    EasyOverriderConfig getConfig();
+    ParamListServiceConfig getConfig();
 
     /**
      * Sets the config for the service.<br>
      *
-     * @param easyOverriderConfig  the config to use
-     * @return This EasyOverriderService
+     * @param paramListServiceConfig  the config to use
+     * @return This ParamListService
      */
-    EasyOverriderService setConfig(EasyOverriderConfig easyOverriderConfig);
+    ParamListService setConfig(ParamListServiceConfig paramListServiceConfig);
 
     /**
      * Tests if two objects are the same given the provided param description map.<br>

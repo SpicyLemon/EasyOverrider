@@ -4,10 +4,9 @@ import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 
 import java.util.IllegalFormatException;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class EasyOverriderConfig {
+public class ParamListServiceConfig {
 
     private String stringForNull = "null";
     private String stringForRecursionPrevented = "...";
@@ -19,28 +18,28 @@ public class EasyOverriderConfig {
     private Function<Class, String> classNameGetter = Class::getCanonicalName;
     private Function<Integer, String> hashCodeToString = Integer::toHexString;
 
-    private static ParamList<EasyOverriderConfig> paramList;
+    private static ParamList<ParamListServiceConfig> paramList;
 
-    static ParamList<EasyOverriderConfig> getParamList() {
+    static ParamList<ParamListServiceConfig> getParamList() {
         if (paramList == null) {
-            paramList = ParamList.forClass(EasyOverriderConfig.class)
-                                 .withParam("stringForNull", EasyOverriderConfig::getStringForNull, String.class)
+            paramList = ParamList.forClass(ParamListServiceConfig.class)
+                                 .withParam("stringForNull", ParamListServiceConfig::getStringForNull, String.class)
                                  .withParam("stringForRecursionPrevented",
-                                            EasyOverriderConfig::getStringForRecursionPrevented,
+                                            ParamListServiceConfig::getStringForRecursionPrevented,
                                             String.class)
                                  .withParam("stringForEmptyParamList",
-                                            EasyOverriderConfig::getStringForEmptyParamList,
+                                            ParamListServiceConfig::getStringForEmptyParamList,
                                             String.class)
-                                 .withParam("parameterDelimiter", EasyOverriderConfig::getParameterDelimiter, String.class)
-                                 .withParam("nameValueFormat", EasyOverriderConfig::getNameValueFormat, String.class)
-                                 .withParam("parameterValueFormat", EasyOverriderConfig::getParameterValueFormat, String.class)
-                                 .withParam("toStringFormat", EasyOverriderConfig::getToStringFormat, String.class)
+                                 .withParam("parameterDelimiter", ParamListServiceConfig::getParameterDelimiter, String.class)
+                                 .withParam("nameValueFormat", ParamListServiceConfig::getNameValueFormat, String.class)
+                                 .withParam("parameterValueFormat", ParamListServiceConfig::getParameterValueFormat, String.class)
+                                 .withParam("toStringFormat", ParamListServiceConfig::getToStringFormat, String.class)
                                  .withParam("classNameGetter",
-                                            EasyOverriderConfig::getClassNameGetter,
+                                            ParamListServiceConfig::getClassNameGetter,
                                             INCLUDED_IN_TOSTRING_ONLY,
                                             Function.class)
                                  .withParam("hashCodeToString",
-                                            EasyOverriderConfig::getHashCodeToString,
+                                            ParamListServiceConfig::getHashCodeToString,
                                             INCLUDED_IN_TOSTRING_ONLY,
                                             Function.class)
                                  .andThatsIt();
@@ -51,7 +50,7 @@ public class EasyOverriderConfig {
     /**
      * Default empty constructor using default values.<br>
      */
-    public EasyOverriderConfig() { }
+    public ParamListServiceConfig() { }
 
     /**
      * Full constructor including all values.<br>
@@ -78,18 +77,18 @@ public class EasyOverriderConfig {
      * @see #setClassNameGetter(Function)
      * @see #setHashCodeToString(Function)
      */
-    public EasyOverriderConfig(String stringForNull, String stringForRecursionPrevented, String stringForEmptyParamList,
-                               String parameterDelimiter, String nameValueFormat, String parameterValueFormat, String toStringFormat,
-                               Function<Class, String> classNameGetter, Function<Integer, String> hashCodeToString) {
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setStringForNull, stringForNull);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setStringForRecursionPrevented, stringForRecursionPrevented);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setStringForEmptyParamList, stringForEmptyParamList);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setParameterDelimiter, parameterDelimiter);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setNameValueFormat, nameValueFormat);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setParameterValueFormat, parameterValueFormat);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setToStringFormat, toStringFormat);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setClassNameGetter, classNameGetter);
-        EasyOverriderUtils.runSetterIfNotNull(this, EasyOverriderConfig::setHashCodeToString, hashCodeToString);
+    public ParamListServiceConfig(String stringForNull, String stringForRecursionPrevented, String stringForEmptyParamList,
+                                  String parameterDelimiter, String nameValueFormat, String parameterValueFormat, String toStringFormat,
+                                  Function<Class, String> classNameGetter, Function<Integer, String> hashCodeToString) {
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setStringForNull, stringForNull);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setStringForRecursionPrevented, stringForRecursionPrevented);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setStringForEmptyParamList, stringForEmptyParamList);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setParameterDelimiter, parameterDelimiter);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setNameValueFormat, nameValueFormat);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setParameterValueFormat, parameterValueFormat);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setToStringFormat, toStringFormat);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setClassNameGetter, classNameGetter);
+        EasyOverriderUtils.runSetterIfNotNull(this, ParamListServiceConfig::setHashCodeToString, hashCodeToString);
     }
 
     /**
@@ -109,10 +108,10 @@ public class EasyOverriderConfig {
      * Default value is <code>"null"</code>.<br>
      *
      * @param stringForNull  the string to use in a toString when a value is null - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      */
-    public EasyOverriderConfig setStringForNull(final String stringForNull) {
+    public ParamListServiceConfig setStringForNull(final String stringForNull) {
         requireNonNull(stringForNull, 1, "stringForNull", "setStringForNull");
         this.stringForNull = stringForNull;
         return this;
@@ -135,10 +134,10 @@ public class EasyOverriderConfig {
      * Default value is <code>"..."</code>.<br>
      *
      * @param stringForRecursionPrevented  the string to use in a toString when a previously seen object is seen again - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      */
-    public EasyOverriderConfig setStringForRecursionPrevented(final String stringForRecursionPrevented) {
+    public ParamListServiceConfig setStringForRecursionPrevented(final String stringForRecursionPrevented) {
         requireNonNull(stringForRecursionPrevented, 1, "stringForRecursionPrevented", "setStringForRecursionPrevented");
         this.stringForRecursionPrevented = stringForRecursionPrevented;
         return this;
@@ -161,10 +160,10 @@ public class EasyOverriderConfig {
      * Default value is <code>" "</code>.<br>
      *
      * @param stringForEmptyParamList  the string to use in a toString when an empty ParamList is encountered - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      */
-    public EasyOverriderConfig setStringForEmptyParamList(final String stringForEmptyParamList) {
+    public ParamListServiceConfig setStringForEmptyParamList(final String stringForEmptyParamList) {
         requireNonNull(stringForEmptyParamList, 1, "stringForEmptyParamList", "setStringForEmptyParamList");
         this.stringForEmptyParamList = stringForEmptyParamList;
         return this;
@@ -187,10 +186,10 @@ public class EasyOverriderConfig {
      * Default value is <code>", "</code>.<br>
      *
      * @param parameterDelimiter  the string to use in a toString between parameters - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      */
-    public EasyOverriderConfig setParameterDelimiter(final String parameterDelimiter) {
+    public ParamListServiceConfig setParameterDelimiter(final String parameterDelimiter) {
         requireNonNull(parameterDelimiter, 1, "parameterDelimiter", "setParameterDelimiter");
         this.parameterDelimiter = parameterDelimiter;
         return this;
@@ -215,11 +214,11 @@ public class EasyOverriderConfig {
      * Default value is <code>"%1$s=%2$s"</code>.<br>
      *
      * @param nameValueFormat  the format string to use in a toString to create a name/value string - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      */
-    public EasyOverriderConfig setNameValueFormat(final String nameValueFormat) {
+    public ParamListServiceConfig setNameValueFormat(final String nameValueFormat) {
         requireNonNull(nameValueFormat, 1, "nameValueFormat", "setNameValueFormat");
         try {
             String.format(nameValueFormat, "name", "value");
@@ -249,11 +248,11 @@ public class EasyOverriderConfig {
      * Default value is <code>"'%1$s'"</code>.<br>
      *
      * @param parameterValueFormat  the format string to use in a toString on each parameter value - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      */
-    public EasyOverriderConfig setParameterValueFormat(final String parameterValueFormat) {
+    public ParamListServiceConfig setParameterValueFormat(final String parameterValueFormat) {
         requireNonNull(parameterValueFormat, 1, "parameterValueFormat", "setParameterValueFormat");
         try {
             String.format(parameterValueFormat, "parameter");
@@ -283,11 +282,11 @@ public class EasyOverriderConfig {
      * Default value is <code>"%1$s@%2$s [%3$s]"</code>.<br>
      *
      * @param toStringFormat  the format string to use in a toString to create the final toString value - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided String is null
      * @throws IllegalArgumentException if the provided format is invalid
      */
-    public EasyOverriderConfig setToStringFormat(final String toStringFormat) {
+    public ParamListServiceConfig setToStringFormat(final String toStringFormat) {
         requireNonNull(toStringFormat, 1, "toStringFormat", "setToStringFormat");
         try {
             String.format(toStringFormat, "class", "hashcode", "paramslist");
@@ -315,10 +314,10 @@ public class EasyOverriderConfig {
      * Default value is <code>Class::getCanonicalName</code>.<br>
      *
      * @param classNameGetter  the function to use to get the class name from a Class object - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided Function is null
      */
-    public EasyOverriderConfig setClassNameGetter(final Function<Class, String> classNameGetter) {
+    public ParamListServiceConfig setClassNameGetter(final Function<Class, String> classNameGetter) {
         requireNonNull(classNameGetter, 1, "classNameGetter", "setClassNameGetter");
         this.classNameGetter = classNameGetter;
         return this;
@@ -341,10 +340,10 @@ public class EasyOverriderConfig {
      * Default value is <code>Integer::toHexString</code>.<br>
      *
      * @param hashCodeToString  the function to use to convert the hashCode to a String - cannot be null
-     * @return the current EasyOverriderConfig
+     * @return the current ParamListServiceConfig
      * @throws IllegalArgumentException if the provided Function is null
      */
-    public EasyOverriderConfig setHashCodeToString(final Function<Integer, String> hashCodeToString) {
+    public ParamListServiceConfig setHashCodeToString(final Function<Integer, String> hashCodeToString) {
         this.hashCodeToString = hashCodeToString;
         return this;
     }

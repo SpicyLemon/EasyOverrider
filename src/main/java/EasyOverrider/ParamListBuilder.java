@@ -54,7 +54,7 @@ public class ParamListBuilder<O> {
     private ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
     private final List<String> paramOrder;
     private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
-    private EasyOverriderService easyOverriderService;
+    private ParamListService paramListService;
 
     private static ParamList<ParamListBuilder> paramList;
 
@@ -80,7 +80,7 @@ public class ParamListBuilder<O> {
                                  .withCollection("paramOrder", (plb) -> plb.paramOrder, List.class, String.class)
                                  .withMap("paramDescriptionMap", (plb) -> plb.paramDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
-                                 .withParam("easyOverriderService", (plb) -> plb.easyOverriderService, EasyOverriderService.class)
+                                 .withParam("paramListService", (plb) -> plb.paramListService, ParamListService.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -91,13 +91,13 @@ public class ParamListBuilder<O> {
      *
      * This is so that the setting can all be done in one place, but we can have validation on the different actual constructors.<br>
      *
-     * @param easyOverriderService  the service that the ParamList will use for most functionality
+     * @param paramListService  the service that the ParamList will use for most functionality
      * @param parentClass  the class of the object being described
      * @param superParamList  any existing ParamList available to the parentClass
      */
-    private ParamListBuilder(final EasyOverriderService easyOverriderService,
+    private ParamListBuilder(final ParamListService paramListService,
                              final Class<O> parentClass, final ParamList<? super O> superParamList) {
-        this.easyOverriderService = easyOverriderService;
+        this.paramListService = paramListService;
         this.parentClass = parentClass;
         this.paramOrder = Optional.ofNullable(superParamList)
                                   .map(ParamList::getParamOrder)
@@ -121,11 +121,11 @@ public class ParamListBuilder<O> {
      * @see ParamList#extendedBy(Class)
      */
     ParamListBuilder(final Class<O> parentClass, final ParamList<? super O> superParamList,
-                     final EasyOverriderService easyOverriderService) {
-        this(easyOverriderService, parentClass, superParamList);
+                     final ParamListService paramListService) {
+        this(paramListService, parentClass, superParamList);
         requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
         requireNonNull(superParamList, 2, "superParamList", "ParamListBuilder Constructor");
-        requireNonNull(easyOverriderService, 3, "easyOverriderService", "ParamListBuilder Constructor");
+        requireNonNull(paramListService, 3, "paramListService", "ParamListBuilder Constructor");
     }
 
     /**
@@ -146,17 +146,17 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Set the EasyOverriderService to use.<br>
+     * Set the ParamListService to use.<br>
      *
      * If there are already <code>ParamDescription</code> entries in this builder, they are all updated to use this new service.<br>
      *
-     * @param easyOverriderService  the EasyOverriderService to use for the parameters and param list.
+     * @param paramListService  the ParamListService to use for the parameters and param list.
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided parameter is null.
      */
-    public ParamListBuilder<O> usingService(final EasyOverriderService easyOverriderService) {
-        requireNonNull(easyOverriderService, 1, "easyOverriderService", "usingService");
-        this.easyOverriderService = easyOverriderService;
+    public ParamListBuilder<O> usingService(final ParamListService paramListService) {
+        requireNonNull(paramListService, 1, "paramListService", "usingService");
+        this.paramListService = paramListService;
         return this;
     }
 
@@ -981,7 +981,7 @@ public class ParamListBuilder<O> {
      */
     public ParamList<O> andThatsIt() {
         return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder,
-                                Optional.ofNullable(easyOverriderService).orElseGet(EasyOverriderServiceImpl::new));
+                                Optional.ofNullable(paramListService).orElseGet(ParamListServiceImpl::new));
     }
 
     /**

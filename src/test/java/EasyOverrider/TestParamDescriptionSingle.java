@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 public class TestParamDescriptionSingle {
 
-    private static EasyOverriderService easyOverriderService = null;
+    private static ParamListService easyOverriderService = null;
 
     @Before
     public void initTestStuff() {
@@ -29,7 +29,7 @@ public class TestParamDescriptionSingle {
             //Since hashcodes don't have to be the same all the time, we can't hard-code
             //toString results in here that contain the hashCode values.
             //So, just tell the service to use a hard coded string for that part.
-            easyOverriderService = new EasyOverriderServiceImpl(new EasyOverriderConfig().setHashCodeToString((i) -> "HASHCODE"));
+            easyOverriderService = new ParamListServiceImpl(new ParamListServiceConfig().setHashCodeToString((i) -> "HASHCODE"));
         }
     }
 
@@ -187,12 +187,12 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void setService_differentSettings_toStringContainsServiceToString() {
-        EasyOverriderService originalService = easyOverriderService;
+        ParamListService originalService = easyOverriderService;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
                                         TestObj::getTheString, INCLUDED_IN_ALL, originalService, false);
-        EasyOverriderService newService = new EasyOverriderServiceImpl();
+        ParamListService newService = new ParamListServiceImpl();
         newService.getConfig().setParameterValueFormat(">>>>%1$s<<<<");
         newService.getConfig().setHashCodeToString((i) -> "HASHCODE");
         newService.getConfig().setParameterDelimiter(" | ");
@@ -686,7 +686,7 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void equals_sameConstructorParametersExceptService_true() {
-        EasyOverriderService service = new EasyOverriderServiceImpl();
+        ParamListService service = new ParamListServiceImpl();
         service.getConfig().setStringForEmptyParamList("nothing");
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(
@@ -791,7 +791,7 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void hashCode_sameConstructorParametersExceptService_different() {
-        EasyOverriderService service = new EasyOverriderServiceImpl();
+        ParamListService service = new ParamListServiceImpl();
         service.getConfig().setParameterDelimiter(":");
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, TestObj>(

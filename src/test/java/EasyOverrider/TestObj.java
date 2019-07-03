@@ -13,7 +13,7 @@ import java.util.Map;
 @Ignore
 public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
 
-    private static final EasyOverriderService easyOverriderService = new EasyOverriderServiceImpl();
+    private static final ParamListService easyOverriderService = new ParamListServiceImpl();
 
     private boolean theBoolean;
     private int theInt;
@@ -45,7 +45,7 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
         return paramList;
     }
 
-    public EasyOverriderService getEasyOverriderService() {
+    public ParamListService getEasyOverriderService() {
         return easyOverriderService;
     }
 

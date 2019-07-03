@@ -3,7 +3,7 @@ package EasyOverrider;
 public class TestEasyOverriderServiceImpl {
 
     //Things to test:
-    // EasyOverriderServiceImpl(),
+    // ParamListServiceImpl(),
     // getStringForNull(), setStringForNull(String),
     // getStringForRecursionPrevented(), setStringForRecursionPrevented(String),
     // getStringForEmptyParamList(), setStringForEmptyParamList(String),
@@ -23,7 +23,7 @@ public class TestEasyOverriderServiceImpl {
     // valueToStringPreventingRecursionSingle(Object, Map, Class),
     // valueToStringPreventingRecursionCollection(Object, Map, Class),
     // valueToStringPreventingRecursionMap(Object, Map, Class, Class),
-    // validateParamListConstructorOrThrow(Class, Map, List, EasyOverriderService),
+    // validateParamListConstructorOrThrow(Class, Map, List, ParamListService),
     // getParamsString(Object, Map, List, Map),
     //
     // getAllParamDescriptions(List, Map), getEqualsParamDescriptions(List, Map),

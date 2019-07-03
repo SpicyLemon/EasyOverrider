@@ -3,9 +3,9 @@ package EasyOverrider;
 public class TestParamListBuilder {
 
     //Things to test:
-    // ParamListBuilder(Class), ParamListBuilder(Class, ParamList, EasyOverriderService), forClass(Class),
+    // ParamListBuilder(Class), ParamListBuilder(Class, ParamList, ParamListService), forClass(Class),
     // getParentClass(), getParamMethodRestrictionRestriction(), getParamOrder(), getParamDescriptionMap(),
-    // usingService(EasyOverriderService), havingRestriction(ParamMethodRestrictionRestriction),
+    // usingService(ParamListService), havingRestriction(ParamMethodRestrictionRestriction),
     // allowingUnsafeParamMethodRestrictions(), allowingOnlySafeParamMethodRestrictions(),
     //
     // withParam(String, Function, Class), withParam(String, Function, ParamMethodRestriction, Class),
