@@ -106,32 +106,6 @@ public interface ParamDescription<O, P> {
     boolean isToStringInclude();
 
     /**
-     * Runs the getter on the provided object.<br>
-     *
-     * @param obj  the object you want to get the parameter from
-     * @return The result of the getter when given the provided object.
-     */
-    P get(final O obj);
-
-    /**
-     * Tests whether or not this param is equal in the two objects.<br>
-     *
-     * @param thisO  the main object we're checking on
-     * @param thatO  the other object we're checking on
-     * @return True if the parameter described in here is the same in both objects.
-     */
-    boolean paramsAreEqual(final O thisO, final O thatO);
-
-    /**
-     * Get the String of this parameter from the provided object. <br>
-     *
-     * @param obj  the object to turn into a string
-     * @param seen  the map of classes to sets of hashCodes of objects that have already been toString-ified.
-     * @return A String.
-     */
-    String paramValueToString(final O obj, final Map<Class, Set<Integer>> seen);
-
-    /**
      * Gets the name/value string for this parameter given the provided object, and preventing recursion if needed.<br>
      *
      * @param obj  the object to get the name/value string of

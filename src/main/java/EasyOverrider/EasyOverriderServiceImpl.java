@@ -605,14 +605,15 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         O thisO = (O)thisObj;
         @SuppressWarnings("unchecked")
         O thatO = (O)thatObj;
-        return getEqualsParamDescriptions(paramOrder, paramDescriptionMap).stream().allMatch(pd -> pd.paramsAreEqual(thisO, thatO));
+        return getEqualsParamDescriptions(paramOrder, paramDescriptionMap)
+                        .stream().allMatch(pd -> paramsAreEqual(thisO, thatO, pd.getGetter(), pd.getName()));
     }
 
     /**
      * {@inheritDoc}
      *
      * Uses the {@link #getHashCodeParamDescriptions(List, Map)} method to get the applicable entries.
-     * Then loops through them calling {@link ParamDescription#get(Object)} on each entry.
+     * Then loops through them calling {@link #get(Object, Function, String)} on each entry.
      * The results are converted to an array of objects and then provided to {@link Objects#hash(Object...)}.<br>
      *
      * @param thisObj  {@inheritDoc} - cannot be null
@@ -628,9 +629,10 @@ public class EasyOverriderServiceImpl implements EasyOverriderService {
         requireNonNull(thisObj, 1, "thisObj", "hashCode");
         requireNonNull(paramOrder, 2, "paramOrder", "hashCode");
         requireNonNull(paramDescriptionMap, 3, "paramDescriptionMap", "hashCode");
-        return Objects.hash(getHashCodeParamDescriptions(paramOrder, paramDescriptionMap).stream()
-                                                                                         .map(pd -> pd.get(thisObj))
-                                                                                         .toArray());
+        return Objects.hash(getHashCodeParamDescriptions(paramOrder, paramDescriptionMap)
+                                            .stream()
+                                            .map(pd -> get(thisObj, pd.getGetter(), pd.getName()))
+                                            .toArray());
     }
 
     /**

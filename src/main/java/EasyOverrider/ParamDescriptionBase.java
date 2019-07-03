@@ -218,47 +218,6 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#get(Object, Function, String)} method.<br>
-     *
-     * @param obj  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public P get(final O obj) {
-        return easyOverriderService.get(obj, getter, name);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.<br>
-     *
-     * @param thisO  {@inheritDoc}
-     * @param thatO  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public boolean paramsAreEqual(final O thisO, final O thatO) {
-        return easyOverriderService.paramsAreEqual(thisO, thatO, getter, name);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Uses the {@link EasyOverriderService#paramsAreEqual(Object, Object, Function, String)} method.<br>
-     *
-     * @param obj  {@inheritDoc}
-     * @param seen  {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String paramValueToString(final O obj, final Map<Class, Set<Integer>> seen) {
-        return easyOverriderService.paramValueToString(obj, getter, seen, (p, s) -> valueToStringPreventingRecursion(p, s));
-    }
-
-    /**
      * Converts the value of this parameter to a string while preventing recursion.<br>
      *
      * Implementor will probably want to call {@link EasyOverriderService#objectToStringPreventingRecursion(Class, Object, Map)}.<br>
