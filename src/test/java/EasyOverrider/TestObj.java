@@ -9,11 +9,10 @@ import org.junit.Ignore;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Ignore
-public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
-
-    private static final ParamListService easyOverriderService = new ParamListServiceImpl();
+public class TestObj implements RecursionPreventingToString {
 
     private boolean theBoolean;
     private int theInt;
@@ -25,31 +24,31 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
     private List<TestObj> theCollectionTestObj;
     private Map<String, TestObj> theMapStringTestObj;
 
-    private static final ParamList<TestObj> paramList =
-                    ParamList.forClass(TestObj.class)
-                             .usingService(easyOverriderService)
-                             .allowingUnsafeParamMethodRestrictions()
-                             .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
-                             .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
-                             .withParam("theString", TestObj::getTheString, String.class)
-                             .withParam("theOtherString", TestObj::getTheOtherString, String.class)
-                             .withCollection("theCollectionString", TestObj::getTheCollectionString, Collection.class, String.class)
-                             .withMap("theMapStringInt", TestObj::getTheMapStringInt, Map.class, String.class, Integer.class)
-                             .withParam("theTestObj", TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj.class)
-                             .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, List.class, TestObj.class)
-                             .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, Map.class, String.class, TestObj.class)
-                             .andThatsIt();
+    private final ParamList<TestObj> paramList;
 
-    @Override
-    public ParamList<TestObj> getParamList() {
-        return paramList;
+    private ParamList<TestObj> createParamList(ParamListServiceConfig config) {
+        return ParamList.forClass(TestObj.class)
+                        .usingService(new ParamListServiceImpl(config))
+                        .allowingUnsafeParamMethodRestrictions()
+                        .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
+                        .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
+                        .withParam("theString", TestObj::getTheString, String.class)
+                        .withParam("theOtherString", TestObj::getTheOtherString, String.class)
+                        .withCollection("theCollectionString", TestObj::getTheCollectionString, Collection.class, String.class)
+                        .withMap("theMapStringInt", TestObj::getTheMapStringInt, Map.class, String.class, Integer.class)
+                        .withParam("theTestObj", TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj.class)
+                        .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, List.class, TestObj.class)
+                        .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, Map.class, String.class, TestObj.class)
+                        .andThatsIt();
     }
 
-    public ParamListService getEasyOverriderService() {
-        return easyOverriderService;
+    public TestObj() {
+        paramList = createParamList(new ParamListServiceConfig());
     }
 
-    public TestObj() { }
+    public TestObj(ParamListServiceConfig config) {
+        paramList = createParamList(config);
+    }
 
     public boolean isTheBoolean() {
         return theBoolean;
@@ -121,5 +120,30 @@ public class TestObj extends EasyOverriderPreventingRecursiveToString<TestObj> {
 
     public void setTheMapStringTestObj(Map<String, TestObj> theMapStringTestObj) {
         this.theMapStringTestObj = theMapStringTestObj;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return paramList.equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return paramList.hashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return paramList.toString(this, null);
+    }
+
+    @Override
+    public String toString(Map<Class, Set<Integer>> seen) {
+        return paramList.toString(this, seen);
+    }
+
+    @Override
+    public String primaryToString() {
+        return paramList.primaryToString(this);
     }
 }
