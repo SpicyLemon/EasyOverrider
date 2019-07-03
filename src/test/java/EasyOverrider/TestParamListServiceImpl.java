@@ -1,6 +1,6 @@
 package EasyOverrider;
 
-public class TestEasyOverriderServiceImpl {
+public class TestParamListServiceImpl {
 
     //Things to test:
     // ParamListServiceImpl(),
