@@ -17,28 +17,30 @@ import java.util.function.Function;
 /**
  * Class to help with building the building of a ParamList.<br>
  *
- * Since the {@link ParamList} objects are pretty complicated, this class helps create them in a nice, fluent way.
+ * Since the {@link ParamList} and {@link ParamDescription} objects are pretty complicated,
+ * this class helps create them in a nice, fluent way.<br>
  *
  * <pre>
  * {@code
  *
  * private static ParamList<Foo> paramList =
  *                 ParamList.forClass(Foo.class)
- *                          .withParam("id", Foo::getId, INCLUDED_IN_TOSTRING_ONLY, Integer.class)
+ *                          .withPrimaryParam("id", Foo::getId, Integer.class)
  *                          .withParam("name", Foo::getName, String.class)
  *                          .withParam("bar", Foo::getBar, Bar.class)
  *                          .andThatsIt();
  * }
  * </pre>
  *
- * @param <O>  the type of the param list you're creating
+ * @param <O>  the type you're creating the ParamList for
  */
 public class ParamListBuilder<O> {
 
-    // The public methods in here that add collection and map parameters have to suppress warnings about unchecked conversions.
+    // The public methods in here that deal with collection and map parameters have to suppress warnings about unchecked conversions.
     // This prevents the warnings from showing up everywhere a call is made to those methods.
+    //
     // The signature for those methods contain the raw Collection or Map types instead of also including the types they contain.
-    // For example, public <E, P extends Collection> ParamListBuilder<O> withCollection. Notice the raw Collection there instead
+    // For example, public <E, P extends Collection> ParamListBuilder<O> withCollection(...). Notice the raw Collection there instead
     // of Collection<? extends E>.  If the <? extends E> is included in the signature, then the Class<P> parameter provided to
     // that method confuses things. You cannot create a Class<Collection<? extends E>> object, it can only be Class<Collection>.
     // So with the <? extends E> the compiler complains, and things just don't work.
@@ -250,6 +252,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withParam(String, Function, Class)
+     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
@@ -287,6 +290,12 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
+     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withParam(String, Function, Class)
+     * @see #withCollection(String, Function, Class, Class)
+     * @see #withMap(String, Function, Class, Class, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, Class)
+     * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
                                                     final Class<P> paramClass) {
@@ -322,6 +331,12 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
+     * @see #withPrimaryParam(String, Function, Class)
+     * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
                                                     final ParamMethodRestriction paramMethodRestriction,
@@ -570,6 +585,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withParam(String, Function, Class)
@@ -602,6 +618,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
      * @see #withUpdatedParam(String, Function, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withParam(String, Function, ParamMethodRestriction, Class)
@@ -642,6 +659,12 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
+     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedParam(String, Function, Class)
+     * @see #withUpdatedCollection(String, Function, Class, Class)
+     * @see #withUpdatedMap(String, Function, Class, Class, Class)
+     * @see #withPrimaryParam(String, Function, Class)
+     * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
                                                            final Class<P> paramClass) {
@@ -682,6 +705,12 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
      *                                  the provided {@link ParamMethodRestriction}.
+     * @see #withUpdatedPrimaryParam(String, Function, Class)
+     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
                                                            final ParamMethodRestriction paramMethodRestriction,
@@ -955,13 +984,22 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @see #withoutParam(String)
      * @see #withParam(String, Function, Class)
+     * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withPrimaryParam(String, Function, Class)
+     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
      * @see #withCollection(String, Function, Class, Class)
+     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
+     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
+     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
+     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
      */
     public ParamListBuilder<O> withoutParam(final String name) {
         requireNonNull(name, 1, "name", "withoutParam");
