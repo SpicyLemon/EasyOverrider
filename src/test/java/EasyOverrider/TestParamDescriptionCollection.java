@@ -375,16 +375,6 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void safeGet_nullObj_returnsNull() {
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
-        TestObj testObj = null;
-        Collection<String> expected = null;
-        Collection<String> actual = (Collection<String>)paramDescriptionCollection.safeGet(testObj);
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void paramsAreEqual_nullNull_true() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
