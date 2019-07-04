@@ -4,6 +4,7 @@ import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,8 +27,7 @@ public class TestParamDescriptionSingle {
     @Before
     public void initTestParamDescriptionSingle() {
         if (config == null) {
-            config = new ParamListServiceConfig();
-            config.setHashCodeToString((i) -> "HASHCODE");
+            config = getConfig();
         }
     }
 
@@ -202,6 +202,17 @@ public class TestParamDescriptionSingle {
             boolean actual = paramDescriptionSingle.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
+    }
+
+    @Test
+    public void isPrimary_true_returnsCorrectValue() {
+        boolean expected = true;
+        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
+                        new ParamDescriptionSingle<TestObj, String>(
+                                        TestObj.class, String.class, "stuff",
+                                        TestObj::getTheString, INCLUDED_IN_ALL, expected);
+        String actual = paramDescriptionSingle1.getName();
+        assertEquals(expected, actual);
     }
 
     @Test
