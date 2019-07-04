@@ -2,6 +2,7 @@ package EasyOverrider;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -47,10 +48,14 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
         this.isPrimary = isPrimary;
     }
 
+    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
+        return objectToString.apply(getter.apply(obj), paramClass);
+    }
+
     /**
      * Returns whether or not this ParamDescription is [part of] a primary key.<br>
      *
-     * @return True if it repesents a key component. False otherwise.
+     * @return True if it represents a key component. False otherwise.
      */
     public boolean isPrimary() {
         return isPrimary;

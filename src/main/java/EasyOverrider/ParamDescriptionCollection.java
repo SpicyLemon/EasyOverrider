@@ -5,7 +5,9 @@ import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Describes a standard {@link Collection} parameter in an object.<br>
@@ -47,6 +49,17 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
         super(parentClass, paramClass, name, getter, paramMethodRestriction, baseConstructorParamOrder);
         requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
         this.entryClass = entryClass;
+    }
+
+    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
+        P collection = getter.apply(obj);
+        if (collection == null) {
+            return objectToString.apply(collection, paramClass);
+        }
+        return collection.stream()
+                         .map(e -> objectToString.apply(e, entryClass))
+                         .collect(Collectors.toList())
+                         .toString();
     }
 
     /**

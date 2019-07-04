@@ -5,7 +5,9 @@ import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Describes a standard Map parameter in an object.<br>
@@ -53,6 +55,18 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
         requireNonNull(valueClass, 4, "valueClass", "ParamDescriptionMap constructor");
         this.keyClass = keyClass;
         this.valueClass = valueClass;
+    }
+
+    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
+        P map = getter.apply(obj);
+        if (map == null) {
+            return objectToString.apply(map, paramClass);
+        }
+        return map.entrySet()
+                  .stream()
+                  .collect(Collectors.toMap(e -> objectToString.apply(e.getKey(), keyClass),
+                                            e -> objectToString.apply(e.getValue(), valueClass)))
+                  .toString();
     }
 
     /**

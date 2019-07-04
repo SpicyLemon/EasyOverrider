@@ -1,5 +1,6 @@
 package EasyOverrider;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -86,4 +87,14 @@ public interface ParamDescription<O, P> {
     default boolean isToStringInclude() {
         return getParamMethodRestriction().isToStringInclude();
     }
+
+    /**
+     * Gets the parameter value from the object and converts it to a String.<br>
+     *
+     * @param obj  the object with the parameter
+     * @param objectToString  the BiFunction to use to actually create the String (and prevent recursion)
+     * @param <B> the type of the parameter to be converted
+     * @return A String.
+     */
+    <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString);
 }
