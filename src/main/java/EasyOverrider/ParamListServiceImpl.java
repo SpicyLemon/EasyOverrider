@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -276,8 +277,8 @@ public class ParamListServiceImpl implements ParamListService {
     /**
      * Creates a name/value String for a parameter in an object.<br>
      *
-     * First gets the parameter from the object and passes that to
-     * {@link #anyParamToString(Object, ParamDescription, Map)} to get the string of that parameter.
+     * Makes a call to {@link ParamDescription#getParamString(Object, BiFunction)} with the object and
+     * a reference to {@link #objectToString(Object, Class, Map)}.
      * Then, if that result is not the {@link ParamListServiceConfig#getStringForNull()}
      * or {@link ParamListServiceConfig#getStringForRecursionPrevented()} values,
      * the {@link ParamListServiceConfig#getParameterValueFormat()} is applied to it.<br>
@@ -294,60 +295,12 @@ public class ParamListServiceImpl implements ParamListService {
      */
     private <O, P> String getNameValueString(final O obj, final ParamDescription<O, P> paramDescription,
                                              final Map<Class, Set<Integer>> seen) {
-        String value = anyParamToString(paramDescription.getGetter().apply(obj), paramDescription, seen);
+        String value = paramDescription.getParamString(obj, (p, c) -> objectToString(p, c, seen));
         if (!value.equals(config.getStringForNull())
             && !value.equals(config.getStringForRecursionPrevented())) {
             value = String.format(config.getParameterValueFormat(), value);
         }
         return String.format(config.getNameValueFormat(), paramDescription.getName(), value);
-    }
-
-    /**
-     * Converts any parameter to a String in a recursion-safe way.<br>
-     *
-     * If the provided parameter is null, {@link ParamListServiceConfig#getStringForNull()} is returned.<br>
-     *
-     * If the provided <code>paramDescription</code> is a <code>ParamDescriptionMap</code>,
-     * each entry is processed and its key and value are both converted to Strings preventing recursion.<br>
-     * Those strings are the collected into a <code>Map&lt;String, String&gt;</code>
-     * and converted to a final String using {@link Map#toString()}.<br>
-     *
-     * If the provided <code>paramDescription</code> is a <code>ParamDescriptionCollection</code>,
-     * each entry is processed and its value is converted to a String preventing recursion.
-     * Those strings are the collected into a <code>List&lt;String&gt;</code> and converted to a String using {@link List#toString()}.<br>
-     *
-     * Otherwise, {@link #objectToString(Object, Class, Map)} is returned.<br>
-     *
-     * @param param  the parameter to convert to a String
-     * @param paramDescription  the description of the parameter - assumed not null
-     * @param seen  the map of classes to sets of hashCodes indicating objects that have already been converted to a string - assumed not null
-     * @param <P>  the type of the parameter (getter return value)
-     * @return A String
-     */
-    @SuppressWarnings("unchecked")
-    private <P> String anyParamToString(final P param, final ParamDescription<?, P> paramDescription,
-                                        final Map<Class, Set<Integer>> seen) {
-        if (param == null) {
-            return config.getStringForNull();
-        }
-        if (paramDescription instanceof ParamDescriptionMap) {
-            ParamDescriptionMap pdMap = (ParamDescriptionMap)paramDescription;
-            Map<Object, Object> map = (Map)param;
-            return map.entrySet()
-                      .stream()
-                      .collect(Collectors.toMap(e -> objectToString(e.getKey(), pdMap.getKeyClass(), seen),
-                                                e -> objectToString(e.getValue(), pdMap.getValueClass(), seen)))
-                      .toString();
-        }
-        if (paramDescription instanceof ParamDescriptionCollection) {
-            ParamDescriptionCollection pdCol = (ParamDescriptionCollection)paramDescription;
-            Collection<Object> collection = (Collection)param;
-            return collection.stream()
-                             .map(e -> objectToString(e, pdCol.getEntryClass(), seen))
-                             .collect(Collectors.toList())
-                             .toString();
-        }
-        return objectToString(param, paramDescription.getParamClass(), seen);
     }
 
     /**
@@ -380,11 +333,11 @@ public class ParamListServiceImpl implements ParamListService {
         if (obj == null) {
             return config.getStringForNull();
         }
-        if (!(obj instanceof RecursionPreventingToString)) {
+        if (!objClass.isAssignableFrom(RecursionPreventingToString.class)) {
             return obj.toString();
         }
-        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
         int objHashCode = obj.hashCode();
+        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
         if (!seen.containsKey(objClass)) {
             seen.put(objClass, new HashSet<>());
         }
