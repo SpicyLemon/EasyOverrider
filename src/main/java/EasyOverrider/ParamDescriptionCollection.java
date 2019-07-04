@@ -58,7 +58,7 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      * If that result is null, just passes that null and the parameter class into the provided BiFunction and returns that result.
      * Otherwise, it loops through the collection and calls the BiFunction on each entry using the entry class.
      * The resulting strings are all collected into a <code>List&lt;String&gt;</code>
-     * and then converted to a String using {@link List#toString()}.<br>
+     * and then converted to a String using <code>List.toString()</code>.<br>
      *
      * @param obj  {@inheritDoc}
      * @param objectToString  {@inheritDoc}

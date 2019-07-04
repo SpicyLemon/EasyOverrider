@@ -65,7 +65,7 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      * Otherwise, it loops through the entries of the map and calls the BiFunction on each key and value
      * using the key class and entry class respectively.
      * The resulting strings are all collected back into a <code>map&lt;String, String&gt;</code>
-     * and then converted to a String using {@link Map#toString()}.<br>
+     * and then converted to a String using <code>Map.toString()</code>.<br>
      *
      * @param obj  {@inheritDoc}
      * @param objectToString  {@inheritDoc}
