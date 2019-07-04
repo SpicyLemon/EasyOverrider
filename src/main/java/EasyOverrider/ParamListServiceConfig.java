@@ -15,7 +15,7 @@ public class ParamListServiceConfig {
     private String nameValueFormat = "%1$s=%2$s";
     private String parameterValueFormat = "'%1$s'";
     private String toStringFormat = "%1$s@%2$s [%3$s]";
-    private Function<Class, String> classNameGetter = Class::getCanonicalName;
+    private Function<Class, String> classNameGetter = Class::getSimpleName;
     private Function<Integer, String> hashCodeToString = Integer::toHexString;
 
     private static ParamList<ParamListServiceConfig> paramList;
@@ -64,7 +64,7 @@ public class ParamListServiceConfig {
      * @param nameValueFormat  the format to use to create name/value pair Strings - default is <code>"%1$s=%2$s"</code>
      * @param parameterValueFormat  the format to use for each parameter - default is <code>"'%1$s'"</code>
      * @param toStringFormat  the format to use for the final toString result - default is <code>"%1$s@%2$s [%3$s]"</code>
-     * @param classNameGetter  the Function that converts a class into a String - default is <code>Class::getCanonicalName</code>
+     * @param classNameGetter  the Function that converts a class into a String - default is <code>Class::getSimpleName</code>
      * @param hashCodeToString  the function that converts a hashCode int to a String - default is <code>Integer::toHexString</code>
      * @throws IllegalArgumentException if a provided format String is invalid.
      * @see #setStringForNull(String)
@@ -300,7 +300,7 @@ public class ParamListServiceConfig {
     /**
      * Getter for the function that is used to get the class name from a Class object.<br>
      *
-     * Default value is <code>Class::getCanonicalName</code>.<br>
+     * Default value is <code>Class::getSimpleName</code>.<br>
      *
      * @return A String
      */
@@ -311,7 +311,7 @@ public class ParamListServiceConfig {
     /**
      * Setter for the function that is used to get the class name from a Class object.<br>
      *
-     * Default value is <code>Class::getCanonicalName</code>.<br>
+     * Default value is <code>Class::getSimpleName</code>.<br>
      *
      * @param classNameGetter  the function to use to get the class name from a Class object - cannot be null
      * @return the current ParamListServiceConfig
