@@ -240,7 +240,8 @@ public class TestParamDescriptionCollection {
         testObj.getTheCollectionString().add("two");
         testObj.getTheCollectionString().add("three");
         testObj.getTheCollectionString().add("one");
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
 
@@ -251,18 +252,20 @@ public class TestParamDescriptionCollection {
         String expected = config.getStringForNull();
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(null);
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getParamString_Empty_equalsExpected() {
+    public void getParamString_empty_equalsExpected() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
         String expected = "[]";
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(new ArrayList<>());
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
 
@@ -318,10 +321,6 @@ public class TestParamDescriptionCollection {
         String actual = paramDescriptionCollection.getParamString(testObj3, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
-
-
-
-
 
     @Test
     public void equals_sameObject_true() {
