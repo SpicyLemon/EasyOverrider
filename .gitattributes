@@ -1,2 +1,2 @@
 #Hide the javadoc auto-generated stuff from diffs
-build/docs/** -diff
+docs/** -diff
