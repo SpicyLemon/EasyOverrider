@@ -218,7 +218,7 @@ public class ParamListServiceImpl implements ParamListService {
         requireNonNull(thisObj, 1, "thisObj", "primaryToString");
         requireNonNull(paramList, 2, "paramList", "primaryToString");
         Predicate<ParamDescription<? super O, ?>> filter = pd -> pd.isToStringInclude()
-                                                                 && pd instanceof ParamDescriptionSingle
+                                                                 && ParamDescriptionSingle.class.isAssignableFrom(pd.getClass())
                                                                  && ((ParamDescriptionSingle)pd).isPrimary();
         List<ParamDescription<? super O, ?>> paramDescriptions = getFilteredParamList(filter, paramList);
         return createToStringResult(thisObj, paramList.getParentClass(), paramDescriptions,
@@ -333,7 +333,7 @@ public class ParamListServiceImpl implements ParamListService {
         if (obj == null) {
             return config.getStringForNull();
         }
-        if (!objClass.isAssignableFrom(RecursionPreventingToString.class)) {
+        if (!RecursionPreventingToString.class.isAssignableFrom(objClass)) {
             return obj.toString();
         }
         int objHashCode = obj.hashCode();
