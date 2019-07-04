@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -51,6 +52,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(null, Collection.class, String.class, "pdc",
                                                              TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 1 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("parentClass"));
@@ -65,6 +67,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, null, String.class, "pdc",
                                                              TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 2 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramClass"));
@@ -78,6 +81,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, Collection.class, null, "pdc",
                                                              TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 3 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("entryClass"));
@@ -92,6 +96,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, null,
                                                              TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 4 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("name"));
@@ -106,6 +111,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, "pdc",
                                                              null, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("getter"));
@@ -120,6 +126,7 @@ public class TestParamDescriptionCollection {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, "pdc",
                                                              TestObj::getTheCollectionString, null);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));

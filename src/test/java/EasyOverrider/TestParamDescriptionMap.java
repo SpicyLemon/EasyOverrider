@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,6 +48,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(null, Map.class, String.class, Integer.class, "theMapStringInt",
                                                       TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 1 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("parentClass"));
@@ -61,6 +63,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, null, String.class, Integer.class, "theMapStringInt",
                                                       TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 2 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramClass"));
@@ -75,6 +78,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, null, Integer.class, "theMapStringInt",
                                                       TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 3 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("keyClass"));
@@ -89,6 +93,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, null, "theMapStringInt",
                                                       TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 4 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("valueClass"));
@@ -103,6 +108,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, null,
                                                       TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("name"));
@@ -117,6 +123,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
                                                       null, INCLUDED_IN_ALL);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("getter"));
@@ -131,6 +138,7 @@ public class TestParamDescriptionMap {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
                                                       TestObj::getTheMapStringInt, null);
+            fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 7 "));
             assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
