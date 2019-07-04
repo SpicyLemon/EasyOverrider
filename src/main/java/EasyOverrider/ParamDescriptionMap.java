@@ -57,15 +57,17 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
         this.valueClass = valueClass;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
         P map = getter.apply(obj);
         if (map == null) {
-            return objectToString.apply(map, paramClass);
+            return objectToString.apply((B)map, (Class<B>)paramClass);
         }
         return map.entrySet()
                   .stream()
-                  .collect(Collectors.toMap(e -> objectToString.apply(e.getKey(), keyClass),
-                                            e -> objectToString.apply(e.getValue(), valueClass)))
+                  .collect(Collectors.toMap(e -> objectToString.apply((B)e.getKey(), (Class<B>)keyClass),
+                                            e -> objectToString.apply((B)e.getValue(), (Class<B>)valueClass)))
                   .toString();
     }
 

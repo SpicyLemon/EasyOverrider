@@ -48,8 +48,10 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
         this.isPrimary = isPrimary;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
-        return objectToString.apply(getter.apply(obj), paramClass);
+        return objectToString.apply((B)getter.apply(obj), (Class<B>)paramClass);
     }
 
     /**

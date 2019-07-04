@@ -51,13 +51,15 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
         this.entryClass = entryClass;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
         P collection = getter.apply(obj);
         if (collection == null) {
-            return objectToString.apply(collection, paramClass);
+            return objectToString.apply((B)collection, (Class<B>)paramClass);
         }
         return collection.stream()
-                         .map(e -> objectToString.apply(e, entryClass))
+                         .map(e -> objectToString.apply((B)e, (Class<B>)entryClass))
                          .collect(Collectors.toList())
                          .toString();
     }
