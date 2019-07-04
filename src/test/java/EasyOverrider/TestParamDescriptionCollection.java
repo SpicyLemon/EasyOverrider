@@ -4,11 +4,13 @@ import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -32,7 +34,94 @@ public class TestParamDescriptionCollection {
         return retval;
     }
 
+    public ParamListServiceConfig config;
+
+    @Before
+    public void initTestParamDescriptionCollection() {
+        if (config == null) {
+            config = getConfig();
+        }
+    }
+
     //TODO: Clean up and make sure there's enough test coverage.
+
+    @Test
+    public void getParentClass_testObj_returnsCorrectValue() {
+        Class<TestObj> expected = TestObj.class;
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
+        Class<TestObj> actual = paramDescriptionCollection.getParentClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamClass_string_returnsCorrectValue() {
+        Class<? extends Collection> expected = Collection.class;
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
+        Class<? extends Collection> actual = paramDescriptionCollection.getParamClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getEntryClass_string_returnsCorrectValue() {
+        Class<String> expected = String.class;
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
+        Class<String> actual = paramDescriptionCollection.getEntryClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getName_string_returnsCorrectValue() {
+        String expected = "myCustomStringNameJustForThisTest";
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString(expected, INCLUDED_IN_ALL);
+        String actual = paramDescriptionCollection.getName();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
+        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("some name or thing", expected);
+        ParamMethodRestriction actual = paramDescriptionCollection.getParamMethodRestriction();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isEqualsInclude();
+            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                            getParamCollectionString("theCollectionString1", pmr);
+            boolean actual = paramDescriptionCollection.isEqualsInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
+
+    @Test
+    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isHashCodeInclude();
+            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                            getParamCollectionString("theCollectionString1", pmr);
+            boolean actual = paramDescriptionCollection.isHashCodeInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
+
+    @Test
+    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isToStringInclude();
+            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                            getParamCollectionString("theCollectionString1", pmr);
+            boolean actual = paramDescriptionCollection.isToStringInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
 
     @Test
     public void equals_sameObject_true() {
@@ -200,83 +289,5 @@ public class TestParamDescriptionCollection {
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
-    }
-
-    @Test
-    public void getParentClass_testObj_returnsCorrectValue() {
-        Class<TestObj> expected = TestObj.class;
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
-        Class<TestObj> actual = paramDescriptionCollection.getParentClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getParamClass_string_returnsCorrectValue() {
-        Class<? extends Collection> expected = Collection.class;
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
-        Class<? extends Collection> actual = paramDescriptionCollection.getParamClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getEntryClass_string_returnsCorrectValue() {
-        Class<String> expected = String.class;
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
-        Class<String> actual = paramDescriptionCollection.getEntryClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getName_string_returnsCorrectValue() {
-        String expected = "myCustomStringNameJustForThisTest";
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString(expected, INCLUDED_IN_ALL);
-        String actual = paramDescriptionCollection.getName();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
-        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                        getParamCollectionString("some name or thing", expected);
-        ParamMethodRestriction actual = paramDescriptionCollection.getParamMethodRestriction();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isEqualsInclude();
-            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamCollectionString("theCollectionString1", pmr);
-            boolean actual = paramDescriptionCollection.isEqualsInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
-    }
-
-    @Test
-    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isHashCodeInclude();
-            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamCollectionString("theCollectionString1", pmr);
-            boolean actual = paramDescriptionCollection.isHashCodeInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
-    }
-
-    @Test
-    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isToStringInclude();
-            ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
-                            getParamCollectionString("theCollectionString1", pmr);
-            boolean actual = paramDescriptionCollection.isToStringInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
     }
 }
