@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import EasyOverrider.TestingUtils.TestObj;
 import org.junit.Before;
 import org.junit.Test;
 

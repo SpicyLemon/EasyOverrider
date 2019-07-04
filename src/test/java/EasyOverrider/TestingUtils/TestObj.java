@@ -1,10 +1,14 @@
-package EasyOverrider;
+package EasyOverrider.TestingUtils;
 
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 
+import EasyOverrider.ParamList;
+import EasyOverrider.ParamListServiceConfig;
+import EasyOverrider.ParamListServiceImpl;
+import EasyOverrider.RecursionPreventingToString;
 import org.junit.Ignore;
 
 import java.util.Collection;
