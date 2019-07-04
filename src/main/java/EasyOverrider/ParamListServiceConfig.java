@@ -344,6 +344,7 @@ public class ParamListServiceConfig {
      * @throws IllegalArgumentException if the provided Function is null
      */
     public ParamListServiceConfig setHashCodeToString(final Function<Integer, String> hashCodeToString) {
+        requireNonNull(hashCodeToString, 1, "hashCodeToString", "setHashCodeToString");
         this.hashCodeToString = hashCodeToString;
         return this;
     }
