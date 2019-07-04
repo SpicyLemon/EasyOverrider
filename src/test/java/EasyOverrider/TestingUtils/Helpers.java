@@ -14,9 +14,19 @@ import java.util.function.Function;
 
 public class Helpers {
 
+    private static ParamListServiceConfig config;
+
     //private empty constructor to prevent instantiation.
     private Helpers() {
         throw new UnsupportedOperationException("Helpers is a static class that should not be instantiated.");
+    }
+
+    public static ParamListServiceConfig getConfig() {
+        if (config == null) {
+            config = new ParamListServiceConfig();
+            config.setHashCodeToString((i) -> "HASHCODE");
+        }
+        return config;
     }
 
     /**
