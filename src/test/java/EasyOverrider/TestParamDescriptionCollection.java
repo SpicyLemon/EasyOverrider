@@ -45,8 +45,6 @@ public class TestParamDescriptionCollection {
         }
     }
 
-    //TODO: Clean up and make sure there's enough test coverage.
-
     @Test
     public void constructor_nullParentClass_boom() {
         try {
@@ -185,6 +183,7 @@ public class TestParamDescriptionCollection {
         //                                TestObj.class, Collection.class, String.class,
         //                                "theCollectionOrSomething", expected, INCLUDED_IN_ALL);
         //Function<TestObj, Collection> actual = paramDescriptionCollection.getGetter();
+        //assertEquals(expected, actual);
         assertTrue(true);
     }
 
