@@ -310,6 +310,7 @@ public class ParamListServiceImpl implements ParamListService {
      */
     private <O, P> String getNameValueString(final O obj, final ParamDescription<O, P> paramDescription,
                                              final Map<Class, Set<Integer>> seen) {
+        @SuppressWarnings("unchecked")
         String value = paramDescription.getParamString(obj, (p, c) -> objectToString(p, c, seen));
         if (!value.equals(config.getStringForNull())
             && !value.equals(config.getStringForRecursionPrevented())) {
