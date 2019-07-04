@@ -4,17 +4,32 @@ import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 public class TestParamDescriptionSingle {
+
+    public ParamListServiceConfig config;
+
+    @Before
+    public void initTestParamDescriptionSingle() {
+        if (config == null) {
+            config = new ParamListServiceConfig();
+            config.setHashCodeToString((i) -> "HASHCODE");
+        }
+    }
 
     //TODO: Clean up and make sure there's enough test coverage.
 
@@ -187,6 +202,101 @@ public class TestParamDescriptionSingle {
             boolean actual = paramDescriptionSingle.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
+    }
+
+    @Test
+    public void getParamString_stringNormal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "It's Me!";
+        TestObj testObj = new TestObj();
+        testObj.setTheString(expected);
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_nullStringNormal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = config.getStringForNull();
+        TestObj testObj = new TestObj();
+        testObj.setTheString(null);
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_stringCustomMethod_equalsExpected() {
+        ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, String.class, "theString",
+                                        TestObj::getTheString, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "String and foo";
+        TestObj testObj = new TestObj();
+        testObj.setTheString("foo");
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> c.getSimpleName() + " and " + p);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_booleanTrueNormal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "true";
+        TestObj testObj = new TestObj();
+        testObj.setTheBoolean(true);
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_booleanFalseNormal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, Boolean> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, Boolean.class, "theBoolean",
+                                        TestObj::isTheBoolean, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "false";
+        TestObj testObj = new TestObj();
+        testObj.setTheBoolean(false);
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_int5Normal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, Integer> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, Integer.class, "theInt",
+                                        TestObj::getTheInt, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "5";
+        TestObj testObj = new TestObj();
+        testObj.setTheInt(5);
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_testObjNormal_equalsExpected() {
+        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "EasyOverrider.TestObj@HASHCODE [" +
+                          "theBoolean='false', theInt='0', theString=null, theOtherString=null, theCollectionString=null, " +
+                          "theMapStringInt=null, theTestObj='EasyOverrider.TestObj@HASHCODE [theInt='0'...]', " +
+                          "theCollectionTestObj=null, theMapStringTestObj=null]";
+        TestObj testObj = new TestObj(config);
+        testObj.setTheTestObj(testObj);
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, seen, config));
+        assertEquals(expected, actual);
     }
 
     @Test
