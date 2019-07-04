@@ -42,7 +42,6 @@ public interface RecursionPreventingToString {
      * <pre>
      * {@code
      *
-     * @Override
      * public String primaryToString() {
      *     return paramList.primaryToString(this);
      * }
