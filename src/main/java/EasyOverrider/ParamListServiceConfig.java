@@ -6,6 +6,9 @@ import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import java.util.IllegalFormatException;
 import java.util.function.Function;
 
+/**
+ * This houses any configuration pieces that should be available to the ParamListService.<br>
+ */
 public class ParamListServiceConfig {
 
     private String stringForNull = "null";
@@ -20,7 +23,7 @@ public class ParamListServiceConfig {
 
     private static ParamList<ParamListServiceConfig> paramList;
 
-    static ParamList<ParamListServiceConfig> getParamList() {
+    private static ParamList<ParamListServiceConfig> getParamList() {
         if (paramList == null) {
             paramList = ParamList.forClass(ParamListServiceConfig.class)
                                  .withParam("stringForNull", ParamListServiceConfig::getStringForNull, String.class)
@@ -351,16 +354,16 @@ public class ParamListServiceConfig {
 
     @Override
     public boolean equals(Object obj) {
-        return paramList.equals(this, obj);
+        return getParamList().equals(this, obj);
     }
 
     @Override
     public int hashCode() {
-        return paramList.hashCode(this);
+        return getParamList().hashCode(this);
     }
 
     @Override
     public String toString() {
-        return paramList.toString(this);
+        return getParamList().toString(this);
     }
 }
