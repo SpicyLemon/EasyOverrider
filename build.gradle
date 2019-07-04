@@ -28,6 +28,11 @@ test {
     dependsOn 'cleanTest'
 }
 
+//Change the destination directory for javadocs so that gitlab can automatically publish them.
+tasks.withType(Javadoc) {
+    destinationDir = file("docs/")
+}
+
 compileJava {
     options.compilerArgs += ['-Xdiags:verbose', "-Xlint:unchecked"]
 }
