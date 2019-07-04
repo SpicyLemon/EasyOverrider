@@ -4,34 +4,239 @@ import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_TOSTRING;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionMap {
     private ParamDescriptionMap<TestObj, String, Integer, ?> getParamMapStringInteger(String name, ParamMethodRestriction pmr) {
-        ParamDescriptionMap<TestObj, String, Integer, ?> retval =
-                        new ParamDescriptionMap<>(
-                                        TestObj.class, Map.class, String.class, Integer.class, name,
-                                        TestObj::getTheMapStringInt, pmr);
-        return retval;
+        return new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, name,
+                                         TestObj::getTheMapStringInt, pmr);
     }
 
     private ParamDescriptionMap<TestObj, String, TestObj, ?> getParamMapStringTestObj(String name, ParamMethodRestriction pmr) {
-        ParamDescriptionMap<TestObj, String, TestObj, ?> retval =
-                        new ParamDescriptionMap<>(
-                                        TestObj.class, Map.class, String.class, TestObj.class, name,
-                                        TestObj::getTheMapStringTestObj, pmr);
-        return retval;
+        return new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, name,
+                                         TestObj::getTheMapStringTestObj, pmr);
     }
 
-    //TODO: Clean up and make sure there's enough test coverage.
+    public ParamListServiceConfig config;
+
+    @Before
+    public void initTestParamDescriptionCollection() {
+        if (config == null) {
+            config = getConfig();
+        }
+    }
+
+    @Test
+    public void constructor_nullParentClass_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(null, Map.class, String.class, Integer.class, "theMapStringInt",
+                                                      TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 1 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("parentClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamClass_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, null, String.class, Integer.class, "theMapStringInt",
+                                                      TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 2 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullKeyClass_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, Map.class, null, Integer.class, "theMapStringInt",
+                                                      TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 3 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("keyClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullValueClass_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, null, "theMapStringInt",
+                                                      TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 4 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("valueClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullName_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, null,
+                                                      TestObj::getTheMapStringInt, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("name"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullGetter_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
+                                                      null, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("getter"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamMethodRestriction_boom() {
+        try {
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
+                                                      TestObj::getTheMapStringInt, null);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 7 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void getParentClass_testObj_returnsCorrectValue() {
+        Class<TestObj> expected = TestObj.class;
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        Class<TestObj> actual = paramDescriptionMap.getParentClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamClass_string_returnsCorrectValue() {
+        Class<? extends Map> expected = Map.class;
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        Class<? extends Map> actual = paramDescriptionMap.getParamClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getValueClass_string_returnsCorrectValue() {
+        Class<Integer> expected = Integer.class;
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        Class<Integer> actual = paramDescriptionMap.getValueClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getKeyClass_string_returnsCorrectValue() {
+        Class<String> expected = String.class;
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        Class<String> actual = paramDescriptionMap.getKeyClass();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getName_string_returnsCorrectValue() {
+        String expected = "myCustomStringNameJustForThisTest";
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger(expected, INCLUDED_IN_ALL);
+        String actual = paramDescriptionMap.getName();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Ignore
+    public void getGetter_getMap_returnsCorrectValue() {
+        //TODO: Figure out how to test this.
+        //See the note on the TestParamDescriptionCollection.getGetter_getCollection_returnsCorrectValue method for the issue here.
+        //
+        //Function<TestObj, Map> expected = TestObj::getTheMapStringInt;
+        //ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+        //                new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
+        //                                          expected, INCLUDED_IN_ALL);
+        //Function<TestObj,Map> actual = paramDescriptionMap.getGetter();
+        //assertEquals(expected, actual);
+        assertTrue(true);
+    }
+
+    @Test
+    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
+        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", expected);
+        ParamMethodRestriction actual = paramDescriptionMap.getParamMethodRestriction();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isEqualsInclude();
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            getParamMapStringInteger("theInt", pmr);
+            boolean actual = paramDescriptionMap.isEqualsInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
+
+    @Test
+    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isHashCodeInclude();
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            getParamMapStringInteger("theInt", pmr);
+            boolean actual = paramDescriptionMap.isHashCodeInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
+
+    @Test
+    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+            boolean expected = pmr.isToStringInclude();
+            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                            getParamMapStringInteger("theInt", pmr);
+            boolean actual = paramDescriptionMap.isToStringInclude();
+            assertEquals(pmr.toString(), expected, actual);
+        }
+    }
 
     @Test
     public void equals_sameObject_true() {
@@ -159,92 +364,5 @@ public class TestParamDescriptionMap {
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
         assertTrue(actual, actual.contains("INCLUDED_IN_ALL"));
-    }
-
-    @Test
-    public void getParentClass_testObj_returnsCorrectValue() {
-        Class<TestObj> expected = TestObj.class;
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        Class<TestObj> actual = paramDescriptionMap.getParentClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getParamClass_string_returnsCorrectValue() {
-        Class<? extends Map> expected = Map.class;
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        Class<? extends Map> actual = paramDescriptionMap.getParamClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getEntryClass_string_returnsCorrectValue() {
-        Class<Integer> expected = Integer.class;
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        Class<Integer> actual = paramDescriptionMap.getValueClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getKeyClass_string_returnsCorrectValue() {
-        Class<String> expected = String.class;
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
-        Class<String> actual = paramDescriptionMap.getKeyClass();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getName_string_returnsCorrectValue() {
-        String expected = "myCustomStringNameJustForThisTest";
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger(expected, INCLUDED_IN_ALL);
-        String actual = paramDescriptionMap.getName();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
-        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                        getParamMapStringInteger("theInt", expected);
-        ParamMethodRestriction actual = paramDescriptionMap.getParamMethodRestriction();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isEqualsInclude();
-            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamMapStringInteger("theInt", pmr);
-            boolean actual = paramDescriptionMap.isEqualsInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
-    }
-
-    @Test
-    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isHashCodeInclude();
-            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamMapStringInteger("theInt", pmr);
-            boolean actual = paramDescriptionMap.isHashCodeInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
-    }
-
-    @Test
-    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
-            boolean expected = pmr.isToStringInclude();
-            ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
-                            getParamMapStringInteger("theInt", pmr);
-            boolean actual = paramDescriptionMap.isToStringInclude();
-            assertEquals(pmr.toString(), expected, actual);
-        }
     }
 }
