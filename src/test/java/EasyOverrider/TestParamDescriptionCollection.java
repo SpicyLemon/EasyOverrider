@@ -249,7 +249,7 @@ public class TestParamDescriptionCollection {
     public void getParamString_nullString_equalsExpected() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
-        String expected = "null";
+        String expected = config.getStringForNull();
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(null);
         String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
