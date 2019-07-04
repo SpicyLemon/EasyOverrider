@@ -3,6 +3,7 @@ package EasyOverrider;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.TestingUtils.Helpers.getConfig;
 
 import org.junit.Ignore;
 
@@ -43,7 +44,7 @@ public class TestObj implements RecursionPreventingToString {
     }
 
     public TestObj() {
-        paramList = createParamList(new ParamListServiceConfig());
+        paramList = createParamList(getConfig());
     }
 
     public TestObj(ParamListServiceConfig config) {
