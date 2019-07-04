@@ -31,7 +31,7 @@ public class TestObj implements RecursionPreventingToString {
                         .usingService(new ParamListServiceImpl(config))
                         .allowingUnsafeParamMethodRestrictions()
                         .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
-                        .withParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
+                        .withPrimaryParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
                         .withParam("theString", TestObj::getTheString, String.class)
                         .withParam("theOtherString", TestObj::getTheOtherString, String.class)
                         .withCollection("theCollectionString", TestObj::getTheCollectionString, Collection.class, String.class)
