@@ -2,6 +2,13 @@ package EasyOverrider.TestingUtils;
 
 import static org.junit.Assert.assertEquals;
 
+import EasyOverrider.ParamListServiceConfig;
+import EasyOverrider.RecursionPreventingToString;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -32,4 +39,29 @@ public class Helpers {
         P actual = getter.apply(obj);
         assertEquals(paramDescription, value, actual);
     }
+
+    public static <P> String objectToString(final P obj, final Class<P> objClass,
+                                            final Map<Class, Set<Integer>> seen, ParamListServiceConfig config) {
+        if (obj == null) {
+            return config.getStringForNull();
+        }
+        if (!objClass.isAssignableFrom(RecursionPreventingToString.class)) {
+            return obj.toString();
+        }
+        int objHashCode = obj.hashCode();
+        RecursionPreventingToString recursiveObject = (RecursionPreventingToString)obj;
+        if (!seen.containsKey(objClass)) {
+            seen.put(objClass, new HashSet<>());
+        }
+        if (!seen.get(objClass).contains(objHashCode)) {
+            seen.get(objClass).add(objHashCode);
+            return recursiveObject.toString(seen);
+        }
+        return Optional.ofNullable(recursiveObject.primaryToString())
+                       .orElseGet(() -> String.format(config.getToStringFormat(),
+                                                      config.getClassNameGetter().apply(objClass),
+                                                      config.getHashCodeToString().apply(obj.hashCode()),
+                                                      config.getStringForRecursionPrevented()));
+    }
+
 }
