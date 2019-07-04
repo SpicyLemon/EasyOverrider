@@ -9,7 +9,5 @@ public class TestParamListServiceImpl {
     // getConfig(), setConfig(ParamListConfig),
     // equals(Object, Object, ParamList), hashCode(Object, ParamList),
     // toString(Object, ParamList, Map), primaryToString(Object, ParamList)
-    //
-    // equals(Object), hashCode(), toString()
 
 }

@@ -9,7 +9,6 @@ public class TestParamList {
     // getParentClass(), getParamDescriptionMap(), getParamOrder(),
     // equals(Object, Object), hashCode(Object), toString(Object), toString(Object, Map)
     // primaryToString(Object), extendedBy(class),
-    // equals(Object), hashCode(), toString()
     //Static:
     // forClass(Class)
 }

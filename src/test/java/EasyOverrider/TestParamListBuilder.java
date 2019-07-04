@@ -18,6 +18,4 @@ public class TestParamListBuilder {
     // withUpdatedCollection(String, Function, Class, Class), withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class),
     // withUpdatedMap(String, Function, Class, Class, Class), withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class),
     // withoutParam(String), andThatsIt(),
-    //
-    // equals(Object), hashCode(), toString()
 }
