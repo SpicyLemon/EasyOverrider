@@ -293,21 +293,21 @@ public class TestParamDescriptionCollection {
     public void getParamString_ListTestObjDeepRecursion_equalsExpected() {
         ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
                         getParamListTestObj("theListTestObj", INCLUDED_IN_ALL);
-        String expected = "[EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, " +
+        String expected = "[TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, " +
                                         "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
-                             "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
-                             "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
+                             "TestObj@HASHCODE [theInt='1'...], " +
+                             "TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
                                         "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
-                               "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
-                               "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
-                               "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
+                               "TestObj@HASHCODE [theInt='1'...], " +
+                               "TestObj@HASHCODE [theInt='2'...], " +
+                               "TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
                                         "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
-                                 "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
-                                 "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
-                                 "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null]]', theMapStringTestObj=null], " +
-                             "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
-                           "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
-                           "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]";
+                                 "TestObj@HASHCODE [theInt='1'...], " +
+                                 "TestObj@HASHCODE [theInt='2'...], " +
+                                 "TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null]]', theMapStringTestObj=null], " +
+                             "TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
+                           "TestObj@HASHCODE [theInt='2'...], " +
+                           "TestObj@HASHCODE [theInt='3'...]]";
         TestObj testObj1 = new TestObj();
         TestObj testObj2 = new TestObj();
         TestObj testObj3 = new TestObj();

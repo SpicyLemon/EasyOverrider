@@ -304,14 +304,14 @@ public class TestParamDescriptionMap {
     public void getParamString_recursiveEntries_matchesExpected() {
         ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
                         getParamMapStringTestObj("theStuff", INCLUDED_IN_ALL);
-        String expected = "{3333=EasyOverrider.TestObj@HASHCODE [theInt='3'...], " +
-                           "2222=EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
+        String expected = "{3333=TestObj@HASHCODE [theInt='3'...], " +
+                           "2222=TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
                            "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj=null, theMapStringTestObj='" +
-                             "{3333=EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
+                             "{3333=TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
                              "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj=null, theMapStringTestObj='" +
-                               "{3333=EasyOverrider.TestObj@HASHCODE [theInt='3'...], " +
-                               "2222=EasyOverrider.TestObj@HASHCODE [theInt='2'...]}'], " +
-                             "2222=EasyOverrider.TestObj@HASHCODE [theInt='2'...]}']}";
+                               "{3333=TestObj@HASHCODE [theInt='3'...], " +
+                               "2222=TestObj@HASHCODE [theInt='2'...]}'], " +
+                             "2222=TestObj@HASHCODE [theInt='2'...]}']}";
         TestObj testObj1 = new TestObj();
         TestObj testObj2 = new TestObj();
         TestObj testObj3 = new TestObj();

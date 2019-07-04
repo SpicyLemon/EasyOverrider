@@ -297,9 +297,9 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<>(
                                         TestObj.class, TestObj.class, "theTestObj",
                                         TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, false);
-        String expected = "EasyOverrider.TestObj@HASHCODE [" +
+        String expected = "TestObj@HASHCODE [" +
                           "theBoolean='false', theInt='0', theString=null, theOtherString=null, theCollectionString=null, " +
-                          "theMapStringInt=null, theTestObj='EasyOverrider.TestObj@HASHCODE [theInt='0'...]', " +
+                          "theMapStringInt=null, theTestObj='TestObj@HASHCODE [theInt='0'...]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]";
         TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
@@ -314,15 +314,15 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<>(
                                         TestObj.class, TestObj.class, "theTestObj",
                                         TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, false);
-        String expected = "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, " +
+        String expected = "TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, " +
                           "theCollectionString=null, theMapStringInt=null, theTestObj='" +
-                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
+                          "TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
                           "theCollectionString=null, theMapStringInt=null, theTestObj='" +
-                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
+                          "TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
                           "theCollectionString=null, theMapStringInt=null, theTestObj='" +
-                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='4', theString='four', theOtherString=null, " +
+                          "TestObj@HASHCODE [theBoolean='false', theInt='4', theString='four', theOtherString=null, " +
                           "theCollectionString=null, theMapStringInt=null, theTestObj='" +
-                          "EasyOverrider.TestObj@HASHCODE [theInt='1'...]', " +
+                          "TestObj@HASHCODE [theInt='1'...]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]', " +
