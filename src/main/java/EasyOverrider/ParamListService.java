@@ -12,7 +12,7 @@ public interface ParamListService {
     /**
      * Gets the config for the service.<br>
      *
-     * @return
+     * @return The configuration being used by this service.
      */
     ParamListServiceConfig getConfig();
 
@@ -30,6 +30,7 @@ public interface ParamListService {
      * @param thisObj  the first object in the comparison
      * @param thatObj  the second object in the comparison
      * @param paramList  the ParamList to operate on
+     * @param <O>  the class of the object
      * @return true if the objects are equal, false if not
      */
     <O> boolean equals(final Object thisObj, final Object thatObj, final ParamList<O> paramList);
