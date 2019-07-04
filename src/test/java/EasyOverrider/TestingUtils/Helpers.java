@@ -36,15 +36,14 @@ public class Helpers {
      *
      * @param paramDescription  the message that will go in the assert so that you can know which parameter test failed
      * @param obj  the object with the getter and setter that you want to test - assumed not null
-     * @param value  the value you want to use to test
      * @param setter  the setter to use - assumed not null
+     * @param value  the value you want to use to test
      * @param getter  the getter to use - assumed not null
      * @param <O>  the type of object you're testing
      * @param <P>  the type of the parameter (value) you're testing
      */
-    public static <O, P> void testSetterGetter(String paramDescription, O obj, P value,
-                                               BiConsumer<O, P> setter,
-                                               Function<O, P> getter) {
+    public static <O, P> void testSetterGetter(String paramDescription, O obj, BiConsumer<O, P> setter,
+                                               P value, Function<O, P> getter) {
         setter.accept(obj, value);
         P actual = getter.apply(obj);
         assertEquals(paramDescription, value, actual);
