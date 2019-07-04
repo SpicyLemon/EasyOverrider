@@ -45,7 +45,7 @@ public class Helpers {
         if (obj == null) {
             return config.getStringForNull();
         }
-        if (!objClass.isAssignableFrom(RecursionPreventingToString.class)) {
+        if (!RecursionPreventingToString.class.isAssignableFrom(objClass)) {
             return obj.toString();
         }
         int objHashCode = obj.hashCode();
