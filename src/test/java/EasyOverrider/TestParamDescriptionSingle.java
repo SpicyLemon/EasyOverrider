@@ -31,8 +31,6 @@ public class TestParamDescriptionSingle {
         }
     }
 
-    //TODO: Clean up and make sure there's enough test coverage.
-
     @Test
     public void constructor_nullParentClass_throwsException() {
         try {
@@ -211,7 +209,7 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "stuff",
                                         TestObj::getTheString, INCLUDED_IN_ALL, expected);
-        String actual = paramDescriptionSingle1.getName();
+        boolean actual = paramDescriptionSingle1.isPrimary();
         assertEquals(expected, actual);
     }
 
