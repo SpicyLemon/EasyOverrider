@@ -50,8 +50,8 @@ public class Helpers {
         assertEquals(paramDescription, value, actual);
     }
 
-    public static <P> String objectToString(final P obj, final Class<P> objClass,
-                                            final Map<Class, Set<Integer>> seen, ParamListServiceConfig config) {
+    public static <P> String objectToString(final P obj, final Class<P> objClass, final Map<Class, Set<Integer>> seen) {
+        ParamListServiceConfig config = getConfig();
         if (obj == null) {
             return config.getStringForNull();
         }

@@ -239,7 +239,7 @@ public class TestParamDescriptionCollection {
         testObj.getTheCollectionString().add("two");
         testObj.getTheCollectionString().add("three");
         testObj.getTheCollectionString().add("one");
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -250,7 +250,7 @@ public class TestParamDescriptionCollection {
         String expected = "null";
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(null);
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -261,7 +261,7 @@ public class TestParamDescriptionCollection {
         String expected = "[]";
         TestObj testObj = new TestObj();
         testObj.setTheCollectionString(new ArrayList<>());
-        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -330,7 +330,7 @@ public class TestParamDescriptionCollection {
         testObj1.setTheCollectionTestObj(theList);
         testObj2.setTheCollectionTestObj(theList);
         testObj3.setTheCollectionTestObj(theList);
-        String actual = paramDescriptionCollection.getParamString(testObj3, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionCollection.getParamString(testObj3, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 

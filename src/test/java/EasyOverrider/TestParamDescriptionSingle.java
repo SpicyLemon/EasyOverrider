@@ -222,7 +222,7 @@ public class TestParamDescriptionSingle {
         String expected = "It's Me!";
         TestObj testObj = new TestObj();
         testObj.setTheString(expected);
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -235,7 +235,7 @@ public class TestParamDescriptionSingle {
         String expected = config.getStringForNull();
         TestObj testObj = new TestObj();
         testObj.setTheString(null);
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -261,7 +261,7 @@ public class TestParamDescriptionSingle {
         String expected = "true";
         TestObj testObj = new TestObj();
         testObj.setTheBoolean(true);
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -274,7 +274,7 @@ public class TestParamDescriptionSingle {
         String expected = "false";
         TestObj testObj = new TestObj();
         testObj.setTheBoolean(false);
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -287,7 +287,7 @@ public class TestParamDescriptionSingle {
         String expected = "5";
         TestObj testObj = new TestObj();
         testObj.setTheInt(5);
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>()));
         assertEquals(expected, actual);
     }
 
@@ -301,10 +301,10 @@ public class TestParamDescriptionSingle {
                           "theBoolean='false', theInt='0', theString=null, theOtherString=null, theCollectionString=null, " +
                           "theMapStringInt=null, theTestObj='EasyOverrider.TestObj@HASHCODE [theInt='0'...]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]";
-        TestObj testObj = new TestObj(config);
+        TestObj testObj = new TestObj();
         testObj.setTheTestObj(testObj);
         Map<Class, Set<Integer>> seen = new HashMap<>();
-        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, seen, config));
+        String actual = paramDescriptionSingle.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
 
@@ -327,10 +327,10 @@ public class TestParamDescriptionSingle {
                           "theCollectionTestObj=null, theMapStringTestObj=null]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]', " +
                           "theCollectionTestObj=null, theMapStringTestObj=null]";
-        TestObj testObj1 = new TestObj(config);
-        TestObj testObj2 = new TestObj(config);
-        TestObj testObj3 = new TestObj(config);
-        TestObj testObj4 = new TestObj(config);
+        TestObj testObj1 = new TestObj();
+        TestObj testObj2 = new TestObj();
+        TestObj testObj3 = new TestObj();
+        TestObj testObj4 = new TestObj();
         testObj1.setTheInt(1);
         testObj2.setTheInt(2);
         testObj3.setTheInt(3);
@@ -344,7 +344,7 @@ public class TestParamDescriptionSingle {
         testObj3.setTheTestObj(testObj4);
         testObj4.setTheTestObj(testObj1);
         Map<Class, Set<Integer>> seen = new HashMap<>();
-        String actual = paramDescriptionSingle.getParamString(testObj4, (p, c) -> objectToString(p, c, seen, config));
+        String actual = paramDescriptionSingle.getParamString(testObj4, (p, c) -> objectToString(p, c, seen));
         assertEquals(expected, actual);
     }
 
