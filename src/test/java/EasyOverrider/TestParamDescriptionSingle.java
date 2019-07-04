@@ -300,6 +300,46 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
+    public void getParamString_testObjFourDeep_equalsExpected() {
+        ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
+                        new ParamDescriptionSingle<>(
+                                        TestObj.class, TestObj.class, "theTestObj",
+                                        TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, false);
+        String expected = "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, " +
+                          "theCollectionString=null, theMapStringInt=null, theTestObj='" +
+                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
+                          "theCollectionString=null, theMapStringInt=null, theTestObj='" +
+                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
+                          "theCollectionString=null, theMapStringInt=null, theTestObj='" +
+                          "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='4', theString='four', theOtherString=null, " +
+                          "theCollectionString=null, theMapStringInt=null, theTestObj='" +
+                          "EasyOverrider.TestObj@HASHCODE [theInt='1'...]', " +
+                          "theCollectionTestObj=null, theMapStringTestObj=null]', " +
+                          "theCollectionTestObj=null, theMapStringTestObj=null]', " +
+                          "theCollectionTestObj=null, theMapStringTestObj=null]', " +
+                          "theCollectionTestObj=null, theMapStringTestObj=null]";
+        TestObj testObj1 = new TestObj(config);
+        TestObj testObj2 = new TestObj(config);
+        TestObj testObj3 = new TestObj(config);
+        TestObj testObj4 = new TestObj(config);
+        testObj1.setTheInt(1);
+        testObj2.setTheInt(2);
+        testObj3.setTheInt(3);
+        testObj4.setTheInt(4);
+        testObj1.setTheString("one");
+        testObj2.setTheString("two");
+        testObj3.setTheString("three");
+        testObj4.setTheString("four");
+        testObj1.setTheTestObj(testObj2);
+        testObj2.setTheTestObj(testObj3);
+        testObj3.setTheTestObj(testObj4);
+        testObj4.setTheTestObj(testObj1);
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionSingle.getParamString(testObj4, (p, c) -> objectToString(p, c, seen, config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void equals_sameObject_true() {
         ParamDescriptionSingle<TestObj, TestObj> paramDescriptionSingle =
                         new ParamDescriptionSingle<TestObj, TestObj>(
