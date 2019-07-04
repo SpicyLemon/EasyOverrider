@@ -48,10 +48,18 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
         this.isPrimary = isPrimary;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Calls the getter on the object and passes that result and the parameter class into the provided BiFunction.<br>
+     *
+     * @param obj  {@inheritDoc}
+     * @param objectToString  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
-        return objectToString.apply((B)getter.apply(obj), (Class<B>)paramClass);
+    public String getParamString(O obj, BiFunction<Object, Class, String> objectToString) {
+        return objectToString.apply(getter.apply(obj), paramClass);
     }
 
     /**

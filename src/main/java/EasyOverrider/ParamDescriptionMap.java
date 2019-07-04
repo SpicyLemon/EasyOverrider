@@ -57,17 +57,30 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
         this.valueClass = valueClass;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Calls the getter on the object.
+     * If that result is null, just passes that null and the parameter class into the provided BiFunction and returns that result.
+     * Otherwise, it loops through the entries of the map and calls the BiFunction on each key and value
+     * using the key class and entry class respectively.
+     * The resulting strings are all collected back into a <code>map&lt;String, String&gt;</code>
+     * and then converted to a String using {@link Map#toString()}.<br>
+     *
+     * @param obj  {@inheritDoc}
+     * @param objectToString  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
+    public String getParamString(O obj, BiFunction<Object, Class, String> objectToString) {
         P map = getter.apply(obj);
         if (map == null) {
-            return objectToString.apply((B)map, (Class<B>)paramClass);
+            return objectToString.apply(map, paramClass);
         }
         return map.entrySet()
                   .stream()
-                  .collect(Collectors.toMap(e -> objectToString.apply((B)e.getKey(), (Class<B>)keyClass),
-                                            e -> objectToString.apply((B)e.getValue(), (Class<B>)valueClass)))
+                  .collect(Collectors.toMap(e -> objectToString.apply(e.getKey(), keyClass),
+                                            e -> objectToString.apply(e.getValue(), valueClass)))
                   .toString();
     }
 

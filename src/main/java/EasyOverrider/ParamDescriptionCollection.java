@@ -51,15 +51,27 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
         this.entryClass = entryClass;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Calls the getter on the object.
+     * If that result is null, just passes that null and the parameter class into the provided BiFunction and returns that result.
+     * Otherwise, it loops through the collection and calls the BiFunction on each entry using the entry class.
+     * The resulting strings are all collected into a <code>List&lt;String&gt;</code>
+     * and then converted to a String using {@link List#toString()}.<br>
+     *
+     * @param obj  {@inheritDoc}
+     * @param objectToString  {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public <B> String getParamString(O obj, BiFunction<B, Class<B>, String> objectToString) {
+    public String getParamString(O obj, BiFunction<Object, Class, String> objectToString) {
         P collection = getter.apply(obj);
         if (collection == null) {
-            return objectToString.apply((B)collection, (Class<B>)paramClass);
+            return objectToString.apply(collection, paramClass);
         }
         return collection.stream()
-                         .map(e -> objectToString.apply((B)e, (Class<B>)entryClass))
+                         .map(e -> objectToString.apply(e, entryClass))
                          .collect(Collectors.toList())
                          .toString();
     }
