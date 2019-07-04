@@ -5,6 +5,7 @@ import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
+import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -14,7 +15,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
@@ -236,6 +239,89 @@ public class TestParamDescriptionMap {
             boolean actual = paramDescriptionMap.isToStringInclude();
             assertEquals(pmr.toString(), expected, actual);
         }
+    }
+
+    @Test
+    public void getParamString_twoEntries_matchesExpected() {
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        String expected = "{one=1, two=2}";
+        TestObj testObj = new TestObj();
+        testObj.setTheMapStringInt(new HashMap<>());
+        testObj.getTheMapStringInt().put("one", 1);
+        testObj.getTheMapStringInt().put("two", 2);
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionMap.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_null_matchesExpected() {
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        String expected = config.getStringForNull();
+        TestObj testObj = new TestObj();
+        testObj.setTheMapStringInt(null);
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionMap.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_empty_matchesExpected() {
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        String expected = "{}";
+        TestObj testObj = new TestObj();
+        testObj.setTheMapStringInt(new HashMap<>());
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionMap.getParamString(testObj, (p, c) -> objectToString(p, c, seen));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_twoEntriesCustomBiFunction_matchesExpected() {
+        ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
+                        getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
+        String expected = "{one(String)=1(Integer), two(String)=2(Integer)}";
+        TestObj testObj = new TestObj();
+        testObj.setTheMapStringInt(new HashMap<>());
+        testObj.getTheMapStringInt().put("one", 1);
+        testObj.getTheMapStringInt().put("two", 2);
+        String actual = paramDescriptionMap.getParamString(testObj, (p, c) -> p.toString() + "(" + c.getSimpleName() + ")");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_recursiveEntries_matchesExpected() {
+        ParamDescriptionMap<TestObj, String, TestObj, ?> paramDescriptionMap =
+                        getParamMapStringTestObj("theStuff", INCLUDED_IN_ALL);
+        String expected = "{3333=EasyOverrider.TestObj@HASHCODE [theInt='3'...], " +
+                           "2222=EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, " +
+                           "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj=null, theMapStringTestObj='" +
+                             "{3333=EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, " +
+                             "theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj=null, theMapStringTestObj='" +
+                               "{3333=EasyOverrider.TestObj@HASHCODE [theInt='3'...], " +
+                               "2222=EasyOverrider.TestObj@HASHCODE [theInt='2'...]}'], " +
+                             "2222=EasyOverrider.TestObj@HASHCODE [theInt='2'...]}']}";
+        TestObj testObj1 = new TestObj();
+        TestObj testObj2 = new TestObj();
+        TestObj testObj3 = new TestObj();
+        testObj1.setTheInt(1);
+        testObj2.setTheInt(2);
+        testObj3.setTheInt(3);
+        testObj1.setTheString("one");
+        testObj2.setTheString("two");
+        testObj3.setTheString("three");
+        Map<String, TestObj> map = new HashMap<>();
+        map.put("2222", testObj2);
+        map.put("3333", testObj3);
+        testObj1.setTheMapStringTestObj(map);
+        testObj2.setTheMapStringTestObj(map);
+        testObj3.setTheMapStringTestObj(map);
+        Map<Class, Set<Integer>> seen = new HashMap<>();
+        String actual = paramDescriptionMap.getParamString(testObj1, (p, c) -> objectToString(p, c, seen));
+        assertEquals(expected, actual);
     }
 
     @Test
