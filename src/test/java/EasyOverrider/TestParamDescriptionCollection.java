@@ -5,33 +5,33 @@ import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
+import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionCollection {
 
     private ParamDescriptionCollection<TestObj, String, ?> getParamCollectionString(String name, ParamMethodRestriction pmr) {
-        ParamDescriptionCollection<TestObj, String, ?> retval =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, String.class, name,
-                                        TestObj::getTheCollectionString, pmr);
-        return retval;
+        return new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, name,
+                                                TestObj::getTheCollectionString, pmr);
     }
 
     private ParamDescriptionCollection<TestObj, TestObj, ?> getParamListTestObj(String name, ParamMethodRestriction pmr) {
-        ParamDescriptionCollection<TestObj, TestObj, ?> retval =
-                        new ParamDescriptionCollection<>(
-                                        TestObj.class, Collection.class, TestObj.class, name,
-                                        TestObj::getTheCollectionTestObj, pmr);
-        return retval;
+        return new ParamDescriptionCollection<>(TestObj.class, Collection.class, TestObj.class, name,
+                                                TestObj::getTheCollectionTestObj, pmr);
     }
 
     public ParamListServiceConfig config;
@@ -44,6 +44,89 @@ public class TestParamDescriptionCollection {
     }
 
     //TODO: Clean up and make sure there's enough test coverage.
+
+    @Test
+    public void constructor_nullParentClass_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(null, Collection.class, String.class, "pdc",
+                                                             TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 1 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("parentClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamClass_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(TestObj.class, null, String.class, "pdc",
+                                                             TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 2 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+    @Test
+    public void constructor_nullEntryClass_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(TestObj.class, Collection.class, null, "pdc",
+                                                             TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 3 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("entryClass"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullName_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, null,
+                                                             TestObj::getTheCollectionString, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 4 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("name"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullGetter_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, "pdc",
+                                                             null, INCLUDED_IN_ALL);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("getter"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
+
+    @Test
+    public void constructor_nullParamMethodRestriction_boom() {
+        try {
+            ParamDescriptionCollection<TestObj, String, ?> pdc =
+                            new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, "pdc",
+                                                             TestObj::getTheCollectionString, null);
+        } catch (IllegalArgumentException e) {
+            assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
+            assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
+        }
+    }
 
     @Test
     public void getParentClass_testObj_returnsCorrectValue() {
@@ -79,6 +162,28 @@ public class TestParamDescriptionCollection {
                         getParamCollectionString(expected, INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.getName();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    @Ignore
+    public void getGetter_getCollection_returnsCorrectValue() {
+        //TODO: Figure out how to test this.
+        //Problem: The getter is a Function<TestObj, Collection<String>>.
+        // However, in the constructor, we can only send in Collection.class.
+        // So P must be Collection and not Collection<String>, and same with the getter.
+        // But then, we can only use a wildcard in the variable type for P because it must
+        // simultaneously be a raw Collection and a Collection<String>.
+        // That means that when we call getGetter, it doesn't know what the return value for the function is.
+        // If we go back and try to tell it it's a Collection<String>, then we run into the whole
+        // Collection.class parameter thing, and not being able to do Collection<String>.class.
+        //
+        //Function<TestObj, Collection> expected = TestObj::getTheCollectionString;
+        //ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+        //                new ParamDescriptionCollection<>(
+        //                                TestObj.class, Collection.class, String.class,
+        //                                "theCollectionOrSomething", expected, INCLUDED_IN_ALL);
+        //Function<TestObj, Collection> actual = paramDescriptionCollection.getGetter();
+        assertTrue(true);
     }
 
     @Test
@@ -122,6 +227,116 @@ public class TestParamDescriptionCollection {
             assertEquals(pmr.toString(), expected, actual);
         }
     }
+
+    @Test
+    public void getParamString_stringFourEntries_equalsExpected() {
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
+        String expected = "[one, two, three, one]";
+        TestObj testObj = new TestObj();
+        testObj.setTheCollectionString(new ArrayList<>());
+        testObj.getTheCollectionString().add("one");
+        testObj.getTheCollectionString().add("two");
+        testObj.getTheCollectionString().add("three");
+        testObj.getTheCollectionString().add("one");
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_nullString_equalsExpected() {
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
+        String expected = "null";
+        TestObj testObj = new TestObj();
+        testObj.setTheCollectionString(null);
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_Empty_equalsExpected() {
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
+        String expected = "[]";
+        TestObj testObj = new TestObj();
+        testObj.setTheCollectionString(new ArrayList<>());
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_twoEntriesCustomBiFunction_equalsExpected() {
+        ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
+                        getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
+        String expected = "[String of 'ten', String of 'eleven']";
+        TestObj testObj = new TestObj();
+        testObj.setTheCollectionString(new ArrayList<>());
+        testObj.getTheCollectionString().add("ten");
+        testObj.getTheCollectionString().add("eleven");
+        String actual = paramDescriptionCollection.getParamString(testObj, (p, c) -> c.getSimpleName() + " of '" + p.toString() + "'");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getParamString_ListTestObjDeepRecursion_equalsExpected() {
+        ParamDescriptionCollection<TestObj, TestObj, ?> paramDescriptionCollection =
+                        getParamListTestObj("theListTestObj", INCLUDED_IN_ALL);
+        String expected = "[EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                             "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                               "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null]]', theMapStringTestObj=null], " +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
+
+                           "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                             "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                               "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null]]', theMapStringTestObj=null], " +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
+
+                           "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='3', theString='three', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                             "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='1', theString='one', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                               "EasyOverrider.TestObj@HASHCODE [theBoolean='false', theInt='2', theString='two', theOtherString=null, theCollectionString=null, theMapStringInt=null, theTestObj=null, theCollectionTestObj='[" +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='1'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                                 "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
+                               "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null], " +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='2'...], " +
+                             "EasyOverrider.TestObj@HASHCODE [theInt='3'...]]', theMapStringTestObj=null]]";
+        TestObj testObj1 = new TestObj();
+        TestObj testObj2 = new TestObj();
+        TestObj testObj3 = new TestObj();
+        testObj1.setTheInt(1);
+        testObj2.setTheInt(2);
+        testObj3.setTheInt(3);
+        testObj1.setTheString("one");
+        testObj2.setTheString("two");
+        testObj3.setTheString("three");
+        List<TestObj> theList = new ArrayList<>();
+        theList.add(testObj1);
+        theList.add(testObj2);
+        theList.add(testObj3);
+        testObj1.setTheCollectionTestObj(theList);
+        testObj2.setTheCollectionTestObj(theList);
+        testObj3.setTheCollectionTestObj(theList);
+        String actual = paramDescriptionCollection.getParamString(testObj3, (p, c) -> objectToString(p, c, new HashMap<>(), config));
+        assertEquals(expected, actual);
+    }
+
+
+
+
 
     @Test
     public void equals_sameObject_true() {
