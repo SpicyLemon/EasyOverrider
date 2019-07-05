@@ -212,7 +212,7 @@ public class TestParamDescriptionMap {
         ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", expected);
-        ParamUsage actual = paramDescriptionMap.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionMap.getParamUsage();
         assertEquals(expected, actual);
     }
 

@@ -69,12 +69,12 @@ public class TestParamUsageRestriction {
 
     @Test
     public void getAllowedParamMethodRestrictions_safeOnly_sizeEquals4() {
-        assertEquals(4, SAFE_ONLY.getAllowedParamMethodRestrictions().size());
+        assertEquals(4, SAFE_ONLY.getAllowedUsages().size());
     }
 
     @Test
     public void getAllowedParamMethodRestrictions_safeOnly_noEntriesEndInUnsafe() {
-        SAFE_ONLY.getAllowedParamMethodRestrictions().forEach(pmr -> {
+        SAFE_ONLY.getAllowedUsages().forEach(pmr -> {
             if (pmr.name().endsWith("UNSAFE")) {
                 fail(pmr.name() + " is in the SAFE_ONLY ParamUsageRestriction allowedParamMethodRestrictions list.");
             }
@@ -137,7 +137,7 @@ public class TestParamUsageRestriction {
 
     @Test
     public void getAllowedParamMethodRestrictions_allowUnsafe_sizeEqualsParamMethodRestrictionsValuesLength() {
-        assertEquals(ParamUsage.values().length, ALLOW_UNSAFE.getAllowedParamMethodRestrictions().size());
+        assertEquals(ParamUsage.values().length, ALLOW_UNSAFE.getAllowedUsages().size());
     }
 
     @Test

@@ -7,7 +7,7 @@ public class TestParamListBuilder {
     //Things to test:
     // ParamListBuilder(Class, ParamList, ParamListService), forClass(Class),
     // usingService(ParamListService), havingRestriction(ParamUsageRestriction),
-    // allowingUnsafeParamMethodRestrictions(), allowingOnlySafeParamMethodRestrictions(),
+    // allowingUnsafeParamUsages(), allowingOnlySafeParamUsages(),
     //
     // withParam(String, Function, Class), withParam(String, Function, ParamMethodRestriction, Class),
     // withPrimaryParam(String, Function, Class), withPrimaryParam(String, Function, ParamMethodRestriction, Class),

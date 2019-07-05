@@ -199,7 +199,7 @@ public class TestParamDescriptionCollection {
         ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("some name or thing", expected);
-        ParamUsage actual = paramDescriptionCollection.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionCollection.getParamUsage();
         assertEquals(expected, actual);
     }
 

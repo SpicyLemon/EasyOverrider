@@ -34,7 +34,7 @@ public class TestObj implements RecursionPreventingToString {
     private ParamList<TestObj> createParamList(ParamListServiceConfig config) {
         return ParamList.forClass(TestObj.class)
                         .usingService(new ParamListServiceImpl(config))
-                        .allowingUnsafeParamMethodRestrictions()
+                        .allowingUnsafeParamUsages()
                         .withParam("theBoolean", TestObj::isTheBoolean, HASHCODE_AND_TOSTRING_ONLY__UNSAFE, Boolean.class)
                         .withPrimaryParam("theInt", TestObj::getTheInt, EQUALS_AND_TOSTRING_ONLY__UNSAFE, Integer.class)
                         .withParam("theString", TestObj::getTheString, String.class)

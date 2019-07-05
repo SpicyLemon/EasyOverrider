@@ -159,7 +159,7 @@ public class TestParamDescriptionSingle {
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
                                         TestObj::getTheString, expected, false);
-        ParamUsage actual = paramDescriptionSingle1.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionSingle1.getParamUsage();
         assertEquals(expected, actual);
     }
 
