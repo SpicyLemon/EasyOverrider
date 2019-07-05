@@ -12,7 +12,7 @@ import java.util.function.Function;
  * <li><code>Class paramClass</code> - This is the raw class of the parameter.
  * <li><code>String name</code> - This is the name of the parameter (usually the variable name).
  * <li><code>Function getter</code> - This is a reference to the getter for the parameter.
- * <li>{@link ParamUsage}<code> paramMethodRestriction</code> - This is used to describe what method calls this parameter should be included in.
+ * <li>{@link ParamUsage}<code> paramUsage</code> - This is used to describe what method calls this parameter should be included in.
  * </ul>
  *
  * @param <O>  the type of object in question
@@ -49,11 +49,11 @@ public interface ParamDescription<O, P> {
     Function<? super O, P> getGetter();
 
     /**
-     * Gets the ParamMethodRestriction for this parameter.<br>
+     * Gets the ParamUsage for this parameter.<br>
      *
      * @return The {@link ParamUsage} value for this parameter.
      */
-    ParamUsage getParamMethodRestriction();
+    ParamUsage getParamUsage();
 
     /**
      * Get whether or not this should be included for the equals() method.<br>
@@ -63,7 +63,7 @@ public interface ParamDescription<O, P> {
      * @return True if it's to be included. False if it's to be ignored.
      */
     default boolean isEqualsInclude() {
-        return getParamMethodRestriction().isEqualsInclude();
+        return getParamUsage().isEqualsInclude();
     }
 
     /**
@@ -74,7 +74,7 @@ public interface ParamDescription<O, P> {
      * @return True if it's to be included. False if it's to be ignored.
      */
     default boolean isHashCodeInclude() {
-        return getParamMethodRestriction().isHashCodeInclude();
+        return getParamUsage().isHashCodeInclude();
     }
 
     /**
@@ -85,7 +85,7 @@ public interface ParamDescription<O, P> {
      * @return True if it's to be included. False if it's to be ignored.
      */
     default boolean isToStringInclude() {
-        return getParamMethodRestriction().isToStringInclude();
+        return getParamUsage().isToStringInclude();
     }
 
     /**

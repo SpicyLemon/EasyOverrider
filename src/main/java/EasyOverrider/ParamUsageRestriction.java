@@ -46,29 +46,29 @@ public enum ParamUsageRestriction {
     ALLOW_UNSAFE(EnumSet.of(IGNORED_FOR_ALL, TOSTRING_ONLY, EQUALS_AND_HASHCODE_ONLY, INCLUDED_IN_ALL, EQUALS_ONLY__UNSAFE, HASHCODE_ONLY__UNSAFE,
                             HASHCODE_AND_TOSTRING_ONLY__UNSAFE, EQUALS_AND_TOSTRING_ONLY__UNSAFE));
 
-    private Set<ParamUsage> allowedParamMethodRestrictions;
+    private Set<ParamUsage> allowedUsages;
 
-    ParamUsageRestriction(final Set<ParamUsage> allowedParamMethodRestrictions) {
-        this.allowedParamMethodRestrictions = allowedParamMethodRestrictions;
+    ParamUsageRestriction(final Set<ParamUsage> allowedUsages) {
+        this.allowedUsages = allowedUsages;
     }
 
     /**
-     * Gets all of the ParamMethodRestriction values that are allowed for this ParamUsageRestriction.
+     * Gets all of the ParamUsage values that are allowed for this ParamUsageRestriction.
      *
      * @return A Set of {@link ParamUsage} values.
      */
-    public Set<ParamUsage> getAllowedParamMethodRestrictions() {
-        return Collections.unmodifiableSet(allowedParamMethodRestrictions);
+    public Set<ParamUsage> getAllowedUsages() {
+        return Collections.unmodifiableSet(allowedUsages);
     }
 
     /**
-     * Tests if the provided ParamMethodRestriction is allowed for this ParamUsageRestriction.
+     * Tests if the provided ParamUsage is allowed for this ParamUsageRestriction.
      *
-     * @param paramMethodRestriction  the {@link ParamUsage} value to check on
-     * @return True if the provided ParamMethodRestriction is allowed. False if not.
+     * @param paramUsage  the {@link ParamUsage} value to check on
+     * @return True if the provided ParamUsage is allowed. False if not.
      */
-    public boolean allows(final ParamUsage paramMethodRestriction) {
-        return allowedParamMethodRestrictions.contains(paramMethodRestriction);
+    public boolean allows(final ParamUsage paramUsage) {
+        return allowedUsages.contains(paramUsage);
     }
 
     /**
@@ -79,9 +79,9 @@ public enum ParamUsageRestriction {
     @Override
     public String toString() {
         return this.name() +
-               "[" + allowedParamMethodRestrictions.stream()
-                                                   .map(ParamUsage::name)
-                                                   .sorted()
-                                                   .collect(Collectors.joining(",")) + "]";
+               "[" + allowedUsages.stream()
+                                  .map(ParamUsage::name)
+                                  .sorted()
+                                  .collect(Collectors.joining(",")) + "]";
     }
 }

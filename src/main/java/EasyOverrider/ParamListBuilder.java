@@ -226,8 +226,8 @@ public class ParamListBuilder<O> {
      * By default, a ParamListBuilder uses <code>ParamUsageRestriction.SAFE_ONLY</code>.<br>
      *
      * @param paramUsageRestriction  the ParamUsageRestriction to use
-     * @see #allowingOnlySafeParamMethodRestrictions()
-     * @see #allowingUnsafeParamMethodRestrictions()
+     * @see #allowingOnlySafeParamUsages()
+     * @see #allowingUnsafeParamUsages()
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided parameter is null.
      */
@@ -238,21 +238,21 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Allow unsafe ParamMethodRestriction values.<br>
+     * Allow unsafe ParamUsage values.<br>
      *
      * This is the same as <code>havingRestriction(ParamUsageRestriction.ALLOW_UNSAFE)</code>.<br>
      *
      * @return The current ParamListBuilder.
      * @see #havingRestriction(ParamUsageRestriction)
-     * @see #allowingOnlySafeParamMethodRestrictions()
+     * @see #allowingOnlySafeParamUsages()
      */
-    public ParamListBuilder<O> allowingUnsafeParamMethodRestrictions() {
+    public ParamListBuilder<O> allowingUnsafeParamUsages() {
         this.paramUsageRestriction = ALLOW_UNSAFE;
         return this;
     }
 
     /**
-     * Only allow safe ParamMethodRestriction values.<br>
+     * Only allow safe ParamUsage values.<br>
      *
      * By default, a ParamListBuilder is in this state.<br>
      *
@@ -260,9 +260,9 @@ public class ParamListBuilder<O> {
      *
      * @return The current ParamListBuilder.
      * @see #havingRestriction(ParamUsageRestriction)
-     * @see #allowingOnlySafeParamMethodRestrictions()
+     * @see #allowingOnlySafeParamUsages()
      */
-    public ParamListBuilder<O> allowingOnlySafeParamMethodRestrictions() {
+    public ParamListBuilder<O> allowingOnlySafeParamUsages() {
         this.paramUsageRestriction = SAFE_ONLY;
         return this;
     }
@@ -270,7 +270,7 @@ public class ParamListBuilder<O> {
     /**
      * Add a new ParamDescriptionSingle to the list with the provided parameters.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -300,7 +300,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -317,20 +317,20 @@ public class ParamListBuilder<O> {
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
-                                             final ParamUsage paramMethodRestriction,
+                                             final ParamUsage paramUsage,
                                              final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withParam");
         requireNonNull(getter, 2, "getter", "withParam");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withParam");
+        requireNonNull(paramUsage, 3, "paramUsage", "withParam");
         requireNonNull(paramClass, 4, "paramClass", "withParam");
-        addSingleParam(paramClass, name, getter, paramMethodRestriction, false);
+        addSingleParam(paramClass, name, getter, paramUsage, false);
         return this;
     }
 
     /**
      * Add a new ParamDescriptionSingle that represents a primary parameter.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamUsage#TOSTRING_ONLY}.<br>
+     * The default ParamUsage is {@link ParamUsage#TOSTRING_ONLY}.<br>
      *
      * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
      * the containing object, even if a recursive toString is detected.
@@ -382,7 +382,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -397,13 +397,13 @@ public class ParamListBuilder<O> {
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
-                                                    final ParamUsage paramMethodRestriction,
+                                                    final ParamUsage paramUsage,
                                                     final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withPrimaryParam");
         requireNonNull(getter, 2, "getter", "withPrimaryParam");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withPrimaryParam");
+        requireNonNull(paramUsage, 3, "paramUsage", "withPrimaryParam");
         requireNonNull(paramClass, 4, "paramClass", "withPrimaryParam");
-        addSingleParam(paramClass, name, getter, paramMethodRestriction, true);
+        addSingleParam(paramClass, name, getter, paramUsage, true);
         return this;
     }
 
@@ -413,21 +413,21 @@ public class ParamListBuilder<O> {
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                    final ParamUsage paramMethodRestriction, final boolean isPrimaryKey) {
-        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
+                                    final ParamUsage paramUsage, final boolean isPrimaryKey) {
+        addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramUsage, isPrimaryKey));
     }
 
     /**
      * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default paramUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -460,7 +460,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the collection - cannot be null
@@ -479,14 +479,14 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                        final ParamUsage paramMethodRestriction,
+                                                                        final ParamUsage paramUsage,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withCollection");
         requireNonNull(getter, 2, "getter", "withCollection");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withCollection");
+        requireNonNull(paramUsage, 3, "paramUsage", "withCollection");
         requireNonNull(paramClass, 4, "paramClass", "withCollection");
         requireNonNull(entryClass, 5, "entryClass", "withCollection");
-        addCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
+        addCollectionParam(paramClass, entryClass, name, getter, paramUsage);
         return this;
     }
 
@@ -497,7 +497,7 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the collection
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
@@ -506,14 +506,14 @@ public class ParamListBuilder<O> {
      */
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                            final String name, final Function<? super O, P> getter,
-                                                                           final ParamUsage paramMethodRestriction) {
-        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
+                                                                           final ParamUsage paramUsage) {
+        addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramUsage));
     }
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -550,7 +550,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the map's keys - cannot be null
@@ -571,16 +571,16 @@ public class ParamListBuilder<O> {
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final ParamUsage paramMethodRestriction,
+                                                             final ParamUsage paramUsage,
                                                              final Class<P> paramClass, final Class<K> keyClass,
                                                              final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withMap");
         requireNonNull(getter, 2, "getter", "withMap");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withMap");
+        requireNonNull(paramUsage, 3, "paramUsage", "withMap");
         requireNonNull(paramClass, 4, "paramClass", "withMap");
         requireNonNull(keyClass, 5, "keyClass", "withMap");
         requireNonNull(entryClass, 6, "entryClass", "withMap");
-        addMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
+        addMapParam(paramClass, keyClass, entryClass, name, getter, paramUsage);
         return this;
     }
 
@@ -592,7 +592,7 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the map
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the map
      * @param <E>  the type of the entries in the map
@@ -603,9 +603,9 @@ public class ParamListBuilder<O> {
     private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
                                                                              final Class<E> entryClass, final String name,
                                                                              final Function<? super O, P> getter,
-                                                                             final ParamUsage paramMethodRestriction) {
+                                                                             final ParamUsage paramUsage) {
         addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
-                                                     name, getter, paramMethodRestriction));
+                                                     name, getter, paramUsage));
     }
 
     /**
@@ -617,7 +617,7 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
     private void addParam(final ParamDescription<? super O, ?> paramDescription) {
-        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction(), paramDescription.getName());
+        enforceParamMethodUsageRestriction(paramDescription.getParamUsage(), paramDescription.getName());
         String name = paramDescription.getName();
         if (paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("A parameter named '" + name + "' already exists while trying to " +
@@ -630,7 +630,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -666,7 +666,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -683,20 +683,20 @@ public class ParamListBuilder<O> {
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
-                                                    final ParamUsage paramMethodRestriction,
+                                                    final ParamUsage paramUsage,
                                                     final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withUpdatedParam");
         requireNonNull(getter, 2, "getter", "withUpdatedParam");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedParam");
+        requireNonNull(paramUsage, 3, "paramUsage", "withUpdatedParam");
         requireNonNull(paramClass, 4, "paramClass", "withUpdatedParam");
-        updateSingleParam(paramClass, name, getter, paramMethodRestriction, false);
+        updateSingleParam(paramClass, name, getter, paramUsage, false);
         return this;
     }
 
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamUsage#TOSTRING_ONLY}.<br>
+     * The default paramUsage is {@link ParamUsage#TOSTRING_ONLY}.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -754,7 +754,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -771,13 +771,13 @@ public class ParamListBuilder<O> {
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
-                                                           final ParamUsage paramMethodRestriction,
+                                                           final ParamUsage paramUsage,
                                                            final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
         requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedPrimaryParam");
+        requireNonNull(paramUsage, 3, "paramUsage", "withUpdatedPrimaryParam");
         requireNonNull(paramClass, 4, "paramClass", "withUpdatedPrimaryParam");
-        updateSingleParam(paramClass, name, getter, paramMethodRestriction, true);
+        updateSingleParam(paramClass, name, getter, paramUsage, true);
         return this;
     }
 
@@ -787,21 +787,21 @@ public class ParamListBuilder<O> {
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                       final ParamUsage paramMethodRestriction, boolean isPrimaryKey) {
-        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
+                                       final ParamUsage paramUsage, boolean isPrimaryKey) {
+        updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramUsage, isPrimaryKey));
     }
 
     /**
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionCollection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -841,7 +841,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the parameter - cannot be null
@@ -861,14 +861,14 @@ public class ParamListBuilder<O> {
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(
                     final String name, final Function<? super O, P> getter,
-                    final ParamUsage paramMethodRestriction,
+                    final ParamUsage paramUsage,
                     final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withUpdatedCollection");
         requireNonNull(getter, 2, "getter", "withUpdatedCollection");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedCollection");
+        requireNonNull(paramUsage, 3, "paramUsage", "withUpdatedCollection");
         requireNonNull(paramClass, 4, "paramClass", "withUpdatedCollection");
         requireNonNull(entryClass, 5, "entryClass", "withUpdatedCollection");
-        updateCollectionParam(paramClass, entryClass, name, getter, paramMethodRestriction);
+        updateCollectionParam(paramClass, entryClass, name, getter, paramUsage);
         return this;
     }
 
@@ -879,7 +879,7 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the parameter
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
@@ -888,15 +888,15 @@ public class ParamListBuilder<O> {
      */
     private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                               final String name, final Function<? super O, P> getter,
-                                                                              final ParamUsage paramMethodRestriction) {
+                                                                              final ParamUsage paramUsage) {
         updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass,
-                                                            name, getter, paramMethodRestriction));
+                                                            name, getter, paramUsage));
     }
 
     /**
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamUsage of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionMap is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -940,7 +940,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the keys in the parameter - cannot be null
@@ -962,16 +962,16 @@ public class ParamListBuilder<O> {
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(
                     final String name, final Function<? super O, P> getter,
-                    final ParamUsage paramMethodRestriction,
+                    final ParamUsage paramUsage,
                     final Class<P> paramClass, final Class<K> keyClass,
                     final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withUpdatedMap");
         requireNonNull(getter, 2, "getter", "withUpdatedMap");
-        requireNonNull(paramMethodRestriction, 3, "paramMethodRestriction", "withUpdatedMap");
+        requireNonNull(paramUsage, 3, "paramUsage", "withUpdatedMap");
         requireNonNull(paramClass, 4, "paramClass", "withUpdatedMap");
         requireNonNull(keyClass, 5, "keyClass", "withUpdatedMap");
         requireNonNull(entryClass, 6, "entryClass", "withUpdatedMap");
-        updateMapParam(paramClass, keyClass, entryClass, name, getter, paramMethodRestriction);
+        updateMapParam(paramClass, keyClass, entryClass, name, getter, paramUsage);
         return this;
     }
 
@@ -983,7 +983,7 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the parameter
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
+     * @param paramUsage  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the parameter
      * @param <E>  the type of the entries in the parameter
@@ -994,9 +994,9 @@ public class ParamListBuilder<O> {
     private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(
                     final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
                     final String name, final Function<? super O, P> getter,
-                    final ParamUsage paramMethodRestriction) {
+                    final ParamUsage paramUsage) {
         updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
-                                                        name, getter, paramMethodRestriction));
+                                                        name, getter, paramUsage));
     }
 
     /**
@@ -1008,7 +1008,7 @@ public class ParamListBuilder<O> {
      *                                  the provided {@link ParamUsage}.
      */
     private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
-        enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction(), paramDescription.getName());
+        enforceParamMethodUsageRestriction(paramDescription.getParamUsage(), paramDescription.getName());
         String name = paramDescription.getName();
         if (!paramDescriptionMap.containsKey(name)) {
             throw new IllegalArgumentException("No parameter named '" + name + "' exists to be updated while trying to " +
@@ -1018,15 +1018,15 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamUsageRestriction.<br>
+     * Makes sure that the provided ParamUsage is allowed using this builder's ParamUsageRestriction.<br>
      *
-     * @param paramMethodRestriction  the {@link ParamUsage} to check
+     * @param paramUsage  the {@link ParamUsage} to check
      * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
-    private void enforceParamMethodRestrictionRestriction(final ParamUsage paramMethodRestriction, final String name) {
-        if (!paramUsageRestriction.allows(paramMethodRestriction)) {
-            throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
+    private void enforceParamMethodUsageRestriction(final ParamUsage paramUsage, final String name) {
+        if (!paramUsageRestriction.allows(paramUsage)) {
+            throw new IllegalArgumentException("The ParamUsage [" + paramUsage.name() + "] " +
                                                "on the " + name + " parameter " +
                                                "is not allowed while building a ParamList for a " +
                                                parentClass.getCanonicalName() + " " +

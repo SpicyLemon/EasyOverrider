@@ -19,7 +19,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     final Class<P> paramClass;
     final String name;
     final Function<? super O, P> getter;
-    final ParamUsage paramMethodRestriction;
+    final ParamUsage paramUsage;
 
     private static ParamList<ParamDescriptionBase> paramList;
 
@@ -41,8 +41,8 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
                                  .withParam("paramClass", ParamDescriptionBase::getParamClass, Class.class)
                                  .withParam("name", ParamDescriptionBase::getName, String.class)
                                  .withParam("getter", ParamDescriptionBase::getGetter, TOSTRING_ONLY, Function.class)
-                                 .withParam("paramMethodRestriction",
-                                            ParamDescriptionBase::getParamMethodRestriction,
+                                 .withParam("paramUsage",
+                                            ParamDescriptionBase::getParamUsage,
                                             ParamUsage.class)
                                  .andThatsIt();
         }
@@ -56,23 +56,23 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * @param paramClass  the class of the parameter - cannot be null
      * @param name  the name of the parameter - cannot be null
      * @param getter  the getter for the parameter - cannot be null
-     * @param paramMethodRestriction  the {@link ParamUsage} for the parameter - cannot be null
+     * @param paramUsage  the {@link ParamUsage} for the parameter - cannot be null
      * @param paramIndexNumbers  a list of parameter index numbers used for possible validation error messages
      * @throws IllegalArgumentException If any parameter is null.
      */
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                         final Function<? super O, P> getter, final ParamUsage paramMethodRestriction,
+                         final Function<? super O, P> getter, final ParamUsage paramUsage,
                          final List<Integer> paramIndexNumbers) {
         requireNonNull(parentClass, getIndexOrDefault(paramIndexNumbers, 1), "parentClass", "ParamDescriptionBase constructor");
         requireNonNull(paramClass, getIndexOrDefault(paramIndexNumbers, 2), "paramClass", "ParamDescriptionBase constructor");
         requireNonNull(name, getIndexOrDefault(paramIndexNumbers, 3), "name", "ParamDescriptionBase constructor");
         requireNonNull(getter, getIndexOrDefault(paramIndexNumbers, 4), "getter", "ParamDescriptionBase constructor");
-        requireNonNull(paramMethodRestriction, getIndexOrDefault(paramIndexNumbers, 5), "paramMethodRestriction", "ParamDescriptionBase constructor");
+        requireNonNull(paramUsage, getIndexOrDefault(paramIndexNumbers, 5), "paramUsage", "ParamDescriptionBase constructor");
         this.parentClass = parentClass;
         this.paramClass = paramClass;
         this.name = name;
         this.getter = getter;
-        this.paramMethodRestriction = paramMethodRestriction;
+        this.paramUsage = paramUsage;
     }
 
     @Override
@@ -96,7 +96,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     @Override
-    public ParamUsage getParamMethodRestriction() {
-        return paramMethodRestriction;
+    public ParamUsage getParamUsage() {
+        return paramUsage;
     }
 }
