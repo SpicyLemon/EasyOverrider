@@ -1,9 +1,9 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.IGNORED_FOR_ALL;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
@@ -154,18 +154,18 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = HASHCODE_ONLY__UNSAFE;
+        ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
                                         TestObj::getTheString, expected, false);
-        ParamMethodRestriction actual = paramDescriptionSingle1.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionSingle1.getParamMethodRestriction();
         assertEquals(expected, actual);
     }
 
     @Test
     public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                             new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
@@ -177,7 +177,7 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                             new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,
@@ -189,7 +189,7 @@ public class TestParamDescriptionSingle {
 
     @Test
     public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
                             new ParamDescriptionSingle<TestObj, String>(TestObj.class, String.class, "theString", TestObj::getTheString,

@@ -20,7 +20,7 @@ package EasyOverrider;
  * By including a parameter in hashCode but not equals, you run the risk of things not working right when they rely on the hashCode.
  * For example, a hashSet might falsely identify two different entries as the same.
  */
-public enum ParamMethodRestriction {
+public enum ParamUsage {
 
     /**
      * Indicates a parameter that should be included in all of the equals(), hashCode(), and toString() methods.
@@ -66,7 +66,7 @@ public enum ParamMethodRestriction {
     private final boolean inHashCode;
     private final boolean inToString;
 
-    ParamMethodRestriction(final boolean inEquals, final boolean inHashCode, final boolean inToString) {
+    ParamUsage(final boolean inEquals, final boolean inHashCode, final boolean inToString) {
         this.inEquals = inEquals;
         this.inHashCode = inHashCode;
         this.inToString = inToString;

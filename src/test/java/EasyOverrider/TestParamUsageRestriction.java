@@ -1,13 +1,13 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_HASHCODE_ONLY;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.IGNORED_FOR_ALL;
+import static EasyOverrider.ParamUsage.EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.EQUALS_AND_HASHCODE_ONLY;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * Unit tests making sure things in the ParamMethodRestriction enum are working as intended.
  */
-public class TestParamMethodRestriction {
+public class TestParamUsageRestriction {
     @Test
     public void isEqualsIgnore_ignoreForAll_true() {
         assertEquals(true, IGNORED_FOR_ALL.isEqualsIgnore());
@@ -276,7 +276,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_containsEnumName() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -284,7 +284,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_containsEquals() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -292,7 +292,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_containsHashCode() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -300,7 +300,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_containsToString() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -308,7 +308,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_doesNotContainIncluded() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertFalse(name + ".toString() contains \"Included\".", actual.contains("Included"));
@@ -316,7 +316,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForAll_containsIgnored() {
-        ParamMethodRestriction toTest = IGNORED_FOR_ALL;
+        ParamUsage toTest = IGNORED_FOR_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -326,7 +326,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsEnumName() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -334,7 +334,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsEquals() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -342,7 +342,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsHashCode() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -350,7 +350,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsToString() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -358,7 +358,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsIncluded() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -366,7 +366,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInEqualsOnly_containsIgnored() {
-        ParamMethodRestriction toTest = EQUALS_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -376,7 +376,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsEnumName() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -384,7 +384,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsEquals() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -392,7 +392,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsHashCode() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -400,7 +400,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsToString() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -408,7 +408,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsIncluded() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -416,7 +416,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInHashCodeOnly_containsIgnored() {
-        ParamMethodRestriction toTest = HASHCODE_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -426,7 +426,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsEnumName() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -434,7 +434,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsEquals() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -442,7 +442,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsHashCode() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -450,7 +450,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsToString() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -458,7 +458,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsIncluded() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -466,7 +466,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInToStringOnly_containsIgnored() {
-        ParamMethodRestriction toTest = TOSTRING_ONLY;
+        ParamUsage toTest = TOSTRING_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -476,7 +476,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsEnumName() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -484,7 +484,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsEquals() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -492,7 +492,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsHashCode() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -500,7 +500,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsToString() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -508,7 +508,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsIncluded() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -516,7 +516,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForEquals_containsIgnored() {
-        ParamMethodRestriction toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -526,7 +526,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsEnumName() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -534,7 +534,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsEquals() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -542,7 +542,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsHashCode() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -550,7 +550,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsToString() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -558,7 +558,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsIncluded() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -566,7 +566,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForHashCode_containsIgnored() {
-        ParamMethodRestriction toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+        ParamUsage toTest = EQUALS_AND_TOSTRING_ONLY__UNSAFE;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -576,7 +576,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsEnumName() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -584,7 +584,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsEquals() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -592,7 +592,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsHashCode() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -600,7 +600,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsToString() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -608,7 +608,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsIncluded() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -616,7 +616,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_ignoredForToString_containsIgnored() {
-        ParamMethodRestriction toTest = EQUALS_AND_HASHCODE_ONLY;
+        ParamUsage toTest = EQUALS_AND_HASHCODE_ONLY;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Ignored\".", actual.contains("Ignored"));
@@ -626,7 +626,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_containsEnumName() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"" + name + "\".", actual.contains(name));
@@ -634,7 +634,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_containsEquals() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"equals\".", actual.contains("equals"));
@@ -642,7 +642,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_containsHashCode() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"hashCode\".", actual.contains("hashCode"));
@@ -650,7 +650,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_containsToString() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"toString\".", actual.contains("toString"));
@@ -658,7 +658,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_containsIncluded() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertTrue(name + ".toString() does not contain \"Included\".", actual.contains("Included"));
@@ -666,7 +666,7 @@ public class TestParamMethodRestriction {
 
     @Test
     public void toString_includedInAll_doesNotContainIgnored() {
-        ParamMethodRestriction toTest = INCLUDED_IN_ALL;
+        ParamUsage toTest = INCLUDED_IN_ALL;
         String name = toTest.name();
         String actual = toTest.toString();
         assertFalse(name + ".toString() contains \"Ignored\".", actual.contains("Ignored"));
@@ -678,6 +678,6 @@ public class TestParamMethodRestriction {
     public void values_length_equals8() {
         //If this test fails, it means a value was added to or removed from the ParamMethodRestricition enum.
         //That means that appropriate tests need to be added or removed in here as well as updating this test appropriately.
-        assertEquals(8, ParamMethodRestriction.values().length);
+        assertEquals(8, ParamUsage.values().length);
     }
 }

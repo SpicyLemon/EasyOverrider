@@ -1,9 +1,9 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_HASHCODE_ONLY;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.EQUALS_AND_HASHCODE_ONLY;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
@@ -23,12 +23,12 @@ import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionMap {
-    private ParamDescriptionMap<TestObj, String, Integer, ?> getParamMapStringInteger(String name, ParamMethodRestriction pmr) {
+    private ParamDescriptionMap<TestObj, String, Integer, ?> getParamMapStringInteger(String name, ParamUsage pmr) {
         return new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, name,
                                          TestObj::getTheMapStringInt, pmr);
     }
 
-    private ParamDescriptionMap<TestObj, String, TestObj, ?> getParamMapStringTestObj(String name, ParamMethodRestriction pmr) {
+    private ParamDescriptionMap<TestObj, String, TestObj, ?> getParamMapStringTestObj(String name, ParamUsage pmr) {
         return new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, TestObj.class, name,
                                          TestObj::getTheMapStringTestObj, pmr);
     }
@@ -209,16 +209,16 @@ public class TestParamDescriptionMap {
 
     @Test
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = HASHCODE_ONLY__UNSAFE;
+        ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", expected);
-        ParamMethodRestriction actual = paramDescriptionMap.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionMap.getParamMethodRestriction();
         assertEquals(expected, actual);
     }
 
     @Test
     public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             getParamMapStringInteger("theInt", pmr);
@@ -229,7 +229,7 @@ public class TestParamDescriptionMap {
 
     @Test
     public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             getParamMapStringInteger("theInt", pmr);
@@ -240,7 +240,7 @@ public class TestParamDescriptionMap {
 
     @Test
     public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             getParamMapStringInteger("theInt", pmr);

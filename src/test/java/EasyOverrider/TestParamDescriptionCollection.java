@@ -1,9 +1,9 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.IGNORED_FOR_ALL;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
@@ -27,12 +27,12 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class TestParamDescriptionCollection {
 
-    private ParamDescriptionCollection<TestObj, String, ?> getParamCollectionString(String name, ParamMethodRestriction pmr) {
+    private ParamDescriptionCollection<TestObj, String, ?> getParamCollectionString(String name, ParamUsage pmr) {
         return new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, name,
                                                 TestObj::getTheCollectionString, pmr);
     }
 
-    private ParamDescriptionCollection<TestObj, TestObj, ?> getParamListTestObj(String name, ParamMethodRestriction pmr) {
+    private ParamDescriptionCollection<TestObj, TestObj, ?> getParamListTestObj(String name, ParamUsage pmr) {
         return new ParamDescriptionCollection<>(TestObj.class, Collection.class, TestObj.class, name,
                                                 TestObj::getTheCollectionTestObj, pmr);
     }
@@ -196,16 +196,16 @@ public class TestParamDescriptionCollection {
 
     @Test
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = HASHCODE_ONLY__UNSAFE;
+        ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("some name or thing", expected);
-        ParamMethodRestriction actual = paramDescriptionCollection.getParamMethodRestriction();
+        ParamUsage actual = paramDescriptionCollection.getParamMethodRestriction();
         assertEquals(expected, actual);
     }
 
     @Test
     public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                             getParamCollectionString("theCollectionString1", pmr);
@@ -216,7 +216,7 @@ public class TestParamDescriptionCollection {
 
     @Test
     public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                             getParamCollectionString("theCollectionString1", pmr);
@@ -227,7 +227,7 @@ public class TestParamDescriptionCollection {
 
     @Test
     public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
-        for(ParamMethodRestriction pmr : ParamMethodRestriction.values()) {
+        for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                             getParamCollectionString("theCollectionString1", pmr);

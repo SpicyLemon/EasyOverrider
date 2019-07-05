@@ -12,7 +12,7 @@ import java.util.function.Function;
  * <li><code>Class paramClass</code> - This is the raw class of the parameter.
  * <li><code>String name</code> - This is the name of the parameter (usually the variable name).
  * <li><code>Function getter</code> - This is a reference to the getter for the parameter.
- * <li>{@link ParamMethodRestriction}<code> paramMethodRestriction</code> - This is used to describe what method calls this parameter should be included in.
+ * <li>{@link ParamUsage}<code> paramMethodRestriction</code> - This is used to describe what method calls this parameter should be included in.
  * </ul>
  *
  * @param <O>  the type of object in question
@@ -51,14 +51,14 @@ public interface ParamDescription<O, P> {
     /**
      * Gets the ParamMethodRestriction for this parameter.<br>
      *
-     * @return The {@link ParamMethodRestriction} value for this parameter.
+     * @return The {@link ParamUsage} value for this parameter.
      */
-    ParamMethodRestriction getParamMethodRestriction();
+    ParamUsage getParamMethodRestriction();
 
     /**
      * Get whether or not this should be included for the equals() method.<br>
      *
-     * Uses the {@link ParamMethodRestriction#isEqualsInclude()} method.<br>
+     * Uses the {@link ParamUsage#isEqualsInclude()} method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
@@ -69,7 +69,7 @@ public interface ParamDescription<O, P> {
     /**
      * Get whether or not this should be included for the the hashCode() method.<br>
      *
-     * Uses the {@link ParamMethodRestriction#isHashCodeInclude()} method.<br>
+     * Uses the {@link ParamUsage#isHashCodeInclude()} method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */
@@ -80,7 +80,7 @@ public interface ParamDescription<O, P> {
     /**
      * Get whether or not this should be included for the toString() method.<br>
      *
-     * Uses the {@link ParamMethodRestriction#isToStringInclude()} method.<br>
+     * Uses the {@link ParamUsage#isToStringInclude()} method.<br>
      *
      * @return True if it's to be included. False if it's to be ignored.
      */

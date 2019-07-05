@@ -1,6 +1,6 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 
 import java.util.IllegalFormatException;

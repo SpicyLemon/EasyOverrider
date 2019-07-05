@@ -41,11 +41,11 @@ public class ParamDescriptionCollection<O, E, P extends Collection<? extends E>>
      * @param entryClass  the class of the entries in the collection parameter
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value for the parameter
+     * @param paramMethodRestriction  the {@link ParamUsage} value for the parameter
      */
     public ParamDescriptionCollection(final Class<O> parentClass, final Class<P> paramClass,
                                       final Class<E> entryClass, final String name,
-                                      final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction) {
+                                      final Function<? super O, P> getter, final ParamUsage paramMethodRestriction) {
         super(parentClass, paramClass, name, getter, paramMethodRestriction, baseConstructorParamOrder);
         requireNonNull(entryClass, 3, "entryClass", "ParamDescriptionMap constructor");
         this.entryClass = entryClass;

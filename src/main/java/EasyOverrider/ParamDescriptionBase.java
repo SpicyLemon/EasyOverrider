@@ -2,7 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.getIndexOrDefault;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 
 import java.util.List;
 import java.util.function.Function;
@@ -19,7 +19,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     final Class<P> paramClass;
     final String name;
     final Function<? super O, P> getter;
-    final ParamMethodRestriction paramMethodRestriction;
+    final ParamUsage paramMethodRestriction;
 
     private static ParamList<ParamDescriptionBase> paramList;
 
@@ -43,7 +43,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
                                  .withParam("getter", ParamDescriptionBase::getGetter, TOSTRING_ONLY, Function.class)
                                  .withParam("paramMethodRestriction",
                                             ParamDescriptionBase::getParamMethodRestriction,
-                                            ParamMethodRestriction.class)
+                                            ParamUsage.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -56,12 +56,12 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
      * @param paramClass  the class of the parameter - cannot be null
      * @param name  the name of the parameter - cannot be null
      * @param getter  the getter for the parameter - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} for the parameter - cannot be null
+     * @param paramMethodRestriction  the {@link ParamUsage} for the parameter - cannot be null
      * @param paramIndexNumbers  a list of parameter index numbers used for possible validation error messages
      * @throws IllegalArgumentException If any parameter is null.
      */
     ParamDescriptionBase(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                         final Function<? super O, P> getter, final ParamMethodRestriction paramMethodRestriction,
+                         final Function<? super O, P> getter, final ParamUsage paramMethodRestriction,
                          final List<Integer> paramIndexNumbers) {
         requireNonNull(parentClass, getIndexOrDefault(paramIndexNumbers, 1), "parentClass", "ParamDescriptionBase constructor");
         requireNonNull(paramClass, getIndexOrDefault(paramIndexNumbers, 2), "paramClass", "ParamDescriptionBase constructor");
@@ -96,7 +96,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
     }
 
     @Override
-    public ParamMethodRestriction getParamMethodRestriction() {
+    public ParamUsage getParamMethodRestriction() {
         return paramMethodRestriction;
     }
 }

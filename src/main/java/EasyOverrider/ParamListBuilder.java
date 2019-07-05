@@ -1,8 +1,8 @@
 package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
@@ -212,7 +212,7 @@ public class ParamListBuilder<O> {
     /**
      * Add a new ParamDescriptionSingle to the list with the provided parameters.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -221,7 +221,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
      * @see #withPrimaryParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -242,7 +242,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -250,16 +250,16 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withParam(String, Function, Class)
-     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withPrimaryParam(String, Function, ParamUsage, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withParam(final String name, final Function<? super O, P> getter,
-                                             final ParamMethodRestriction paramMethodRestriction,
+                                             final ParamUsage paramMethodRestriction,
                                              final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withParam");
         requireNonNull(getter, 2, "getter", "withParam");
@@ -272,7 +272,7 @@ public class ParamListBuilder<O> {
     /**
      * Add a new ParamDescriptionSingle that represents a primary parameter.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamMethodRestriction#TOSTRING_ONLY}.<br>
+     * The default ParamMethodRestriction is {@link ParamUsage#TOSTRING_ONLY}.<br>
      *
      * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
      * the containing object, even if a recursive toString is detected.
@@ -290,7 +290,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -324,7 +324,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -332,14 +332,14 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @see #withPrimaryParam(String, Function, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withPrimaryParam(final String name, final Function<? super O, P> getter,
-                                                    final ParamMethodRestriction paramMethodRestriction,
+                                                    final ParamUsage paramMethodRestriction,
                                                     final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withPrimaryParam");
         requireNonNull(getter, 2, "getter", "withPrimaryParam");
@@ -355,21 +355,21 @@ public class ParamListBuilder<O> {
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                    final ParamMethodRestriction paramMethodRestriction, final boolean isPrimaryKey) {
+                                    final ParamUsage paramMethodRestriction, final boolean isPrimaryKey) {
         addParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
     }
 
     /**
      * Create a new ParamDescriptionCollection for a collection and add it to be included in the ParamList.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -380,7 +380,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
@@ -402,7 +402,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the collection - cannot be null
@@ -412,16 +412,16 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withCollection(String, Function, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
      * @see #withoutParam(String)
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withCollection(final String name, final Function<? super O, P> getter,
-                                                                        final ParamMethodRestriction paramMethodRestriction,
+                                                                        final ParamUsage paramMethodRestriction,
                                                                         final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withCollection");
         requireNonNull(getter, 2, "getter", "withCollection");
@@ -439,23 +439,23 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the collection
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                            final String name, final Function<? super O, P> getter,
-                                                                           final ParamMethodRestriction paramMethodRestriction) {
+                                                                           final ParamUsage paramMethodRestriction) {
         addParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass, name, getter, paramMethodRestriction));
     }
 
     /**
      * Create a new ParamDescriptionMap and add it to be included in the ParamList.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
@@ -468,7 +468,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
      * @see #withParam(String, Function, Class)
      * @see #withCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
@@ -492,7 +492,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the map's keys - cannot be null
@@ -504,16 +504,16 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
      * @see #withoutParam(String)
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <K, E, P extends Map> ParamListBuilder<O> withMap(final String name, final Function<? super O, P> getter,
-                                                             final ParamMethodRestriction paramMethodRestriction,
+                                                             final ParamUsage paramMethodRestriction,
                                                              final Class<P> paramClass, final Class<K> keyClass,
                                                              final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withMap");
@@ -534,18 +534,18 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the map
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the map
      * @param <E>  the type of the entries in the map
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
                                                                              final Class<E> entryClass, final String name,
                                                                              final Function<? super O, P> getter,
-                                                                             final ParamMethodRestriction paramMethodRestriction) {
+                                                                             final ParamUsage paramMethodRestriction) {
         addParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
                                                      name, getter, paramMethodRestriction));
     }
@@ -555,7 +555,7 @@ public class ParamListBuilder<O> {
      *
      * @param paramDescription  the ParamDescription to add
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
     private void addParam(final ParamDescription<? super O, ?> paramDescription) {
@@ -572,7 +572,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -584,7 +584,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
      * @see #withUpdatedPrimaryParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
@@ -608,7 +608,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -616,16 +616,16 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamUsage, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedParam(final String name, final Function<? super O, P> getter,
-                                                    final ParamMethodRestriction paramMethodRestriction,
+                                                    final ParamUsage paramMethodRestriction,
                                                     final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withUpdatedParam");
         requireNonNull(getter, 2, "getter", "withUpdatedParam");
@@ -638,7 +638,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamMethodRestriction#TOSTRING_ONLY}.<br>
+     * The default ParamMethodRestriction is {@link ParamUsage#TOSTRING_ONLY}.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -659,7 +659,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
@@ -696,7 +696,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param <P>  the type of the parameter being described
@@ -704,16 +704,16 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedPrimaryParam(String, Function, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withoutParam(String)
      */
     public <P> ParamListBuilder<O> withUpdatedPrimaryParam(final String name, final Function<? super O, P> getter,
-                                                           final ParamMethodRestriction paramMethodRestriction,
+                                                           final ParamUsage paramMethodRestriction,
                                                            final Class<P> paramClass) {
         requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
         requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
@@ -729,21 +729,21 @@ public class ParamListBuilder<O> {
      * @param paramClass  the class of the parameter in question
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
-                                       final ParamMethodRestriction paramMethodRestriction, boolean isPrimaryKey) {
+                                       final ParamUsage paramMethodRestriction, boolean isPrimaryKey) {
         updateParam(new ParamDescriptionSingle<O, P>(parentClass, paramClass, name, getter, paramMethodRestriction, isPrimaryKey));
     }
 
     /**
      * Updates the parameter having the provided name to be a collection with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionCollection is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -757,7 +757,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withCollection(String, Function, Class, Class)
@@ -783,7 +783,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param entryClass  the class of the entries in the parameter - cannot be null
@@ -793,17 +793,17 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
      * @see #withoutParam(String)
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     public <E, P extends Collection> ParamListBuilder<O> withUpdatedCollection(
                     final String name, final Function<? super O, P> getter,
-                    final ParamMethodRestriction paramMethodRestriction,
+                    final ParamUsage paramMethodRestriction,
                     final Class<P> paramClass, final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withUpdatedCollection");
         requireNonNull(getter, 2, "getter", "withUpdatedCollection");
@@ -821,16 +821,16 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the parameter
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
                                                                               final String name, final Function<? super O, P> getter,
-                                                                              final ParamMethodRestriction paramMethodRestriction) {
+                                                                              final ParamUsage paramMethodRestriction) {
         updateParam(new ParamDescriptionCollection<O, E, P>(parentClass, paramClass, entryClass,
                                                             name, getter, paramMethodRestriction));
     }
@@ -838,7 +838,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name to be a map with the new values given.<br>
      *
-     * Uses the default ParamMethodRestriction of {@link ParamMethodRestriction#INCLUDED_IN_ALL}.<br>
+     * Uses the default ParamMethodRestriction of {@link ParamUsage#INCLUDED_IN_ALL}.<br>
      *
      * Specifically, a new ParamDescriptionMap is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -854,7 +854,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
@@ -882,7 +882,7 @@ public class ParamListBuilder<O> {
      *
      * @param name  the name of the parameter, e.g. "id" - cannot be null
      * @param getter  the getter for the parameter, e.g. Product::getId - cannot be null
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      *                                - cannot be null
      * @param paramClass  the class of the parameter in question - cannot be null
      * @param keyClass  the class of the keys in the parameter - cannot be null
@@ -894,17 +894,17 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
      * @see #withoutParam(String)
      */
     @SuppressWarnings("unchecked")   //There's a comment at the top about why this is needed.
     private <K, E, P extends Map> ParamListBuilder<O> withUpdatedMap(
                     final String name, final Function<? super O, P> getter,
-                    final ParamMethodRestriction paramMethodRestriction,
+                    final ParamUsage paramMethodRestriction,
                     final Class<P> paramClass, final Class<K> keyClass,
                     final Class<E> entryClass) {
         requireNonNull(name, 1, "name", "withUpdatedMap");
@@ -925,18 +925,18 @@ public class ParamListBuilder<O> {
      * @param entryClass  the class of the entries in the parameter
      * @param name  the name of the parameter, e.g. "id"
      * @param getter  the getter for the parameter, e.g. Product::getId
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} value indicating how this parameter should be used
+     * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter (must be a {@link Map} of some sort)
      * @param <K>  the type of the keys in the parameter
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(
                     final Class<P> paramClass, final Class<K> keyClass, final Class<E> entryClass,
                     final String name, final Function<? super O, P> getter,
-                    final ParamMethodRestriction paramMethodRestriction) {
+                    final ParamUsage paramMethodRestriction) {
         updateParam(new ParamDescriptionMap<O, K, E, P>(parentClass, paramClass, keyClass, entryClass,
                                                         name, getter, paramMethodRestriction));
     }
@@ -947,7 +947,7 @@ public class ParamListBuilder<O> {
      * @param paramDescription  the ParamDescription to use
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
     private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
         enforceParamMethodRestrictionRestriction(paramDescription.getParamMethodRestriction(), paramDescription.getName());
@@ -962,11 +962,11 @@ public class ParamListBuilder<O> {
     /**
      * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.<br>
      *
-     * @param paramMethodRestriction  the {@link ParamMethodRestriction} to check
+     * @param paramMethodRestriction  the {@link ParamUsage} to check
      * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
-     *                                  the provided {@link ParamMethodRestriction}.
+     *                                  the provided {@link ParamUsage}.
      */
-    private void enforceParamMethodRestrictionRestriction(final ParamMethodRestriction paramMethodRestriction, final String name) {
+    private void enforceParamMethodRestrictionRestriction(final ParamUsage paramMethodRestriction, final String name) {
         if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
                                                "on the " + name + " parameter " +
@@ -985,21 +985,21 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided name is null.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @see #withParam(String, Function, Class)
-     * @see #withParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withParam(String, Function, ParamUsage, Class)
      * @see #withPrimaryParam(String, Function, Class)
-     * @see #withPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withCollection(String, Function, Class, Class)
-     * @see #withCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withCollection(String, Function, ParamUsage, Class, Class)
      * @see #withMap(String, Function, Class, Class, Class)
-     * @see #withMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withMap(String, Function, ParamUsage, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, Class)
-     * @see #withUpdatedParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedParam(String, Function, ParamUsage, Class)
      * @see #withUpdatedPrimaryParam(String, Function, Class)
-     * @see #withUpdatedPrimaryParam(String, Function, ParamMethodRestriction, Class)
+     * @see #withUpdatedPrimaryParam(String, Function, ParamUsage, Class)
      * @see #withUpdatedCollection(String, Function, Class, Class)
-     * @see #withUpdatedCollection(String, Function, ParamMethodRestriction, Class, Class)
+     * @see #withUpdatedCollection(String, Function, ParamUsage, Class, Class)
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
-     * @see #withUpdatedMap(String, Function, ParamMethodRestriction, Class, Class, Class)
+     * @see #withUpdatedMap(String, Function, ParamUsage, Class, Class, Class)
      */
     public ParamListBuilder<O> withoutParam(final String name) {
         requireNonNull(name, 1, "name", "withoutParam");

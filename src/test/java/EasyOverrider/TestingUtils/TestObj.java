@@ -1,8 +1,8 @@
 package EasyOverrider.TestingUtils;
 
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 
 import EasyOverrider.ParamList;

@@ -1,13 +1,13 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
-import static EasyOverrider.ParamMethodRestriction.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_HASHCODE_ONLY;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
+import static EasyOverrider.ParamUsage.IGNORED_FOR_ALL;
+import static EasyOverrider.ParamUsage.EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
+import static EasyOverrider.ParamUsage.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamUsage.EQUALS_AND_HASHCODE_ONLY;
+import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class TestParamMethodRestrictionRestriction {
+public class TestParamUsage {
 
     @Test
     public void values_exactlyTwoEntries() {
@@ -129,7 +129,7 @@ public class TestParamMethodRestrictionRestriction {
 
     @Test
     public void getAllowedParamMethodRestrictions_allowUnsafe_sizeEqualsParamMethodRestrictionsValuesLength() {
-        assertEquals(ParamMethodRestriction.values().length, ALLOW_UNSAFE.getAllowedParamMethodRestrictions().size());
+        assertEquals(ParamUsage.values().length, ALLOW_UNSAFE.getAllowedParamMethodRestrictions().size());
     }
 
     @Test
