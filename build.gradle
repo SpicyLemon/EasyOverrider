@@ -1,11 +1,22 @@
+import org.ajoberstar.gradle.git.release.opinion.Strategies
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    // Versioning
+    id 'org.ajoberstar.grgit' version '1.7.2'
+    id 'org.ajoberstar.release-opinion' version '1.7.2'
+    // Publishing
+    id 'com.jfrog.bintray' version '1.8.0'
+    id 'maven-publish'
 }
 
+def description = 'An easier way to override equals, hashCode, and toString in Java objects.'
+
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
+    // Use jcenter for resolving dependencies.
     jcenter()
 }
 
@@ -14,28 +25,167 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-//Enhance the output when running unit tests.
+release {
+    versionStrategy Strategies.FINAL
+    defaultVersionStrategy Strategies.SNAPSHOT
+    tagStrategy {
+        generateMessage = { version -> "Version $project.version" }
+    }
+}
+
+// Enhance the output for unit test failures
 tasks.withType(Test) { 
   testLogging {
-    exceptionFormat "full"
-    events "skipped", "passed", "failed"
+    exceptionFormat 'full'
+    events 'failed'
     showStandardStreams true
   }
 }
 
-//When we ask to run the unit tests, clean up the previous results so that they will actually run.
 test {
+    // Do a cleanTest first so that test always run when asked for
     dependsOn 'cleanTest'
+    
+    // Set some coloring stuff up
+    System.setProperty('org.gradle.color.failure', 'RED')
+    System.setProperty('org.gradle.color.progressstatus', 'YELLOW')
+    System.setProperty('org.gradle.color.success', 'GREEN')
+    def out = services.get(StyledTextOutputFactory).create('colored-test-output')
+    out.style(Style.Normal)
+
+    // Print the Test Suite name before running its tests.
+    beforeSuite { suite ->
+        if (suite.name.startsWith('Test Run') || suite.name.startsWith('Gradle Worker')) return
+        out.println("\n" + suite.name)
+    }
+    // For each test, output using the appropriate color include the test name and the result.
+    afterTest { descriptor, result ->
+        def style
+        if (result.failedTestCount > 0) style = Style.Failure
+        else if (result.skippedTestCount > 0) style = Style.ProgressStatus
+        else style = Style.Success
+        out.text('  ').withStyle(style).println((style == Style.Success ? '    PASSED  '
+                                                : style == Style.ProgressStatus ? '  SKIPPED  '
+                                                : 'FAILED  ') + descriptor.name)
+    }
+    // When all done, output a summary.
+    afterSuite { desc, result ->
+        if (!desc.parent) { // will match the outermost suite
+            out.println("Results: ${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+        }
+    }
 }
 
-//Change the destination directory for javadocs so that gitlab can automatically publish them.
+// Change the destination directory for javadocs so that gitlab can automatically publish them.
+// Also provide links ot the main java stuff which also makes the javadoc use the simple names for them.
 tasks.withType(Javadoc) {
     destinationDir = file("$rootDir/docs/")
     options {
-        links("https://docs.oracle.com/javase/8/docs/api") 
+        links('https://docs.oracle.com/javase/8/docs/api')
     }
 }
 
 compileJava {
-    options.compilerArgs += ['-Xdiags:verbose', "-Xlint:unchecked"]
+    options.compilerArgs += ['-Xdiags:verbose', '-Xlint:unchecked']
+}
+
+// Create a sources jar when we build
+task sourcesJar(type: Jar, dependsOn: classes) {
+    group = JavaBasePlugin.BUILD_TASK_NAME
+    description = 'Builds the sources Jar'
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+// Create a javadoc jar when we build
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    group = JavaBasePlugin.BUILD_TASK_NAME
+    description = 'Builds the javadoc Jar'
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// Add the sources and javadoc jars as artifacts to publish
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+//Define some extra POM stuff to include
+def pomExtras = {
+    licenses {
+        license {
+            name 'MIT License'
+            url 'https://github.com/SpicyLemon/EasyOverrider/blob/master/LICENSE'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id  'SpicyLemon'
+            name 'Daniel Wedul'
+            email 'easyoverrider@wedul.com'
+        }
+    }
+    scm {
+        url 'https://github.com/SpicyLemon/EasyOverrider'
+    }
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            bintrayPublication(MavenPublication) {
+                from components.java
+                artifactId 'easyOverrier'
+                groupId 'spicylemon'
+                artifact sourcesJar {
+                    classifier 'sources'
+                }
+                artifact javadocJar {
+                    classifier 'javadoc'
+                }
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', description)
+                    root.appendNode('name', 'EasyOverrider')
+                    root.appendNode('url', 'https://github.com/SpicyLemon/EasyOverrider')
+                    root.children().last() + pomExtras
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getProperty('bintray.user')
+    key = System.getProperty('bintray.key')
+    publications = ['bintrayPublication']
+    publish = true
+
+    pkg {
+        repo = 'EasyOverrider'
+        name = 'EasyOverrider'
+        desc = description
+        websiteUrl = 'https://github.com/SpicyLemon/EasyOverrider'
+        issueTrackerUrl = 'https://github.com/SpicyLemon/EasyOverrider/issues'
+        vcsUrl = 'https://github.com/SpicyLemon/EasyOverrider'
+        licenses = ['MIT']
+        labels = ['equals', 'hashCode', 'toString', 'override']
+        publicDownloadNumbers = true
+        githubRepo = 'SpicyLemon/EasyOverrider'
+        version {
+            released  = new Date()
+            vcsTag = "v$project.version"
+        }
+    }
+}
+
+String resolveProperty(String envVarKey, String projectPropKey) {
+    String propValue = System.getenv()[envVarKey]
+    propValue ?: findProperty(projectPropKey)
 }
