@@ -2,7 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
 import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
 
@@ -272,7 +272,7 @@ public class ParamListBuilder<O> {
     /**
      * Add a new ParamDescriptionSingle that represents a primary parameter.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}.<br>
+     * The default ParamMethodRestriction is {@link ParamMethodRestriction#TOSTRING_ONLY}.<br>
      *
      * The main purpose of a "Primary Parameter" is that it is still included in the toString output of
      * the containing object, even if a recursive toString is detected.
@@ -302,7 +302,7 @@ public class ParamListBuilder<O> {
         requireNonNull(name, 1, "name", "withPrimaryParam");
         requireNonNull(getter, 2, "getter", "withPrimaryParam");
         requireNonNull(paramClass, 3, "paramClass", "withPrimaryParam");
-        addSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
+        addSingleParam(paramClass, name, getter, TOSTRING_ONLY, true);
         return this;
     }
 
@@ -638,7 +638,7 @@ public class ParamListBuilder<O> {
     /**
      * Updates the parameter having the provided name with the new values given.<br>
      *
-     * The default ParamMethodRestriction is {@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}.<br>
+     * The default ParamMethodRestriction is {@link ParamMethodRestriction#TOSTRING_ONLY}.<br>
      *
      * Specifically, a new ParamDescriptionSingle is created using the given info.
      * Then the old ParamDescription is replaced with this new one.<br>
@@ -671,7 +671,7 @@ public class ParamListBuilder<O> {
         requireNonNull(name, 1, "name", "withUpdatedPrimaryParam");
         requireNonNull(getter, 2, "getter", "withUpdatedPrimaryParam");
         requireNonNull(paramClass, 3, "paramClass", "withUpdatedPrimaryParam");
-        updateSingleParam(paramClass, name, getter, INCLUDED_IN_TOSTRING_ONLY, true);
+        updateSingleParam(paramClass, name, getter, TOSTRING_ONLY, true);
         return this;
     }
 

@@ -1,6 +1,6 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 
 import java.util.IllegalFormatException;
@@ -38,12 +38,10 @@ public class ParamListServiceConfig {
                                  .withParam("parameterValueFormat", ParamListServiceConfig::getParameterValueFormat, String.class)
                                  .withParam("toStringFormat", ParamListServiceConfig::getToStringFormat, String.class)
                                  .withParam("classNameGetter",
-                                            ParamListServiceConfig::getClassNameGetter,
-                                            INCLUDED_IN_TOSTRING_ONLY,
+                                            ParamListServiceConfig::getClassNameGetter, TOSTRING_ONLY,
                                             Function.class)
                                  .withParam("hashCodeToString",
-                                            ParamListServiceConfig::getHashCodeToString,
-                                            INCLUDED_IN_TOSTRING_ONLY,
+                                            ParamListServiceConfig::getHashCodeToString, TOSTRING_ONLY,
                                             Function.class)
                                  .andThatsIt();
         }

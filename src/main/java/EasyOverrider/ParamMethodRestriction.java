@@ -3,14 +3,14 @@ package EasyOverrider;
 /**
  * Enum to make it easier to dictate which methods a parameter should be included in.
  * <ul>
- * <li>{@link #IGNORED_FOR_ALL}
- * <li>{@link #INCLUDED_IN_TOSTRING_ONLY}
- * <li>{@link #IGNORED_FOR_TOSTRING}
  * <li>{@link #INCLUDED_IN_ALL}
- * <li>{@link #INCLUDED_IN_EQUALS_ONLY__UNSAFE}
- * <li>{@link #INCLUDED_IN_HASHCODE_ONLY__UNSAFE}
- * <li>{@link #IGNORED_FOR_EQUALS__UNSAFE}
- * <li>{@link #IGNORED_FOR_HASHCODE__UNSAFE}
+ * <li>{@link #TOSTRING_ONLY}
+ * <li>{@link #EQUALS_AND_HASHCODE_ONLY}
+ * <li>{@link #IGNORED_FOR_ALL}
+ * <li>{@link #EQUALS_ONLY__UNSAFE}
+ * <li>{@link #HASHCODE_ONLY__UNSAFE}
+ * <li>{@link #HASHCODE_AND_TOSTRING_ONLY__UNSAFE}
+ * <li>{@link #EQUALS_AND_TOSTRING_ONLY__UNSAFE}
  * </ul>
  *
  * Entries that end in <code>__UNSAFE</code> should only be used in extreme circumstances.<br>
@@ -23,53 +23,53 @@ package EasyOverrider;
 public enum ParamMethodRestriction {
 
     /**
-     * Indicates a parameter that should not be included in any of the equals(), hashCode(), or toString() methods.
+     * Indicates a parameter that should be included in all of the equals(), hashCode(), and toString() methods.
      */
-    IGNORED_FOR_ALL(true, true, true),
-
-    /**
-     * Indicates a parameter that should be included in the toString() method, but not in the equals() or hashCode() methods.
-     */
-    INCLUDED_IN_TOSTRING_ONLY(true, true, false),
-
-    /**
-     * Indicates a parameter that should be included in the hashCode() method, but not in the equals() or toString() methods.
-     */
-    INCLUDED_IN_HASHCODE_ONLY__UNSAFE(true, false, true),
+    INCLUDED_IN_ALL(true, true, true),
 
     /**
      * Indicates a parameter that should be included in the equals() method, but not in the hashCode() or toString() methods.
      */
-    INCLUDED_IN_EQUALS_ONLY__UNSAFE(false, true, true),
+    EQUALS_ONLY__UNSAFE(true, false, false),
+
+    /**
+     * Indicates a parameter that should be included in the hashCode() method, but not in the equals() or toString() methods.
+     */
+    HASHCODE_ONLY__UNSAFE(false, true, false),
+
+    /**
+     * Indicates a parameter that should be included in the toString() method, but not in the equals() or hashCode() methods.
+     */
+    TOSTRING_ONLY(false, false, true),
 
     /**
      * Indicates a parameter that should be included in the equals() and hashCode() methods, but not in the toString() method.
      */
-    IGNORED_FOR_TOSTRING(false, false, true),
+    EQUALS_AND_HASHCODE_ONLY(true, true, false),
 
     /**
      * Indicates a parameter that should be included in the equals() and toString() methods, but not in the hashCode() method.
      */
-    IGNORED_FOR_HASHCODE__UNSAFE(false, true, false),
+    EQUALS_AND_TOSTRING_ONLY__UNSAFE(true, false, true),
 
     /**
-     * Indicates a parameter that should be included in the toString() and hashCode() methods, but not in the equals() method.
+     * Indicates a parameter that should be included in the hashCode() and toString() methods, but not in the equals() method.
      */
-    IGNORED_FOR_EQUALS__UNSAFE(true, false, false),
+    HASHCODE_AND_TOSTRING_ONLY__UNSAFE(false, true, true),
 
     /**
-     * Indicates a parameter that should be included in all of the equals(), hashCode(), and toString() methods.
+     * Indicates a parameter that should not be included in any of the equals(), hashCode(), or toString() methods.
      */
-    INCLUDED_IN_ALL(false, false, false);
+    IGNORED_FOR_ALL(false, false, false);
 
-    private final boolean equalsIgnore;
-    private final boolean hashCodeIgnore;
-    private final boolean toStringIgnore;
+    private final boolean inEquals;
+    private final boolean inHashCode;
+    private final boolean inToString;
 
-    ParamMethodRestriction(final boolean equalsIgnore, final boolean hashCodeIgnore, final boolean toStringIgnore) {
-        this.equalsIgnore = equalsIgnore;
-        this.toStringIgnore = toStringIgnore;
-        this.hashCodeIgnore = hashCodeIgnore;
+    ParamMethodRestriction(final boolean inEquals, final boolean inHashCode, final boolean inToString) {
+        this.inEquals = inEquals;
+        this.inHashCode = inHashCode;
+        this.inToString = inToString;
     }
 
     /**
@@ -79,7 +79,7 @@ public enum ParamMethodRestriction {
      * @see #isEqualsInclude()
      */
     public boolean isEqualsIgnore() {
-        return equalsIgnore;
+        return !inEquals;
     }
 
     /**
@@ -89,7 +89,7 @@ public enum ParamMethodRestriction {
      * @see #isEqualsIgnore()
      */
     public boolean isEqualsInclude() {
-        return !equalsIgnore;
+        return inEquals;
     }
 
     /**
@@ -99,7 +99,7 @@ public enum ParamMethodRestriction {
      * @see #isHashCodeInclude()
      */
     public boolean isHashCodeIgnore() {
-        return hashCodeIgnore;
+        return !inHashCode;
     }
 
     /**
@@ -109,7 +109,7 @@ public enum ParamMethodRestriction {
      * @see #isEqualsIgnore()
      */
     public boolean isHashCodeInclude() {
-        return !hashCodeIgnore;
+        return inHashCode;
     }
 
     /**
@@ -119,7 +119,7 @@ public enum ParamMethodRestriction {
      * @see #isToStringInclude()
      */
     public boolean isToStringIgnore() {
-        return toStringIgnore;
+        return !inToString;
     }
 
     /**
@@ -129,7 +129,7 @@ public enum ParamMethodRestriction {
      * @see #isToStringIgnore()
      */
     public boolean isToStringInclude() {
-        return !toStringIgnore;
+        return inToString;
     }
 
     /**
@@ -140,9 +140,9 @@ public enum ParamMethodRestriction {
     @Override
     public String toString() {
         return this.name() + "[" +
-               "equals():" + flagToString(equalsIgnore) + ", " +
-               "hashCode():" + flagToString(hashCodeIgnore) + ", " +
-               "toString():" + flagToString(toStringIgnore) +
+               "equals():" + flagToString(inEquals) + ", " +
+               "hashCode():" + flagToString(inHashCode) + ", " +
+               "toString():" + flagToString(inToString) +
                "]";
     }
 
@@ -153,6 +153,6 @@ public enum ParamMethodRestriction {
      * @return "Ignored" if the flag is true, "Included" if the flag is false.
      */
     private static String flagToString(final boolean flag) {
-        return flag ? "Ignored" : "Included";
+        return flag ? "Included" : "Ignored";
     }
 }

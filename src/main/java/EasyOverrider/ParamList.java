@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  *                          .withPrimaryParam("id", Foo::getId, Integer.class)
  *                          .withParam("bar", Foo::getBar, String.class)
  *                          .withParam("baz", Foo::getBaz, Baz.class)
- *                          .withCollection("moreFoo", Foo::getMoreFoo, INCLUDED_IN_TOSTRING_ONLY, List.class, Foo.class)
+ *                          .withCollection("moreFoo", Foo::getMoreFoo, TOSTRING_ONLY, List.class, Foo.class)
  *                          .andThatsIt();
  * }
  * </pre>

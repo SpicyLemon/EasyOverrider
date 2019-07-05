@@ -1,9 +1,9 @@
 package EasyOverrider;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_TOSTRING;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_HASHCODE_ONLY;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
@@ -209,7 +209,7 @@ public class TestParamDescriptionMap {
 
     @Test
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+        ParamMethodRestriction expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", expected);
         ParamMethodRestriction actual = paramDescriptionMap.getParamMethodRestriction();
@@ -364,7 +364,7 @@ public class TestParamDescriptionMap {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
                         getParamMapStringInteger("theInt1", INCLUDED_IN_ALL);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamMapStringInteger("theInt2", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt2", EQUALS_AND_HASHCODE_ONLY);
         assertFalse("1.equals(2)", paramDescriptionMap1.equals(paramDescriptionMap2));
         assertFalse("2.equals(1)", paramDescriptionMap2.equals(paramDescriptionMap1));
     }
@@ -381,27 +381,27 @@ public class TestParamDescriptionMap {
     @Test
     public void hashCode_sameConstructorParameters_same() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamMapStringInteger("theInt", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt", EQUALS_AND_HASHCODE_ONLY);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamMapStringInteger("theInt", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt", EQUALS_AND_HASHCODE_ONLY);
         assertEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptNames_different() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamMapStringInteger("theInt1", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt1", EQUALS_AND_HASHCODE_ONLY);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamMapStringInteger("theInt2", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt2", EQUALS_AND_HASHCODE_ONLY);
         assertNotEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 
     @Test
     public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
-                        getParamMapStringInteger("theInt", IGNORED_FOR_TOSTRING);
+                        getParamMapStringInteger("theInt", EQUALS_AND_HASHCODE_ONLY);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
-                        getParamMapStringInteger("theInt", INCLUDED_IN_TOSTRING_ONLY);
+                        getParamMapStringInteger("theInt", TOSTRING_ONLY);
         assertNotEquals(paramDescriptionMap1.hashCode(), paramDescriptionMap2.hashCode());
     }
 

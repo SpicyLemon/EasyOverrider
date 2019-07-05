@@ -2,7 +2,7 @@ package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.getIndexOrDefault;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 
 import java.util.List;
 import java.util.function.Function;
@@ -40,7 +40,7 @@ public abstract class ParamDescriptionBase<O, P> implements ParamDescription<O, 
                                  .withParam("parentClass", ParamDescriptionBase::getParentClass, Class.class)
                                  .withParam("paramClass", ParamDescriptionBase::getParamClass, Class.class)
                                  .withParam("name", ParamDescriptionBase::getName, String.class)
-                                 .withParam("getter", ParamDescriptionBase::getGetter, INCLUDED_IN_TOSTRING_ONLY, Function.class)
+                                 .withParam("getter", ParamDescriptionBase::getGetter, TOSTRING_ONLY, Function.class)
                                  .withParam("paramMethodRestriction",
                                             ParamDescriptionBase::getParamMethodRestriction,
                                             ParamMethodRestriction.class)

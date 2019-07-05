@@ -1,8 +1,8 @@
 package EasyOverrider.TestingUtils;
 
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 
 import EasyOverrider.ParamList;
@@ -35,15 +35,15 @@ public class TestObj implements RecursionPreventingToString {
         return ParamList.forClass(TestObj.class)
                         .usingService(new ParamListServiceImpl(config))
                         .allowingUnsafeParamMethodRestrictions()
-                        .withParam("theBoolean", TestObj::isTheBoolean, IGNORED_FOR_EQUALS__UNSAFE, Boolean.class)
-                        .withPrimaryParam("theInt", TestObj::getTheInt, IGNORED_FOR_HASHCODE__UNSAFE, Integer.class)
+                        .withParam("theBoolean", TestObj::isTheBoolean, HASHCODE_AND_TOSTRING_ONLY__UNSAFE, Boolean.class)
+                        .withPrimaryParam("theInt", TestObj::getTheInt, EQUALS_AND_TOSTRING_ONLY__UNSAFE, Integer.class)
                         .withParam("theString", TestObj::getTheString, String.class)
                         .withParam("theOtherString", TestObj::getTheOtherString, String.class)
                         .withCollection("theCollectionString", TestObj::getTheCollectionString, Collection.class, String.class)
                         .withMap("theMapStringInt", TestObj::getTheMapStringInt, Map.class, String.class, Integer.class)
-                        .withParam("theTestObj", TestObj::getTheTestObj, INCLUDED_IN_TOSTRING_ONLY, TestObj.class)
-                        .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, INCLUDED_IN_TOSTRING_ONLY, List.class, TestObj.class)
-                        .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, INCLUDED_IN_TOSTRING_ONLY, Map.class, String.class, TestObj.class)
+                        .withParam("theTestObj", TestObj::getTheTestObj, TOSTRING_ONLY, TestObj.class)
+                        .withCollection("theCollectionTestObj", TestObj::getTheCollectionTestObj, TOSTRING_ONLY, List.class, TestObj.class)
+                        .withMap("theMapStringTestObj", TestObj::getTheMapStringTestObj, TOSTRING_ONLY, Map.class, String.class, TestObj.class)
                         .andThatsIt();
     }
 

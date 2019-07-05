@@ -2,8 +2,8 @@ package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
 import static EasyOverrider.TestingUtils.Helpers.getConfig;
 import static EasyOverrider.TestingUtils.Helpers.objectToString;
 import static org.junit.Assert.assertEquals;
@@ -196,7 +196,7 @@ public class TestParamDescriptionCollection {
 
     @Test
     public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
-        ParamMethodRestriction expected = INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
+        ParamMethodRestriction expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("some name or thing", expected);
         ParamMethodRestriction actual = paramDescriptionCollection.getParamMethodRestriction();
@@ -398,7 +398,7 @@ public class TestParamDescriptionCollection {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
-                        getParamCollectionString("theCollectionString2", INCLUDED_IN_EQUALS_ONLY__UNSAFE);
+                        getParamCollectionString("theCollectionString2", EQUALS_ONLY__UNSAFE);
         assertNotEquals(paramDescriptionCollection1.hashCode(), paramDescriptionCollection2.hashCode());
     }
 

@@ -1,13 +1,13 @@
 package EasyOverrider;
 
 import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_ALL;
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_EQUALS__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_HASHCODE__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.IGNORED_FOR_TOSTRING;
+import static EasyOverrider.ParamMethodRestriction.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_AND_HASHCODE_ONLY;
 import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_EQUALS_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_HASHCODE_ONLY__UNSAFE;
-import static EasyOverrider.ParamMethodRestriction.INCLUDED_IN_TOSTRING_ONLY;
+import static EasyOverrider.ParamMethodRestriction.EQUALS_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.HASHCODE_ONLY__UNSAFE;
+import static EasyOverrider.ParamMethodRestriction.TOSTRING_ONLY;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -27,13 +27,13 @@ public enum ParamMethodRestrictionRestriction {
      * This is the default. It only allows safe, {@link ParamMethodRestriction} values:
      * <ul>
      * <li>{@link ParamMethodRestriction#IGNORED_FOR_ALL}</li>
-     * <li>{@link ParamMethodRestriction#INCLUDED_IN_TOSTRING_ONLY}</li>
-     * <li>{@link ParamMethodRestriction#IGNORED_FOR_TOSTRING}</li>
+     * <li>{@link ParamMethodRestriction#TOSTRING_ONLY}</li>
+     * <li>{@link ParamMethodRestriction#EQUALS_AND_HASHCODE_ONLY}</li>
      * <li>{@link ParamMethodRestriction#INCLUDED_IN_ALL}</li>
      * </ul>
      * If, for some weird reason, you think you need the other values too, use {@link #ALLOW_UNSAFE}.
      */
-    SAFE_ONLY(EnumSet.of(IGNORED_FOR_ALL, INCLUDED_IN_TOSTRING_ONLY, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL)),
+    SAFE_ONLY(EnumSet.of(IGNORED_FOR_ALL, TOSTRING_ONLY, EQUALS_AND_HASHCODE_ONLY, INCLUDED_IN_ALL)),
 
     /**
      * This allows all the {@link ParamMethodRestriction} values to be available including the <code>__UNSAFE</code> ones.<br>
@@ -43,9 +43,8 @@ public enum ParamMethodRestrictionRestriction {
      *
      * What you probably want is {@link #SAFE_ONLY}.
      */
-    ALLOW_UNSAFE(EnumSet.of(IGNORED_FOR_ALL, INCLUDED_IN_TOSTRING_ONLY, IGNORED_FOR_TOSTRING, INCLUDED_IN_ALL,
-                            INCLUDED_IN_EQUALS_ONLY__UNSAFE, INCLUDED_IN_HASHCODE_ONLY__UNSAFE,
-                            IGNORED_FOR_EQUALS__UNSAFE, IGNORED_FOR_HASHCODE__UNSAFE));
+    ALLOW_UNSAFE(EnumSet.of(IGNORED_FOR_ALL, TOSTRING_ONLY, EQUALS_AND_HASHCODE_ONLY, INCLUDED_IN_ALL, EQUALS_ONLY__UNSAFE, HASHCODE_ONLY__UNSAFE,
+                            HASHCODE_AND_TOSTRING_ONLY__UNSAFE, EQUALS_AND_TOSTRING_ONLY__UNSAFE));
 
     private Set<ParamMethodRestriction> allowedParamMethodRestrictions;
 
