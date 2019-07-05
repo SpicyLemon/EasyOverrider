@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+/**
+ * A static class containing various generic methods used by EasyOverrider.<br>
+ */
 public class EasyOverriderUtils {
 
     //private empty constructor to prevent instantiation.
