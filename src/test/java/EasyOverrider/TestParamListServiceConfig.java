@@ -55,7 +55,7 @@ public class TestParamListServiceConfig {
     }
 
     @Test
-    public void constructor_nullArgs_keepDefualtValue() {
+    public void constructor_nullArgs_keepDefaultValues() {
         ParamListServiceConfig config = new ParamListServiceConfig(null, null, null, null, null, null, null, null, null);
         assertEquals("null", config.getStringForNull());
         assertEquals("...", config.getStringForRecursionPrevented());
@@ -102,6 +102,40 @@ public class TestParamListServiceConfig {
             assertNotNull("Cause should have something.", e.getCause());
             assertTrue("Cause should be an IllegalFormatException", e.getCause() instanceof IllegalFormatException);
         }
+    }
+
+    @Test
+    public void constructor_copy_argsCopied() {
+        ParamListServiceConfig config = new ParamListServiceConfig()
+                        .setStringForNull("String for null")
+                        .setStringForRecursionPrevented("String for recursion Prevented");
+        ParamListServiceConfig copy = new ParamListServiceConfig(config);
+        assertEquals("String for null", config.getStringForNull());
+        assertEquals("String for recursion Prevented", config.getStringForRecursionPrevented());
+        assertEquals(" ", config.getStringForEmptyParamList());
+        assertEquals(", ", config.getParameterDelimiter());
+        assertEquals("%1$s=%2$s", config.getNameValueFormat());
+        assertEquals("'%1$s'", config.getParameterValueFormat());
+        assertEquals("%1$s@%2$s [%3$s]", config.getToStringFormat());
+        assertEquals("String", config.getClassNameGetter().apply(String.class));
+        assertEquals("b", config.getHashCodeToString().apply(11));
+    }
+
+    @Test
+    public void copyOf_aFewSet_argsCopied() {
+        ParamListServiceConfig config = new ParamListServiceConfig()
+                        .setStringForNull("String for null 2")
+                        .setStringForRecursionPrevented("String for recursion Prevented 2");
+        ParamListServiceConfig copy = config.copyOf();
+        assertEquals("String for null 2", config.getStringForNull());
+        assertEquals("String for recursion Prevented 2", config.getStringForRecursionPrevented());
+        assertEquals(" ", config.getStringForEmptyParamList());
+        assertEquals(", ", config.getParameterDelimiter());
+        assertEquals("%1$s=%2$s", config.getNameValueFormat());
+        assertEquals("'%1$s'", config.getParameterValueFormat());
+        assertEquals("%1$s@%2$s [%3$s]", config.getToStringFormat());
+        assertEquals("String", config.getClassNameGetter().apply(String.class));
+        assertEquals("b", config.getHashCodeToString().apply(11));
     }
 
     @Test
