@@ -2,7 +2,6 @@ package EasyOverrider;
 
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +47,25 @@ public class ParamListServiceImpl implements ParamListService {
     public ParamListServiceImpl(ParamListServiceConfig config) {
         requireNonNull(config, 1, "config", "ParamListServiceImpl constructor");
         this.config = config;
+    }
+
+    /**
+     * Copy Constructor.<br>
+     *
+     * @param original The service to copy.
+     */
+    public ParamListServiceImpl(ParamListService original) {
+        this.setConfig(original.getConfig().copyOf());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public ParamListService copyOf() {
+        return new ParamListServiceImpl(this);
     }
 
     /**

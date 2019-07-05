@@ -93,6 +93,34 @@ public class ParamListServiceConfig {
     }
 
     /**
+     * A Copy constructor.<br>
+     *
+     * @param original  the ParamListServiceConfig to copy
+     * @see #copyOf()
+     */
+    public ParamListServiceConfig(ParamListServiceConfig original) {
+        this.setStringForNull(original.getStringForNull());
+        this.setStringForRecursionPrevented(original.getStringForRecursionPrevented());
+        this.setStringForEmptyParamList(original.getStringForEmptyParamList());
+        this.setParameterDelimiter(original.getParameterDelimiter());
+        this.setNameValueFormat(original.getNameValueFormat());
+        this.setParameterValueFormat(original.getParameterValueFormat());
+        this.setToStringFormat(original.getToStringFormat());
+        this.setClassNameGetter(original.getClassNameGetter());
+        this.setHashCodeToString(original.getHashCodeToString());
+    }
+
+    /**
+     * A copy method.<br>
+     *
+     * @return a copy of this ParamListServiceConfig.
+     * @see #ParamListServiceConfig(ParamListServiceConfig)
+     */
+    public ParamListServiceConfig copyOf() {
+        return new ParamListServiceConfig(this);
+    }
+
+    /**
      * Getter for the String that is used in a toString when a value is null.<br>
      *
      * Default value is <code>"null"</code>.<br>

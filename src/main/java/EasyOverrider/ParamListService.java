@@ -10,6 +10,13 @@ import java.util.Set;
 public interface ParamListService {
 
     /**
+     * Creates a copy of this ParamListService.<br>
+     *
+     * @return A copy of this ParamListService.
+     */
+    ParamListService copyOf();
+
+    /**
      * Gets the config for the service.<br>
      *
      * @return The configuration being used by this service.
