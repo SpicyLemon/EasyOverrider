@@ -56,7 +56,10 @@ public class ParamListBuilder<O> {
     private ParamUsageRestriction paramUsageRestriction;
     private final List<String> paramOrder;
     private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
+    private boolean usingServiceCalled = false;
     private ParamListService paramListService;
+    private boolean configuredByCalled = false;
+    private ParamListServiceConfig paramListServiceConfig;
 
     private static ParamList<ParamListBuilder> paramList;
 
@@ -82,7 +85,12 @@ public class ParamListBuilder<O> {
                                  .withCollection("paramOrder", (plb) -> plb.paramOrder, List.class, String.class)
                                  .withMap("paramDescriptionMap", (plb) -> plb.paramDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
+                                 .withParam("usingServiceCalled", (plb) -> plb.usingServiceCalled, Boolean.class)
                                  .withParam("paramListService", (plb) -> plb.paramListService, ParamListService.class)
+                                 .withParam("configuredByCalled", (plb) -> plb.configuredByCalled, Boolean.class)
+                                 .withParam("paramListServiceConfig",
+                                            (plb) -> plb.paramListServiceConfig,
+                                            ParamListServiceConfig.class)
                                  .andThatsIt();
         }
         return paramList;
@@ -100,6 +108,9 @@ public class ParamListBuilder<O> {
     private ParamListBuilder(final ParamListService paramListService,
                              final Class<O> parentClass, final ParamList<? super O> superParamList) {
         this.paramListService = paramListService;
+        this.paramListServiceConfig = Optional.ofNullable(paramListService)
+                                              .map(ParamListService::getConfig)
+                                              .orElse(null);
         this.parentClass = parentClass;
         this.paramOrder = Optional.ofNullable(superParamList)
                                   .map(ParamList::getParamOrder)
@@ -143,22 +154,69 @@ public class ParamListBuilder<O> {
      * @throws IllegalArgumentException if the provided class is null.
      */
     public static <C> ParamListBuilder<C> forClass(final Class<C> parentClass) {
-        requireNonNull(parentClass, 1, "parentClass", "ParamListBuilder Constructor");
+        requireNonNull(parentClass, 1, "parentClass", "forClass");
         return new ParamListBuilder<>(null, parentClass, null);
     }
 
     /**
      * Set the ParamListService to use.<br>
      *
-     * If there are already <code>ParamDescription</code> entries in this builder, they are all updated to use this new service.<br>
+     * This method can only be called once for any ParamListBuilder.
+     * Calling it a second time will result in an {@link IllegalStateException} being thrown.<br>
      *
-     * @param paramListService  the ParamListService to use for the parameters and param list.
+     * If this method is not called, the default {@link ParamListServiceImpl} is used.<br>
+     *
+     * @param paramListService  the ParamListService to use for the parameters and param list
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided parameter is null.
+     * @throws IllegalStateException if called multiple times for a builder.
      */
     public ParamListBuilder<O> usingService(final ParamListService paramListService) {
         requireNonNull(paramListService, 1, "paramListService", "usingService");
+        if (usingServiceCalled) {
+            throw new IllegalStateException("Method usingService called multiple times " +
+                                            "while building the ParamList for " + parentClass.getCanonicalName());
+        }
         this.paramListService = paramListService;
+        if (!configuredByCalled) {
+            this.paramListServiceConfig = paramListService.getConfig();
+        }
+        usingServiceCalled = true;
+        return this;
+    }
+
+    /**
+     * Set the ParamListServiceConfig to use.<br>
+     *
+     * This method can only be called once for any ParamListBuilder.
+     * Calling it a second time will result in an {@link IllegalStateException} being thrown.<br>
+     *
+     * The config provided to this method takes precedence over any config
+     * already contained in a service provided to {@link #usingService(ParamListService)}.
+     * This is true regardless of the order in which <code>configuredBy</code> and <code>usingService</code> are called.<br>
+     *
+     * If <code>usingService</code> is not called, the default service will
+     * be used in conjunction with the config provided to this method.<br>
+     *
+     * If not called, behavior is as follows:<br>
+     * If {@link #usingService(ParamListService)} has been called, the config contained in that service is used.<br>
+     * If not, then If this builder was created using {@link ParamList#extendedBy(Class)},
+     * then the config used for the service in the original ParamList is maintained and provided to the new one.<br>
+     * Otherwise, the default config is used.<br>
+     *
+     * @param paramListServiceConfig  the ParamListServiceConfig to use
+     * @return The current ParamListBuilder.
+     * @throws IllegalArgumentException if the provided parameter is null.
+     * @throws IllegalStateException if called multiple times for a builder.
+     */
+    public ParamListBuilder<O> configuredBy(final ParamListServiceConfig paramListServiceConfig) {
+        requireNonNull(paramListServiceConfig, 1, "paramListServiceConfig", "configuredBy");
+        if (configuredByCalled) {
+            throw new IllegalStateException("Method configuredBy called multiple times " +
+                                            "while building the ParamList for " + parentClass.getCanonicalName());
+        }
+        this.paramListServiceConfig = paramListServiceConfig;
+        configuredByCalled = true;
         return this;
     }
 
@@ -1018,8 +1076,13 @@ public class ParamListBuilder<O> {
      * @return a ParamList object.
      */
     public ParamList<O> andThatsIt() {
-        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder,
-                                Optional.ofNullable(paramListService).orElseGet(ParamListServiceImpl::new));
+        if (paramListService == null) {
+            paramListService = new ParamListServiceImpl();
+        }
+        if (paramListServiceConfig != null) {
+            paramListService.setConfig(paramListServiceConfig);
+        }
+        return new ParamList<O>(parentClass, paramDescriptionMap, paramOrder, paramListService);
     }
 
     /**
