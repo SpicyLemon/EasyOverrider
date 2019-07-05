@@ -7,7 +7,6 @@ import static EasyOverrider.TestingUtils.Helpers.getConfig;
 
 import EasyOverrider.ParamList;
 import EasyOverrider.ParamListServiceConfig;
-import EasyOverrider.ParamListServiceImpl;
 import EasyOverrider.RecursionPreventingToString;
 import org.junit.Ignore;
 
@@ -31,9 +30,9 @@ public class TestObj implements RecursionPreventingToString {
 
     private final ParamList<TestObj> paramList;
 
-    private ParamList<TestObj> createParamList(ParamListServiceConfig config) {
+    private static ParamList<TestObj> createParamList(ParamListServiceConfig config) {
         return ParamList.forClass(TestObj.class)
-                        .usingService(new ParamListServiceImpl(config))
+                        .configuredBy(config)
                         .allowingUnsafeParamUsages()
                         .withParam("theBoolean", TestObj::isTheBoolean, HASHCODE_AND_TOSTRING_ONLY__UNSAFE, Boolean.class)
                         .withPrimaryParam("theInt", TestObj::getTheInt, EQUALS_AND_TOSTRING_ONLY__UNSAFE, Integer.class)
