@@ -8,8 +8,8 @@ import static EasyOverrider.ParamUsage.HASHCODE_AND_TOSTRING_ONLY__UNSAFE;
 import static EasyOverrider.ParamUsage.EQUALS_AND_TOSTRING_ONLY__UNSAFE;
 import static EasyOverrider.ParamUsage.EQUALS_AND_HASHCODE_ONLY;
 import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
-import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
-import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
+import static EasyOverrider.ParamUsageRestriction.SAFE_ONLY;
+import static EasyOverrider.ParamUsageRestriction.ALLOW_UNSAFE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,7 @@ public class TestParamUsageRestriction {
 
     @Test
     public void values_exactlyTwoEntries() {
-        assertEquals(2, ParamMethodRestrictionRestriction.values().length);
+        assertEquals(2, ParamUsageRestriction.values().length);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TestParamUsageRestriction {
     public void getAllowedParamMethodRestrictions_safeOnly_noEntriesEndInUnsafe() {
         SAFE_ONLY.getAllowedParamMethodRestrictions().forEach(pmr -> {
             if (pmr.name().endsWith("UNSAFE")) {
-                fail(pmr.name() + " is in the SAFE_ONLY ParamMethodRestrictionRestriction allowedParamMethodRestrictions list.");
+                fail(pmr.name() + " is in the SAFE_ONLY ParamUsageRestriction allowedParamMethodRestrictions list.");
             }
         });
     }

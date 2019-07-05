@@ -3,8 +3,8 @@ package EasyOverrider;
 import static EasyOverrider.EasyOverriderUtils.requireNonNull;
 import static EasyOverrider.ParamUsage.INCLUDED_IN_ALL;
 import static EasyOverrider.ParamUsage.TOSTRING_ONLY;
-import static EasyOverrider.ParamMethodRestrictionRestriction.ALLOW_UNSAFE;
-import static EasyOverrider.ParamMethodRestrictionRestriction.SAFE_ONLY;
+import static EasyOverrider.ParamUsageRestriction.ALLOW_UNSAFE;
+import static EasyOverrider.ParamUsageRestriction.SAFE_ONLY;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class ParamListBuilder<O> {
     // Java forgets all that crap when running anyway.
 
     private final Class<O> parentClass;
-    private ParamMethodRestrictionRestriction paramMethodRestrictionRestriction;
+    private ParamUsageRestriction paramUsageRestriction;
     private final List<String> paramOrder;
     private final Map<String, ParamDescription<? super O, ?>> paramDescriptionMap;
     private ParamListService paramListService;
@@ -76,9 +76,9 @@ public class ParamListBuilder<O> {
             // is that it uses itself. The class code needs to be loaded before it can be used.
             paramList = ParamList.forClass(ParamListBuilder.class)
                                  .withParam("parentClass", (plb) -> plb.parentClass, Class.class)
-                                 .withParam("paramMethodRestrictionRestriction",
-                                            (plb) -> plb.paramMethodRestrictionRestriction,
-                                            ParamMethodRestrictionRestriction.class)
+                                 .withParam("paramUsageRestriction",
+                                            (plb) -> plb.paramUsageRestriction,
+                                            ParamUsageRestriction.class)
                                  .withCollection("paramOrder", (plb) -> plb.paramOrder, List.class, String.class)
                                  .withMap("paramDescriptionMap", (plb) -> plb.paramDescriptionMap,
                                           Map.class, String.class, ParamDescription.class)
@@ -109,7 +109,7 @@ public class ParamListBuilder<O> {
                                            .map(ParamList::getParamDescriptionMap)
                                            .map(HashMap<String, ParamDescription<? super O, ?>>::new)
                                            .orElseGet(HashMap::new);
-        this.paramMethodRestrictionRestriction = SAFE_ONLY;
+        this.paramUsageRestriction = SAFE_ONLY;
     }
 
     /**
@@ -163,33 +163,33 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Set the ParamMethodRestrictionRestriction value for the builder.<br>
+     * Set the ParamUsageRestriction value for the builder.<br>
      *
-     * By default, a ParamListBuilder uses <code>ParamMethodRestrictionRestriction.SAFE_ONLY</code>.<br>
+     * By default, a ParamListBuilder uses <code>ParamUsageRestriction.SAFE_ONLY</code>.<br>
      *
-     * @param paramMethodRestrictionRestriction  the ParamMethodRestrictionRestriction to use
+     * @param paramUsageRestriction  the ParamUsageRestriction to use
      * @see #allowingOnlySafeParamMethodRestrictions()
      * @see #allowingUnsafeParamMethodRestrictions()
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided parameter is null.
      */
-    public ParamListBuilder<O> havingRestriction(final ParamMethodRestrictionRestriction paramMethodRestrictionRestriction) {
-        requireNonNull(paramMethodRestrictionRestriction, 1, "paramMethodRestrictionRestriction", "havingRestriction");
-        this.paramMethodRestrictionRestriction = paramMethodRestrictionRestriction;
+    public ParamListBuilder<O> havingRestriction(final ParamUsageRestriction paramUsageRestriction) {
+        requireNonNull(paramUsageRestriction, 1, "paramUsageRestriction", "havingRestriction");
+        this.paramUsageRestriction = paramUsageRestriction;
         return this;
     }
 
     /**
      * Allow unsafe ParamMethodRestriction values.<br>
      *
-     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.ALLOW_UNSAFE)</code>.<br>
+     * This is the same as <code>havingRestriction(ParamUsageRestriction.ALLOW_UNSAFE)</code>.<br>
      *
      * @return The current ParamListBuilder.
-     * @see #havingRestriction(ParamMethodRestrictionRestriction)
+     * @see #havingRestriction(ParamUsageRestriction)
      * @see #allowingOnlySafeParamMethodRestrictions()
      */
     public ParamListBuilder<O> allowingUnsafeParamMethodRestrictions() {
-        this.paramMethodRestrictionRestriction = ALLOW_UNSAFE;
+        this.paramUsageRestriction = ALLOW_UNSAFE;
         return this;
     }
 
@@ -198,14 +198,14 @@ public class ParamListBuilder<O> {
      *
      * By default, a ParamListBuilder is in this state.<br>
      *
-     * This is the same as <code>havingRestriction(ParamMethodRestrictionRestriction.SAFE_ONLY)</code>.
+     * This is the same as <code>havingRestriction(ParamUsageRestriction.SAFE_ONLY)</code>.
      *
      * @return The current ParamListBuilder.
-     * @see #havingRestriction(ParamMethodRestrictionRestriction)
+     * @see #havingRestriction(ParamUsageRestriction)
      * @see #allowingOnlySafeParamMethodRestrictions()
      */
     public ParamListBuilder<O> allowingOnlySafeParamMethodRestrictions() {
-        this.paramMethodRestrictionRestriction = SAFE_ONLY;
+        this.paramUsageRestriction = SAFE_ONLY;
         return this;
     }
 
@@ -249,7 +249,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withParam(String, Function, Class)
      * @see #withPrimaryParam(String, Function, ParamUsage, Class)
@@ -358,7 +358,7 @@ public class ParamListBuilder<O> {
      * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <P> void addSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
@@ -411,7 +411,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withCollection(String, Function, Class, Class)
      * @see #withParam(String, Function, ParamUsage, Class)
@@ -443,7 +443,7 @@ public class ParamListBuilder<O> {
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <E, P extends Collection<? extends E>> void addCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
@@ -503,7 +503,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withMap(String, Function, Class, Class, Class)
      * @see #withParam(String, Function, ParamUsage, Class)
@@ -539,7 +539,7 @@ public class ParamListBuilder<O> {
      * @param <K>  the type of the keys in the map
      * @param <E>  the type of the entries in the map
      * @throws IllegalArgumentException if a ParamDescription with the same name has already been added to this builder.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <K, E, P extends Map<? extends K, ? extends E>> void addMapParam(final Class<P> paramClass, final Class<K> keyClass,
@@ -554,7 +554,7 @@ public class ParamListBuilder<O> {
      * Adds a ParamDescription to what we've got.<br>
      *
      * @param paramDescription  the ParamDescription to add
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @throws IllegalArgumentException if the name of the provided ParamDescription has already been provided.
      */
@@ -615,7 +615,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedParam(String, Function, Class)
      * @see #withUpdatedPrimaryParam(String, Function, ParamUsage, Class)
@@ -703,7 +703,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedPrimaryParam(String, Function, Class)
      * @see #withUpdatedParam(String, Function, ParamUsage, Class)
@@ -732,7 +732,7 @@ public class ParamListBuilder<O> {
      * @param paramMethodRestriction  the {@link ParamUsage} value indicating how this parameter should be used
      * @param <P>  the type of the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <P> void updateSingleParam(final Class<P> paramClass, final String name, final Function<? super O, P> getter,
@@ -792,7 +792,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedCollection(String, Function, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamUsage, Class)
@@ -825,7 +825,7 @@ public class ParamListBuilder<O> {
      * @param <P>  the type of the parameter (must be a {@link Collection} of some sort)
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <E, P extends Collection<? extends E>> void updateCollectionParam(final Class<P> paramClass, final Class<E> entryClass,
@@ -893,7 +893,7 @@ public class ParamListBuilder<O> {
      * @return The current ParamListBuilder.
      * @throws IllegalArgumentException if the provided name is not already defined.
      * @throws IllegalArgumentException if any parameter is null.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      * @see #withUpdatedMap(String, Function, Class, Class, Class)
      * @see #withUpdatedParam(String, Function, ParamUsage, Class)
@@ -930,7 +930,7 @@ public class ParamListBuilder<O> {
      * @param <K>  the type of the keys in the parameter
      * @param <E>  the type of the entries in the parameter
      * @throws IllegalArgumentException if the provided name is not already defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private <K, E, P extends Map<? extends K, ? extends E>> void updateMapParam(
@@ -946,7 +946,7 @@ public class ParamListBuilder<O> {
      *
      * @param paramDescription  the ParamDescription to use
      * @throws IllegalArgumentException if the name of the provided ParamDescription has not already been defined.
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private void updateParam(final ParamDescription<? super O, ?> paramDescription) {
@@ -960,20 +960,20 @@ public class ParamListBuilder<O> {
     }
 
     /**
-     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamMethodRestrictionRestriction.<br>
+     * Makes sure that the provided ParamMethodRestriction is allowed using this builder's ParamUsageRestriction.<br>
      *
      * @param paramMethodRestriction  the {@link ParamUsage} to check
-     * @throws IllegalArgumentException if the {@link ParamMethodRestrictionRestriction} doesn't allow
+     * @throws IllegalArgumentException if the {@link ParamUsageRestriction} doesn't allow
      *                                  the provided {@link ParamUsage}.
      */
     private void enforceParamMethodRestrictionRestriction(final ParamUsage paramMethodRestriction, final String name) {
-        if (!paramMethodRestrictionRestriction.allows(paramMethodRestriction)) {
+        if (!paramUsageRestriction.allows(paramMethodRestriction)) {
             throw new IllegalArgumentException("The ParamMethodRestriction [" + paramMethodRestriction.name() + "] " +
                                                "on the " + name + " parameter " +
                                                "is not allowed while building a ParamList for a " +
                                                parentClass.getCanonicalName() + " " +
-                                               "with a ParamMethodRestrictionRestriction of " +
-                                               "[" + paramMethodRestrictionRestriction.name() + "].");
+                                               "with a ParamUsageRestriction of " +
+                                               "[" + paramUsageRestriction.name() + "].");
         }
     }
 

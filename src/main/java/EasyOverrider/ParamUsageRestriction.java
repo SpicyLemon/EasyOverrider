@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * The default value is {@link #SAFE_ONLY}, but if, for some reason, you decided that you want
  * the <code>__UNSAFE</code> values, you can use {@link #ALLOW_UNSAFE}.
  */
-public enum ParamMethodRestrictionRestriction {
+public enum ParamUsageRestriction {
 
     /**
      * This is the default. It only allows safe, {@link ParamUsage} values:
@@ -48,12 +48,12 @@ public enum ParamMethodRestrictionRestriction {
 
     private Set<ParamUsage> allowedParamMethodRestrictions;
 
-    ParamMethodRestrictionRestriction(final Set<ParamUsage> allowedParamMethodRestrictions) {
+    ParamUsageRestriction(final Set<ParamUsage> allowedParamMethodRestrictions) {
         this.allowedParamMethodRestrictions = allowedParamMethodRestrictions;
     }
 
     /**
-     * Gets all of the ParamMethodRestriction values that are allowed for this ParamMethodRestrictionRestriction.
+     * Gets all of the ParamMethodRestriction values that are allowed for this ParamUsageRestriction.
      *
      * @return A Set of {@link ParamUsage} values.
      */
@@ -62,7 +62,7 @@ public enum ParamMethodRestrictionRestriction {
     }
 
     /**
-     * Tests if the provided ParamMethodRestriction is allowed for this ParamMethodRestrictionRestriction.
+     * Tests if the provided ParamMethodRestriction is allowed for this ParamUsageRestriction.
      *
      * @param paramMethodRestriction  the {@link ParamUsage} value to check on
      * @return True if the provided ParamMethodRestriction is allowed. False if not.
@@ -72,7 +72,7 @@ public enum ParamMethodRestrictionRestriction {
     }
 
     /**
-     * toString method for a ParamMethodRestrictionRestriction.
+     * toString method for a ParamUsageRestriction.
      *
      * @return A String
      */
