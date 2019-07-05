@@ -108,9 +108,10 @@ class MoreFoo extends Foo {
     private String theString;
     
     private static ParamList<MoreFoo> paramList 
-                         = Foo.getParamList().extendedBy(MoreFoo.class)
-                                             .withParam("theString", MoreFoo::getTheString, String.class)
-                                             .andThatsIt();
+                         = Foo.getParamList()
+                              .extendedBy(MoreFoo.class)
+                              .withParam("theString", MoreFoo::getTheString, String.class)
+                              .andThatsIt();
                                                       
     public String getTheString() { return theString; }
     public String setTheString(String theString) { this.theString = theString; }
@@ -131,7 +132,7 @@ class MoreFoo extends Foo {
     }
 }
 ```
-In the above code, the paramList in MoreFoo will now contain all the info on the params in both Foo and Baz. For example, if you call `moreFoo.toString()`, the resulting String will contain all appropriate entries from the Foo object as well as the `theString` parameter from the MoreFoo object.
+In the above code, the paramList in MoreFoo will now contain all the info on the params in both Foo and MoreFoo. For example, if you call `moreFoo.toString()`, the resulting String will contain all appropriate entries from the Foo object as well as the `theString` parameter from the MoreFoo object.
 
 #### Details of the ParamListBuilder
 The usual way of creating a `ParamListBuilder` is by using the static `ParamList.forClass(Class)` method. This way, you don't have to import the `ParamListBuilder` class into your class.
