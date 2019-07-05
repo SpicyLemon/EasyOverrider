@@ -45,12 +45,12 @@ public class ParamDescriptionMap<O, K, V, P extends Map<? extends K, ? extends V
      * @param valueClass  the class of the values in the map parameter
      * @param name  the name of the parameter
      * @param getter  the getter for the parameter
-     * @param paramMethodRestriction  the {@link ParamUsage} value for the parameter
+     * @param paramUsage  the {@link ParamUsage} value for the parameter
      */
     public ParamDescriptionMap(final Class<O> parentClass, final Class<P> paramClass,
                                final Class<K> keyClass, final Class<V> valueClass, final String name,
-                               final Function<? super O, P> getter, final ParamUsage paramMethodRestriction) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, baseConstructorParamOrder);
+                               final Function<? super O, P> getter, final ParamUsage paramUsage) {
+        super(parentClass, paramClass, name, getter, paramUsage, baseConstructorParamOrder);
         requireNonNull(keyClass, 3, "keyClass", "ParamDescriptionMap constructor");
         requireNonNull(valueClass, 4, "valueClass", "ParamDescriptionMap constructor");
         this.keyClass = keyClass;

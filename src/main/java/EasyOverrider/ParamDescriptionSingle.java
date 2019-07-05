@@ -35,16 +35,16 @@ public class ParamDescriptionSingle<O, P> extends ParamDescriptionBase<O, P> {
      * @param paramClass The class of the parameter.
      * @param name The name of the parameter.
      * @param getter The getter for the parameter.
-     * @param paramMethodRestriction The {@link ParamUsage} value for the parameter.
+     * @param paramUsage The {@link ParamUsage} value for the parameter.
      * @param isPrimary  whether or not this parameter is a primary one
      * @throws IllegalArgumentException If any parameter is null.
      * @see ParamDescriptionCollection
      * @see ParamDescriptionMap
      */
     public ParamDescriptionSingle(final Class<O> parentClass, final Class<P> paramClass, final String name,
-                                  final Function<? super O, P> getter, final ParamUsage paramMethodRestriction,
+                                  final Function<? super O, P> getter, final ParamUsage paramUsage,
                                   final boolean isPrimary) {
-        super(parentClass, paramClass, name, getter, paramMethodRestriction, baseConstructorParamOrder);
+        super(parentClass, paramClass, name, getter, paramUsage, baseConstructorParamOrder);
         this.isPrimary = isPrimary;
     }
 
