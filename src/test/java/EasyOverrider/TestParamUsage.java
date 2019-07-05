@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Unit tests making sure things in the ParamMethodRestriction enum are working as intended.
+ * Unit tests making sure things in the ParamUsage enum are working as intended.
  */
 public class TestParamUsage {
     @Test

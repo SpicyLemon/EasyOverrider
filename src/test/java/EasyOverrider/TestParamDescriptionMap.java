@@ -133,7 +133,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void constructor_nullParamMethodRestriction_boom() {
+    public void constructor_nullParamUsage_boom() {
         try {
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                             new ParamDescriptionMap<>(TestObj.class, Map.class, String.class, Integer.class, "theMapStringInt",
@@ -141,7 +141,7 @@ public class TestParamDescriptionMap {
             fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 7 "));
-            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramUsage"));
             assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
             assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
         }
@@ -208,7 +208,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
+    public void getParamUsage_includedInHashCodeOnly_returnsCorrectValue() {
         ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", expected);
@@ -217,7 +217,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isEqualsInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
@@ -228,7 +228,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isHashCodeInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
@@ -239,7 +239,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isToStringInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
@@ -360,7 +360,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
+    public void equals_sameConstructorParametersExceptParamUsage_false() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
                         getParamMapStringInteger("theInt1", INCLUDED_IN_ALL);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
@@ -397,7 +397,7 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
+    public void hashCode_sameConstructorParametersExceptParamUsage_different() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap1 =
                         getParamMapStringInteger("theInt", EQUALS_AND_HASHCODE_ONLY);
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap2 =
@@ -445,15 +445,15 @@ public class TestParamDescriptionMap {
     }
 
     @Test
-    public void toString_stringParam_containsParamMethodRestriction() {
+    public void toString_stringParam_containsParamUsage() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();
-        assertTrue(actual, actual.contains("paramMethodRestriction"));
+        assertTrue(actual, actual.contains("paramUsage"));
     }
 
     @Test
-    public void toString_stringParam_containsParamMethodRestrictionValue() {
+    public void toString_stringParam_containsParamUsageValue() {
         ParamDescriptionMap<TestObj, String, Integer, ?> paramDescriptionMap =
                         getParamMapStringInteger("theInt", INCLUDED_IN_ALL);
         String actual = paramDescriptionMap.toString();

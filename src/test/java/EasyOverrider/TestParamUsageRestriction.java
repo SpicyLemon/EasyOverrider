@@ -20,6 +20,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Makes sure the ParamUsageRestriction enum works correctly.
+ */
 public class TestParamUsageRestriction {
 
     @Test
@@ -68,15 +71,15 @@ public class TestParamUsageRestriction {
     }
 
     @Test
-    public void getAllowedParamMethodRestrictions_safeOnly_sizeEquals4() {
+    public void getAllowedParamUsages_safeOnly_sizeEquals4() {
         assertEquals(4, SAFE_ONLY.getAllowedUsages().size());
     }
 
     @Test
-    public void getAllowedParamMethodRestrictions_safeOnly_noEntriesEndInUnsafe() {
+    public void getAllowedParamUsages_safeOnly_noEntriesEndInUnsafe() {
         SAFE_ONLY.getAllowedUsages().forEach(pmr -> {
             if (pmr.name().endsWith("UNSAFE")) {
-                fail(pmr.name() + " is in the SAFE_ONLY ParamUsageRestriction allowedParamMethodRestrictions list.");
+                fail(pmr.name() + " is in the SAFE_ONLY ParamUsageRestriction allowedParamUsages list.");
             }
         });
     }
@@ -136,7 +139,7 @@ public class TestParamUsageRestriction {
     }
 
     @Test
-    public void getAllowedParamMethodRestrictions_allowUnsafe_sizeEqualsParamMethodRestrictionsValuesLength() {
+    public void getAllowedParamUsages_allowUnsafe_sizeEqualsParamUsagesValuesLength() {
         assertEquals(ParamUsage.values().length, ALLOW_UNSAFE.getAllowedUsages().size());
     }
 

@@ -93,7 +93,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void constructor_nullParamMethodRestriction_throwsException() {
+    public void constructor_nullParamUsage_throwsException() {
         try {
             ParamDescriptionSingle<TestObj, TestObj>
                             paramDescriptionSingle = new ParamDescriptionSingle<TestObj, TestObj>(
@@ -102,7 +102,7 @@ public class TestParamDescriptionSingle {
             fail("Constructor given null parentClass did not throw exception.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 5 "));
-            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramUsage"));
             assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
             assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
         }
@@ -153,7 +153,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
+    public void getParamUsage_includedInHashCodeOnly_returnsCorrectValue() {
         ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
@@ -164,7 +164,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isEqualsInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
@@ -176,7 +176,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isHashCodeInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
@@ -188,7 +188,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isToStringInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionSingle<TestObj, String> paramDescriptionSingle =
@@ -411,7 +411,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
+    public void equals_sameConstructorParametersExceptParamUsage_false() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
@@ -502,7 +502,7 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
+    public void hashCode_sameConstructorParametersExceptParamUsage_different() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
@@ -608,17 +608,17 @@ public class TestParamDescriptionSingle {
     }
 
     @Test
-    public void toString_stringParam_containsParamMethodRestriction() {
+    public void toString_stringParam_containsParamMethodUsage() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",
                                         TestObj::getTheString, INCLUDED_IN_ALL, false);
         String actual = paramDescriptionSingle1.toString();
-        assertTrue(actual, actual.contains("paramMethodRestriction"));
+        assertTrue(actual, actual.contains("paramUsage"));
     }
 
     @Test
-    public void toString_stringParam_containsParamMethodRestrictionValue() {
+    public void toString_stringParam_containsParamUsageValue() {
         ParamDescriptionSingle<TestObj, String> paramDescriptionSingle1 =
                         new ParamDescriptionSingle<TestObj, String>(
                                         TestObj.class, String.class, "theString",

@@ -121,7 +121,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void constructor_nullParamMethodRestriction_boom() {
+    public void constructor_nullParamUsage_boom() {
         try {
             ParamDescriptionCollection<TestObj, String, ?> pdc =
                             new ParamDescriptionCollection<>(TestObj.class, Collection.class, String.class, "pdc",
@@ -129,7 +129,7 @@ public class TestParamDescriptionCollection {
             fail("No exception was thrown.");
         } catch (IllegalArgumentException e) {
             assertTrue("Exception message does not contain parameter index.", e.getMessage().contains(" 6 "));
-            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramMethodRestriction"));
+            assertTrue("Exception message does not contain parameter name.", e.getMessage().contains("paramUsage"));
             assertTrue("Exception message does not contain method name.", e.getMessage().contains("ParamDescription"));
             assertTrue("Exception message does not contain 'constructor'", e.getMessage().contains("constructor"));
         }
@@ -195,7 +195,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void getParamMethodRestriction_includedInHashCodeOnly_returnsCorrectValue() {
+    public void getParamUsage_includedInHashCodeOnly_returnsCorrectValue() {
         ParamUsage expected = HASHCODE_ONLY__UNSAFE;
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("some name or thing", expected);
@@ -204,7 +204,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void isEqualsInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isEqualsInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isEqualsInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
@@ -215,7 +215,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void isHashCodeInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isHashCodeInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isHashCodeInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
@@ -226,7 +226,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void isToStringInclude_allParamMethodRestrictions_matchesParamMethodRestriction() {
+    public void isToStringInclude_allParamUsages_matchesParamUsage() {
         for(ParamUsage pmr : ParamUsage.values()) {
             boolean expected = pmr.isToStringInclude();
             ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
@@ -357,7 +357,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void equals_sameConstructorParametersExceptParamMethodRestriction_false() {
+    public void equals_sameConstructorParametersExceptParamUsage_false() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
                         getParamCollectionString("theCollectionString", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
@@ -394,7 +394,7 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void hashCode_sameConstructorParametersExceptParamMethodRestriction_different() {
+    public void hashCode_sameConstructorParametersExceptParamUsage_different() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection1 =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection2 =
@@ -482,15 +482,15 @@ public class TestParamDescriptionCollection {
     }
 
     @Test
-    public void toString_collectionStringParam_containsParamMethodRestriction() {
+    public void toString_collectionStringParam_containsParamUsage() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
-        assertTrue(actual, actual.contains("paramMethodRestriction"));
+        assertTrue(actual, actual.contains("paramUsage"));
     }
 
     @Test
-    public void toString_collectionStringParam_containsParamMethodRestrictionValue() {
+    public void toString_collectionStringParam_containsParamUsageValue() {
         ParamDescriptionCollection<TestObj, String, ?> paramDescriptionCollection =
                         getParamCollectionString("theCollectionString1", INCLUDED_IN_ALL);
         String actual = paramDescriptionCollection.toString();
