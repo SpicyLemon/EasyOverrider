@@ -31,6 +31,9 @@ test {
 //Change the destination directory for javadocs so that gitlab can automatically publish them.
 tasks.withType(Javadoc) {
     destinationDir = file("docs/")
+    options {
+        links("https://docs.oracle.com/javase/8/docs/api/index.html") 
+    }
 }
 
 compileJava {
