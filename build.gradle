@@ -115,27 +115,6 @@ artifacts {
     archives javadocJar
 }
 
-//Define some extra POM stuff to include
-def pomExtras = {
-    licenses {
-        license {
-            name 'MIT License'
-            url 'https://github.com/SpicyLemon/EasyOverrider/blob/master/LICENSE'
-            distribution 'repo'
-        }
-    }
-    developers {
-        developer {
-            id  'SpicyLemon'
-            name 'Daniel Wedul'
-            email 'easyoverrider@wedul.com'
-        }
-    }
-    scm {
-        url 'https://github.com/SpicyLemon/EasyOverrider'
-    }
-}
-
 project.afterEvaluate {
     publishing {
         publications {
@@ -148,13 +127,6 @@ project.afterEvaluate {
                 }
                 artifact javadocJar {
                     classifier 'javadoc'
-                }
-                pom.withXml {
-                    def root = asNode()
-                    root.appendNode('description', description)
-                    root.appendNode('name', 'EasyOverrider')
-                    root.appendNode('url', 'https://github.com/SpicyLemon/EasyOverrider')
-                    root.children().last() + pomExtras
                 }
             }
         }
