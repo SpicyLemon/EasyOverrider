@@ -1,19 +1,17 @@
-import org.ajoberstar.gradle.git.release.opinion.Strategies
-import org.gradle.internal.logging.text.StyledTextOutputFactory
-import static org.gradle.internal.logging.text.StyledTextOutput.Style
-
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    // Versioning
-    id 'org.ajoberstar.grgit' version '1.7.2'
-    id 'org.ajoberstar.release-opinion' version '1.7.2'
     // Publishing
     id 'com.jfrog.bintray' version '1.8.0'
     id 'maven-publish'
+    // Versioning
+    id 'org.ajoberstar.reckon' version '0.11.0'
 }
 
-def description = 'An easier way to override equals, hashCode, and toString in Java objects.'
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+description = 'An easier way to override equals, hashCode, and toString in Java objects.'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -25,12 +23,17 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-release {
-    versionStrategy Strategies.FINAL
-    defaultVersionStrategy Strategies.SNAPSHOT
-    tagStrategy {
-        generateMessage = { version -> "Version $project.version" }
+compileJava {
+    options.compilerArgs += ['-Xdiags:verbose', '-Xlint:unchecked']
+}
+
+reckon {
+    scopeFromProp()
+    if (!project.hasProperty("reckon.scope")) {
+        project.ext.set('reckon.scope', 'patch')
     }
+    snapshotFromProp()
+    //sample usage: ./gradlew build -Preckon.scope=minor -Preckon.stage=final
 }
 
 // Enhance the output for unit test failures
@@ -89,32 +92,29 @@ tasks.withType(Javadoc) {
     }
 }
 
-compileJava {
-    options.compilerArgs += ['-Xdiags:verbose', '-Xlint:unchecked']
-}
-
 // Create a sources jar when we build
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar) {
     group = JavaBasePlugin.BUILD_TASK_NAME
-    description = 'Builds the sources Jar'
-    classifier = 'sources'
-    from sourceSets.main.allJava
+    description = 'Assembles a jar archive containing the source.'
+    dependsOn 'classes'
+    archiveClassifier = 'source'
+    doLast {
+        from sourceSets.main.allJava
+    }
 }
 
 // Create a javadoc jar when we build
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar) {
     group = JavaBasePlugin.BUILD_TASK_NAME
-    description = 'Builds the javadoc Jar'
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+    description = 'Assembles a jar archive containing the javadoc.'
+    dependsOn 'javadoc'
+    archiveClassifier = 'javadoc'
+    doLast {
+        from javadoc.destinationDir
+    }
 }
 
 // Add the sources and javadoc jars as artifacts to publish
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
 project.afterEvaluate {
     publishing {
         publications {
@@ -122,20 +122,16 @@ project.afterEvaluate {
                 from components.java
                 artifactId 'easyOverrier'
                 groupId 'spicylemon'
-                artifact sourcesJar {
-                    classifier 'sources'
-                }
-                artifact javadocJar {
-                    classifier 'javadoc'
-                }
+                artifact sourcesJar
+                artifact javadocJar
             }
         }
     }
 }
 
 bintray {
-    user = System.getProperty('bintray.user')
-    key = System.getProperty('bintray.key')
+    user = resolveProperty('BINTRAY_USER', 'bintrayUser')
+    key = resolveProperty('BINTRAY_KEY', 'bintrayKey')
     publications = ['bintrayPublication']
     publish = true
 
