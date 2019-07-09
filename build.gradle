@@ -33,7 +33,8 @@ reckon {
         project.ext.set('reckon.scope', 'patch')
     }
     snapshotFromProp()
-    //sample usage: ./gradlew build -Preckon.scope=minor -Preckon.stage=final
+    //sample usage: ./gradlew reckonTagCreate -Preckon.stage=final
+    //          or: ./gradlew reckonTagCreate -Preckon.stage=final -Preckon.scope=minor
 }
 
 // Enhance the output for unit test failures
@@ -114,6 +115,26 @@ task javadocJar(type: Jar) {
     }
 }
 
+def pomConfig = {
+    licenses {
+        license {
+            name 'MIT License'
+            url 'https://github.com/SpicyLemon/EasyOverrider/blob/master/LICENSE'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'spicylemon'
+            name 'Daniel Wedul'
+            email 'easyoverrider@wedul.com'
+        }
+    }
+    scm {
+        url 'https://github.com/SpicyLemon/EasyOverrider'
+    }
+}
+
 // Add the sources and javadoc jars as artifacts to publish
 project.afterEvaluate {
     publishing {
@@ -124,20 +145,29 @@ project.afterEvaluate {
                 groupId 'spicylemon'
                 artifact sourcesJar
                 artifact javadocJar
+                version "$project.version"
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', description)
+                    root.appendNode('name', 'easyOverrider')
+                    root.appendNode('url', 'https://github.com/SpicyLemon/EasyOverrider')
+                    root.children().last() + pomConfig
+                }
             }
         }
     }
 }
 
 bintray {
-    user = resolveProperty('BINTRAY_USER', 'bintrayUser')
-    key = resolveProperty('BINTRAY_KEY', 'bintrayKey')
+    user = resolveProperty('BINTRAY_USER', 'bintray.user')
+    key = resolveProperty('BINTRAY_KEY', 'bintray.key')
     publications = ['bintrayPublication']
     publish = true
 
     pkg {
-        repo = 'EasyOverrider'
-        name = 'EasyOverrider'
+        repo = 'maven'
+        name = 'easyOverrider'
+        userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
         websiteUrl = 'https://github.com/SpicyLemon/EasyOverrider'
         issueTrackerUrl = 'https://github.com/SpicyLemon/EasyOverrider/issues'
@@ -147,8 +177,19 @@ bintray {
         publicDownloadNumbers = true
         githubRepo = 'SpicyLemon/EasyOverrider'
         version {
+            name = "$project.version"
             released  = new Date()
             vcsTag = "v$project.version"
+            //gpg {
+            //    sign = true
+            //    passphrase = resolveProperty('GPG_PASSPHRASE', 'gpg.passphrase')
+            //}
+            //mavenCentralSync {
+            //    sync = true
+            //    user = resolveProperty('MAVEN_USER', 'maven.user')
+            //    password = resolveProperty('MAVEN_PASSWORD', 'maven.password')
+            //    close = '1'
+            //}
         }
     }
 }
