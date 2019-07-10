@@ -118,7 +118,7 @@ task javadocJar(type: Jar) {
 def pomConfig = {
     licenses {
         license {
-            name 'MIT License'
+            name 'MIT'
             url 'https://github.com/SpicyLemon/EasyOverrider/blob/master/LICENSE'
             distribution 'repo'
         }
@@ -180,10 +180,10 @@ bintray {
             name = "$project.version"
             released  = new Date()
             vcsTag = "v$project.version"
-            //gpg {
-            //    sign = true
-            //    passphrase = resolveProperty('GPG_PASSPHRASE', 'gpg.passphrase')
-            //}
+            gpg {
+                sign = true
+                passphrase = resolveProperty('GPG_PASSPHRASE', 'gpg.passphrase')
+            }
             //mavenCentralSync {
             //    sync = true
             //    user = resolveProperty('MAVEN_USER', 'maven.user')
