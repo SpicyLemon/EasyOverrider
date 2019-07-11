@@ -170,7 +170,7 @@ project.afterEvaluate {
         publications {
             bintrayPublication(MavenPublication) {
                 from components.java
-                artifactId 'easyOverrier'
+                artifactId 'easyOverrider'
                 groupId 'spicylemon'
                 artifact sourcesJar
                 artifact javadocJar
