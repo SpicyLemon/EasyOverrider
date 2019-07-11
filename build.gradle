@@ -97,9 +97,9 @@ test {
         if (result.failedTestCount > 0) style = Style.Failure
         else if (result.skippedTestCount > 0) style = Style.ProgressStatus
         else style = Style.Success
-        out.text('  ').withStyle(style).println((style == Style.Success ? '    PASSED  '
-                                                : style == Style.ProgressStatus ? '  SKIPPED  '
-                                                : 'FAILED  ') + descriptor.name)
+        out.text('  ').withStyle(style).println((style == Style.Success ? '    ' + 'PASSED'
+                                                : style == Style.ProgressStatus ? '  ' + 'SKIPPED'
+                                                : 'FAILED') + '  ' + descriptor.name)
     }
     // When all done, output a summary.
     afterSuite { desc, result ->
