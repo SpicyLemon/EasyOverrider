@@ -137,7 +137,7 @@ task sourcesJar(type: Jar) {
 task javadocJar(type: Jar) {
     group = JavaBasePlugin.BUILD_TASK_NAME
     description = 'Assembles a jar archive containing the javadoc.'
-    dependsOn 'javadoc'
+    dependsOn 'javadoc', 'classes'
     archiveClassifier = 'javadoc'
     doLast {
         from javadoc.destinationDir
