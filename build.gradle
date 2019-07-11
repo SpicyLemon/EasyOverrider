@@ -13,6 +13,11 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
 description = 'An easier way to override equals, hashCode, and toString in Java objects.'
 
+def githubRepoUrl = 'https://github.com/SpicyLemon/EasyOverrider'
+
+// If no tasks are listed, list all the tasks.
+defaultTasks 'tasks'
+
 repositories {
     // Use jcenter for resolving dependencies.
     jcenter()
@@ -27,14 +32,39 @@ compileJava {
     options.compilerArgs += ['-Xdiags:verbose', '-Xlint:unchecked']
 }
 
+// Some tasks to make it easier to set the reckon stage and scope parameters.
+// Default stage is snapshot, default scope is patch, so we only need tasks for the other options.
+// These tasks don't actually have any actions. Rather, their existence in the list of tasks is looked for
+//  while setting up all the reckon stuff.
+task finalVersion {
+    group = PublishingPlugin.PUBLISH_TASK_GROUP
+    description = 'Sets the reckon.stage to final'
+}
+task majorUpdate {
+    group = PublishingPlugin.PUBLISH_TASK_GROUP
+    description = 'Sets the reckon.scope to major'
+}
+task minorUpdate {
+    group = PublishingPlugin.PUBLISH_TASK_GROUP
+    description = 'Sets the reckon.scope to minor'
+}
+
+// And set up all the reckon stuff
 reckon {
     scopeFromProp()
-    if (!project.hasProperty("reckon.scope")) {
-        project.ext.set('reckon.scope', 'patch')
+    if (gradle.startParameter.taskNames.contains('majorUpdate')) {
+        setIfNotSet('reckon.scope', 'major')
+    } else if (gradle.startParameter.taskNames.contains('minorUpdate')) {
+        setIfNotSet('reckon.scope', 'minor')
+    } else {
+        setIfNotSet('reckon.scope', 'patch')
     }
     snapshotFromProp()
     //sample usage: ./gradlew reckonTagCreate -Preckon.stage=final
     //          or: ./gradlew reckonTagCreate -Preckon.stage=final -Preckon.scope=minor
+    if (gradle.startParameter.taskNames.contains('finalVersion')) {
+        setIfNotSet('reckon.stage', 'final')
+    }
 }
 
 // Enhance the output for unit test failures
@@ -45,7 +75,6 @@ tasks.withType(Test) {
     showStandardStreams true
   }
 }
-
 test {
     // Do a cleanTest first so that test always run when asked for
     dependsOn 'cleanTest'
@@ -91,7 +120,6 @@ tasks.withType(Javadoc) {
     options {
         links('https://docs.oracle.com/javase/8/docs/api')
     }
-    shouldRunAfter reckonTagCreate
 }
 
 // Create a sources jar when we build
@@ -120,7 +148,7 @@ def pomConfig = {
     licenses {
         license {
             name 'MIT'
-            url 'https://github.com/SpicyLemon/EasyOverrider/blob/master/LICENSE'
+            url githubRepoUrl + '/blob/master/LICENSE'
             distribution 'repo'
         }
     }
@@ -132,7 +160,7 @@ def pomConfig = {
         }
     }
     scm {
-        url 'https://github.com/SpicyLemon/EasyOverrider'
+        url githubRepoUrl
     }
 }
 
@@ -151,7 +179,7 @@ project.afterEvaluate {
                     def root = asNode()
                     root.appendNode('description', description)
                     root.appendNode('name', 'easyOverrider')
-                    root.appendNode('url', 'https://github.com/SpicyLemon/EasyOverrider')
+                    root.appendNode('url', githubRepoUrl)
                     root.children().last() + pomConfig
                 }
             }
@@ -170,9 +198,9 @@ bintray {
         name = 'easyOverrider'
         userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
-        websiteUrl = 'https://github.com/SpicyLemon/EasyOverrider'
-        issueTrackerUrl = 'https://github.com/SpicyLemon/EasyOverrider/issues'
-        vcsUrl = 'https://github.com/SpicyLemon/EasyOverrider'
+        websiteUrl = githubRepoUrl
+        issueTrackerUrl = githubRepoUrl + '/issues'
+        vcsUrl = githubRepoUrl
         licenses = ['MIT']
         labels = ['equals', 'hashCode', 'toString', 'override']
         publicDownloadNumbers = true
@@ -198,4 +226,11 @@ bintray {
 String resolveProperty(String envVarKey, String projectPropKey) {
     String propValue = System.getenv()[envVarKey]
     propValue ?: findProperty(projectPropKey)
+}
+
+Void setIfNotSet(String propertyKey, String value) {
+    if (!project.hasProperty(propertyKey)) {
+        logger.info('Setting property [' + propertyKey + '] to "' + value + '"')
+        project.ext.set(propertyKey, value)
+    }
 }
