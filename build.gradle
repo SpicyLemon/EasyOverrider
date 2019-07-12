@@ -4,6 +4,8 @@ plugins {
     // Publishing
     id 'com.jfrog.bintray' version '1.8.0'
     id 'maven-publish'
+    // Git stuff
+    id 'org.ajoberstar.grgit' version '3.1.1'
     // Versioning
     id 'org.ajoberstar.reckon' version '0.11.0'
 }
@@ -14,6 +16,7 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 description = 'An easier way to override equals, hashCode, and toString in Java objects.'
 
 def githubRepoUrl = 'https://github.com/SpicyLemon/EasyOverrider'
+def javadocDir = 'docs'
 
 // If no tasks are listed, list all the tasks.
 defaultTasks 'tasks'
@@ -114,11 +117,15 @@ test {
 }
 
 // Change the destination directory for javadocs so that gitlab can automatically publish them.
-// Also provide links ot the main java stuff which also makes the javadoc use the simple names for them.
+// Also provide links to the main java stuff which also makes the javadoc use the simple names for them.
+// Lastly, once the new files have been generated do a commit for them (if we're clean right now).
 tasks.withType(Javadoc) {
-    destinationDir = file("$rootDir/docs/")
+    destinationDir = file('' + rootDir + '/' + javadocDir + '/')
     options {
         links('https://docs.oracle.com/javase/8/docs/api')
+    }
+    doLast {
+        gitCommitDir(javadocDir)
     }
 }
 
@@ -224,13 +231,33 @@ bintray {
 }
 
 String resolveProperty(String envVarKey, String projectPropKey) {
-    String propValue = System.getenv()[envVarKey]
-    propValue ?: findProperty(projectPropKey)
+    String propValue = findProperty(projectPropKey)
+    return propValue ?: System.getenv()[envVarKey]
 }
 
 Void setIfNotSet(String propertyKey, String value) {
     if (!project.hasProperty(propertyKey)) {
         logger.info('Setting property [' + propertyKey + '] to "' + value + '"')
         project.ext.set(propertyKey, value)
+    }
+}
+
+void gitCommitDir(String dirToCommit) {
+    if (!dirToCommit.endsWith('/')) {
+        dirToCommit = dirToCommit + '/'
+    }
+    def status = grgit.status()
+    // Only do the commit if there are changes to commit.
+    def doCommit = !status.isClean()
+    // Only do the commit if there are no changes already staged.
+    doCommit = doCommit && status.staged.allChanges.empty
+    // Only do the commit if there are no conflicts.
+    doCommit = doCommit && status.conflicts.empty
+    // Only do the commit if there are unstaged changes in the dirToCommit.
+    doCommit = doCommit && status.unstaged.allChanges.any { it.startsWith(dirToCommit) }
+    if (doCommit) {
+        grgit.add(patterns: [dirToCommit])
+        def commit = grgit.commit(message: 'Update javadoc to version ' + project.version)
+        println 'Javadoc updates committed: ' + commit.abbreviatedId + ' "' + commit.fullMessage + '"' + "\n"
     }
 }
