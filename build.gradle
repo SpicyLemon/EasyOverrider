@@ -65,7 +65,7 @@ reckon {
     snapshotFromProp()
     //sample usage: ./gradlew reckonTagCreate -Preckon.stage=final
     //          or: ./gradlew reckonTagCreate -Preckon.stage=final -Preckon.scope=minor
-    if (gradle.startParameter.taskNames.contains('finalVersion')) {
+    if (gradle.startParameter.taskNames.contains('finalVersion') || gradle.startParameter.taskNames.contains('release')) {
         setIfNotSet('reckon.stage', 'final')
     }
 }
@@ -149,6 +149,12 @@ task javadocJar(type: Jar) {
     doLast {
         from javadoc.destinationDir
     }
+}
+
+task release {
+    group = PublishingPlugin.PUBLISH_TASK_GROUP
+    description = 'Cleans, builds, tests, updates javadoc, tags, pushes and publishes.'
+    dependsOn 'clean', 'build', 'javadoc', 'reckonTagPush'
 }
 
 def pomConfig = {
