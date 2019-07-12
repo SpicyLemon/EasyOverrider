@@ -154,7 +154,7 @@ task javadocJar(type: Jar) {
 task release {
     group = PublishingPlugin.PUBLISH_TASK_GROUP
     description = 'Cleans, builds, tests, updates javadoc, tags, pushes and publishes.'
-    dependsOn 'clean', 'build', 'javadoc', 'reckonTagPush'
+    dependsOn 'clean', 'assemble', 'test', 'javadoc', 'reckonTagPush'
 }
 
 def pomConfig = {
