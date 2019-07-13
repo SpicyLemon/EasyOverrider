@@ -116,6 +116,13 @@ test {
     }
 }
 
+task commitJavadoc {
+    description "Commits the javadoc directory if possible and needed."
+    doLast {
+        gitCommitDir(javadocDir)
+    }
+}
+
 // Change the destination directory for javadocs so that gitlab can automatically publish them.
 // Also provide links to the main java stuff which also makes the javadoc use the simple names for them.
 // Lastly, once the new files have been generated do a commit for them (if we're clean right now).
@@ -124,9 +131,7 @@ tasks.withType(Javadoc) {
     options {
         links('https://docs.oracle.com/javase/8/docs/api')
     }
-    doLast {
-        gitCommitDir(javadocDir)
-    }
+    finalizedBy commitJavadoc
 }
 
 // Create a sources jar when we build
@@ -151,10 +156,14 @@ task javadocJar(type: Jar) {
     }
 }
 
+assemble.mustRunAfter clean
+test.mustRunAfter assemble
+javadoc.mustRunAfter assemble
 task release {
     group = PublishingPlugin.PUBLISH_TASK_GROUP
     description = 'Cleans, builds, tests, updates javadoc, tags, pushes and publishes.'
-    dependsOn 'clean', 'assemble', 'test', 'javadoc', 'reckonTagPush'
+    dependsOn clean, assemble, test, javadoc
+    finalizedBy reckonTagPush, bintrayUpload
 }
 
 def pomConfig = {
