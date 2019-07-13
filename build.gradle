@@ -216,7 +216,6 @@ bintray {
     publish = true
 
     pkg {
-        repo = 'maven'
         name = 'easyOverrider'
         userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
