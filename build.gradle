@@ -200,6 +200,7 @@ project.afterEvaluate {
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('description', description)
+                    root.appendNode('name', 'easyOverrider')
                     root.appendNode('url', githubRepoUrl)
                     root.children().last() + pomConfig
                 }
@@ -215,7 +216,7 @@ bintray {
     publish = true
 
     pkg {
-        repo = 'easyOverrider'
+        repo = 'maven'
         name = 'easyOverrider'
         userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
