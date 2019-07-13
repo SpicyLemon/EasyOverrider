@@ -176,7 +176,7 @@ def pomConfig = {
     }
     developers {
         developer {
-            id 'spicylemon'
+            id 'SpicyLemon'
             name 'Daniel Wedul'
             email 'easyoverrider@wedul.com'
         }
@@ -217,7 +217,7 @@ bintray {
 
     pkg {
         repo = 'easyOverrider'
-        name = ''
+        name = 'easyOverrider'
         userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
         websiteUrl = githubRepoUrl
