@@ -217,6 +217,7 @@ bintray {
 
     pkg {
         repo = 'easyOverrider'
+        name = ''
         userOrg = resolveProperty('BINTRAY_ORG', 'bintray.org')
         desc = description
         websiteUrl = githubRepoUrl
